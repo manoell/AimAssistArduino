@@ -11,7 +11,7 @@ void setup()
 {
   Mouse.begin();
   Keyboard.begin();
-  Serial.begin(115200);
+  Serial.begin(230400);
   Serial.println("Start");
 
   if (Usb.Init() == -1)
