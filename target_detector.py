@@ -277,7 +277,10 @@ class TargetDetector:
     
     def _get_hybrid_target(self, screen):
         """
-        Implementa o modo híbrido: detecção por cor + confirmação YOLO.
+        Implementa o modo híbrido: detecção por cor + validação YOLO + finalização com cor.
+        YOLO é usado APENAS para confirmação (eliminar falsos positivos como plantas ou skills),
+        enquanto a detecção por cor é usada para o cálculo de movimento final, resultando em
+        movimentos mais fluidos e naturais.
         
         Args:
             screen (numpy.ndarray): Imagem da tela
@@ -285,7 +288,7 @@ class TargetDetector:
         Returns:
             tuple: (x, y, distance) do alvo se encontrado, ou None
         """
-        # 1. Encontrar contornos roxos na imagem
+        # 1. Encontrar contornos roxos na imagem - DETECÇÃO POR COR
         hsv = cv2.cvtColor(screen, cv2.COLOR_BGR2HSV)
         mask = cv2.inRange(hsv, self.lower_color, self.upper_color)
         dilated = cv2.dilate(mask, self.kernel, iterations=3)
@@ -298,13 +301,54 @@ class TargetDetector:
         if not contours:
             return None
         
-        # Filtrar contornos muito pequenos
-        valid_contours = [c for c in contours if cv2.contourArea(c) > 30]
-        if not valid_contours:
+        # Filtrar contornos muito pequenos e armazenar informações completas de cada um
+        valid_contours_info = []
+        for contour in contours:
+            area = cv2.contourArea(contour)
+            if area < 30:
+                continue
+            
+            # Extrair informações detalhadas do contorno
+            x, y, w, h = cv2.boundingRect(contour)
+            
+            # Calcular centro usando o contorno original (melhor precisão)
+            M = cv2.moments(contour)
+            if M["m00"] > 0:
+                cx = int(M["m10"] / M["m00"])
+                cy = int(M["m01"] / M["m00"])
+            else:
+                cx = x + w // 2
+                cy = y + h // 2
+                
+            # Calcular retângulo com padding para o YOLO
+            padding = 15  # Aumentado para garantir que captura todo o personagem
+            x1 = max(0, x - padding)
+            y1 = max(0, y - padding)
+            x2 = min(screen.shape[1], x + w + padding)
+            y2 = min(screen.shape[0], y + h + padding)
+            
+            # Extrair os pontos de contorno e ordená-los por coordenada Y (altura)
+            # Isso ajuda a identificar os pontos superiores para mira na cabeça
+            points = np.array(sorted(contour[:, 0, :], key=lambda p: p[1]))
+            
+            # Armazenar todas as informações relevantes do contorno
+            valid_contours_info.append({
+                'contour': contour,
+                'x': x, 'y': y, 'w': w, 'h': h,
+                'cx': cx, 'cy': cy,
+                'x1': x1, 'y1': y1, 'x2': x2, 'y2': y2,
+                'area': area,
+                'aspect_ratio': w / h if h > 0 else 0,
+                'vertical_position': y / self.fov,  # Posição vertical normalizada
+                'points': points  # Pontos ordenados por altura (Y crescente)
+            })
+        
+        if not valid_contours_info:
             return None
         
-        # 2. Para cada contorno, verificar com YOLO
-        confirmed_targets = []
+        # 2. Para cada contorno, usar YOLO APENAS para verificar se é um personagem válido
+        # YOLO age como um filtro binário: é personagem ou não é
+        confirmed_contours = []
         
         # Redirecionar stdout/stderr para evitar logs
         old_stdout = sys.stdout
@@ -313,56 +357,33 @@ class TargetDetector:
         sys.stderr = open(os.devnull, 'w')
         
         try:
-            for contour in valid_contours:
-                # Extrair região de interesse (ROI)
-                x, y, w, h = cv2.boundingRect(contour)
-                padding = 10
-                x1 = max(0, x - padding)
-                y1 = max(0, y - padding)
-                x2 = min(screen.shape[1], x + w + padding)
-                y2 = min(screen.shape[0], y + h + padding)
-                
+            for contour_info in valid_contours_info:
+                # Extrair região de interesse (ROI) para o YOLO
+                x1, y1, x2, y2 = contour_info['x1'], contour_info['y1'], contour_info['x2'], contour_info['y2']
                 roi = screen[y1:y2, x1:x2]
                 
                 # Ignorar ROIs muito pequenas
                 if roi.shape[0] < 10 or roi.shape[1] < 10:
                     continue
                 
-                # Executar YOLO na ROI
+                # Executar YOLO na ROI apenas para validação
                 results = self.yolo_model(roi, conf=self.confidence_threshold)[0]
                 
-                # Se YOLO encontrou algo, processar as detecções
+                # Se YOLO detectou um personagem, confirmar este contorno
                 if len(results.boxes) > 0:
-                    for box in results.boxes:
-                        # Extrair coordenadas
-                        roi_x1, roi_y1, roi_x2, roi_y2 = map(int, box.xyxy[0])
-                        cls_id = int(box.cls[0])
-                        label = self.class_names[cls_id]
-                        
-                        # Converter para coordenadas globais
-                        abs_x1 = roi_x1 + x1
-                        abs_y1 = roi_y1 + y1
-                        abs_x2 = roi_x2 + x1
-                        abs_y2 = roi_y2 + y1
-                        
-                        # Calcular centro e ajustar para mirar
-                        cx = (abs_x1 + abs_x2) // 2
-                        
-                        # Determinar posição vertical baseada no tipo
-                        if self.headshot_keyword in label.lower():
-                            cy = (abs_y1 + abs_y2) // 2
-                            priority = 1  # Prioridade máxima
-                        else:
-                            # Mirar no topo + offset
-                            cy = abs_y1 + int((abs_y2 - abs_y1) * 0.1)  # Bem próximo ao topo
-                            cy += int(self.target_offset)
-                            priority = 2
-                        
-                        # Calcular distância ao centro
-                        distance = np.sqrt((cx - self.center) ** 2 + (cy - self.center) ** 2)
-                        
-                        # Adicionar à lista de alvos confirmados
-                        confirmed_targets.append((cx, cy, distance, priority))
+                    # Extrair informações da melhor detecção do YOLO
+                    best_box = results.boxes[0]  # Pegamos apenas o mais confiável
+                    cls_id = int(best_box.cls[0])
+                    label = self.class_names[cls_id]
+                    conf = float(best_box.conf[0])
+                    
+                    # Armazenar o contorno confirmado com informação extra do YOLO
+                    contour_info['yolo_confirmed'] = True
+                    contour_info['label'] = label
+                    contour_info['confidence'] = conf
+                    contour_info['is_headshot'] = self.headshot_keyword in label.lower()
+                    
+                    confirmed_contours.append(contour_info)
         finally:
             # Restaurar stdout/stderr
             sys.stdout.close()
@@ -370,15 +391,53 @@ class TargetDetector:
             sys.stdout = old_stdout
             sys.stderr = old_stderr
         
-        # Se encontramos alvos confirmados, pegar o melhor
-        if confirmed_targets:
-            # Ordenar por prioridade e distância
-            confirmed_targets.sort(key=lambda t: (t[3], t[2]))
-            best_target = confirmed_targets[0]
-            return best_target[:3]  # Retornar (x, y, distance)
+        # 3. Se nenhum contorno foi confirmado pelo YOLO, não temos alvo válido
+        if not confirmed_contours:
+            return None
         
-        # Nenhum alvo confirmado
-        return None
+        # 4. Ordenar os contornos confirmados por:
+        #    - Headshot (prioridade maior)
+        #    - Confiança do YOLO
+        #    - Distância ao centro da tela
+        for contour in confirmed_contours:
+            # Calcular distância do centro do contorno ao centro da tela
+            distance = np.sqrt((contour['cx'] - self.center) ** 2 + (contour['cy'] - self.center) ** 2)
+            contour['distance'] = distance
+        
+        # Ordenar os contornos confirmados
+        confirmed_contours.sort(key=lambda c: (
+            0 if c['is_headshot'] else 1,  # Priorizar headshots
+            -c['confidence'],              # Maior confiança primeiro
+            c['distance']                  # Menor distância primeiro
+        ))
+        
+        # 5. Usar o MELHOR contorno para cálculo final (100% baseado em cor para fluidez)
+        best_contour = confirmed_contours[0]
+        
+        # Usar os pontos superiores do contorno para mira precisa
+        top_points = best_contour['points'][:min(5, len(best_contour['points']))]
+        
+        if len(top_points) > 0:
+            # Calcular o ponto médio dos pontos superiores (para centralizar na cabeça)
+            target_x = int(np.mean(top_points[:, 0]))
+            
+            # Para Y, pegar o ponto mais alto (menor Y) e aplicar offset
+            if best_contour['is_headshot']:
+                # Headshot confirmado - mirar exatamente no topo
+                target_y = int(np.min(top_points[:, 1]))
+            else:
+                # Mirar no topo com offset configurado
+                target_y = int(np.min(top_points[:, 1])) + int(self.target_offset)
+            
+            # Calcular distância final
+            distance = np.sqrt((target_x - self.center) ** 2 + (target_y - self.center) ** 2)
+            
+            # Retornar o alvo final baseado 100% na detecção por cor (movimento fluido)
+            # mas confirmado pelo YOLO (sem falsos positivos)
+            return (target_x, target_y, distance)
+        
+        # Fallback se não conseguirmos extrair pontos superiores
+        return (best_contour['cx'], best_contour['y'] + int(self.target_offset), best_contour['distance'])
     
     def _get_yolo_target(self, screen):
         """
