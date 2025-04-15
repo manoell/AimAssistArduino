@@ -39,7 +39,7 @@ class ConfigManager:
             'fov': '100',          # FOV para detecção
             'x_speed': '0.4',      # Velocidade no eixo X
             'y_speed': '0.4',      # Velocidade no eixo Y
-            'target_offset': '5.0', # Offset para mirar (cabeça)
+            'target_offset': '2.0', # Offset para mirar (cabeça)
             'smoothing': '0.7',    # Fator de suavização (0-1)
             'max_distance': '100',  # Distância máxima para auxiliar
             'history_length': '5'   # Tamanho do histórico para suavização
@@ -57,7 +57,17 @@ class ConfigManager:
             'aim_key_name': 'RMB',       # Nome para exibição
             'aim_toggle': 'F2',          # Tecla para ativar/desativar aimbot
             'reload': 'F4',              # Tecla para recarregar configurações
-            'exit': 'F12'                # Tecla para sair
+            'exit': 'F12',               # Tecla para sair
+            'debug': 'F3',               # Tecla para modo de depuração
+            'mode_toggle': 'F5'          # Tecla para alternar modos de detecção
+        }
+        
+        # Seção de configurações YOLO
+        self.config['YOLO'] = {
+            'model_path': 'my_yolo_model.pt',  # Caminho para o modelo
+            'confidence': '0.4',               # Limiar de confiança
+            'enabled': 'true',                 # YOLO ativado por padrão
+            'default_mode': '0'                # 0: Híbrido, 1: YOLO, 2: Cor
         }
         
         # Salvar configurações padrão

@@ -1,116 +1,158 @@
 # Enhanced Arduino Aim Assist
 
-Este projeto implementa um sistema avançado de assistência de mira (aim assist) para jogos FPS, usando Arduino Leonardo para controle de mouse. O sistema foi projetado para ser modular, eficiente e facilmente configurável.
+Um sistema avançado de assistência de mira para jogos FPS, combinando técnicas de visão computacional e controle de hardware via Arduino Leonardo.
 
 ## Características Principais
 
-- **Detecção Precisa de Cores**: Sistema otimizado para detectar contornos roxos (padrão de destaque de inimigos em Valorant)
-- **Algoritmo de Suavização**: Movimentos mais naturais e humanos através de técnicas avançadas de suavização
-- **Detecção de Cabeça**: Mira automática ajustada para zona superior dos contornos detectados
-- **Arquitetura Modular**: Código bem organizado e facilmente extensível
-- **Configuração Flexível**: Todas as configurações podem ser ajustadas através do arquivo settings.ini
-- **Alta Performance**: Captura de tela assíncrona para máxima velocidade e eficiência
+- **Sistema Multi-modo**: Alterne entre Híbrido (Cor+YOLO), YOLO puro ou Cor pura
+- **Detecção Híbrida**: Detecção por cor para velocidade + YOLO para precisão
+- **Zero Falsos Positivos**: Filtragem inteligente de plantas e outros elementos visuais
+- **Detecção Precisa**: Modelo YOLO treinado especificamente para jogos FPS
+- **Movimentos Naturais**: Suavização avançada para movimentos realistas
+- **Clonagem de Dispositivo**: O Arduino aparece para o sistema como seu próprio mouse
 
-## Requisitos de Hardware
+## Requisitos
 
+### Hardware
 - Arduino Leonardo (ou compatível com HID)
 - Cabo USB
+- PC com GPU (recomendável para melhor desempenho do YOLO)
 
-## Requisitos de Software
-
-- Python 3.7+
-- Bibliotecas Python (instaláveis via pip):
-  - OpenCV (`opencv-python`)
-  - NumPy (`numpy`)
-  - PySerial (`pyserial`)
-  - MSS (`mss`) - captura de tela rápida
-  - PyAutoGUI (`pyautogui`)
-  - Keyboard (`keyboard`)
-  - PyWin32 (`pywin32`)
-
-## Clonagem de Mouse (Opcional, mas Recomendado)
-
-Para maior segurança, o projeto inclui um utilitário para "clonar" seu mouse real, fazendo com que o Arduino Leonardo apareça para o sistema operacional exatamente como seu mouse legítimo:
-
-1. Conecte seu Arduino Leonardo e seu mouse normal ao computador
-2. Execute o utilitário de clonagem:
-```
-python spoofer.py
-```
-3. Siga as instruções na tela para selecionar qual mouse clonar
-4. Após a conclusão, desconecte e reconecte o Arduino para que as alterações tenham efeito
-
-Esta etapa é altamente recomendada para evitar detecção, pois remove qualquer referência a "Arduino" nos dispositivos conectados.
+### Software
+- Python 3.8+ (recomendado Python 3.8.10)
+- Bibliotecas Python:
+  ```
+  opencv-python
+  numpy
+  pyserial
+  mss
+  pyautogui
+  keyboard
+  pywin32
+  ultralytics
+  ```
 
 ## Instalação
 
-1. Clone este repositório:
-```
-git clone https://github.com/seu-usuario/arduino-aim-assist.git
-cd arduino-aim-assist
-```
+1. Clone ou baixe este repositório:
 
-2. Instale as dependências necessárias:
+2. Instale as dependências:
 ```
 pip install -r requirements.txt
 ```
 
-3. Configure o Arduino (duas opções):
-   - **Opção 1 (Padrão):** Carregue o código `arduino_code.ino` no seu Arduino Leonardo usando o Arduino IDE.
-   - **Opção 2 (Recomendada):** Use o utilitário de clonagem (instruções abaixo) para configurar o Arduino para imitar seu mouse real.
+3. Baixe o arquivo do modelo YOLO (`my_yolo_model.pt`) e coloque-o na pasta raiz do projeto.
 
-4. Configure o arquivo `settings.ini` com a porta COM correta e outras preferências.
+4. Configure seu Arduino:
+   - **Método Simples**: Carregue o arquivo `arduino_code.ino` usando o Arduino IDE
+   - **Método Avançado**: Execute `python spoofer.py` para clonar seu mouse
 
-5. Execute o programa principal:
+5. Configure o arquivo `settings.ini` para:
+   - Definir a porta COM correta para seu Arduino
+   - Ajustar velocidades, FOV e outras preferências
+
+6. Execute o programa:
 ```
 python main.py
 ```
 
-## Uso
+## Modos de Detecção
 
-1. Inicie o programa executando `python main.py`
-2. Pressione a tecla definida em `aim_toggle` (padrão: F2) para ativar o aim assist
-3. Segure a tecla definida em `aim_key` (padrão: botão direito do mouse) para usar o aim assist quando ativado
-4. Outras teclas úteis:
-   - `reload` (padrão: F4): Recarrega as configurações
-   - `exit` (padrão: F12): Sai do programa
+O sistema oferece três modos diferentes que podem ser alternados durante o uso:
 
-## Estrutura do Projeto
+### 1. Modo HÍBRIDO (Cor + YOLO)
+- **Como Funciona**: Usa detecção de cor para encontrar candidatos e YOLO para confirmar
+- **Vantagens**: Combina velocidade da detecção por cor com precisão do YOLO
+- **Melhor Para**: Uso geral, equilíbrio entre desempenho e precisão
+- **Falsos Positivos**: Praticamente zero (YOLO filtra plantas e outros elementos)
 
-- `main.py`: Programa principal, coordena todos os componentes
-- `screen_capture.py`: Gerencia a captura de tela de alta performance
-- `target_detector.py`: Implementa algoritmos de detecção de alvo
-- `mouse_controller.py`: Controla a comunicação com o Arduino
-- `config_manager.py`: Gerencia configurações do sistema
-- `utils.py`: Funções utilitárias
-- `arduino_code.ino`: Código para o Arduino Leonardo
+### 2. Modo YOLO
+- **Como Funciona**: Usa apenas o modelo YOLO para detectar alvos diretamente
+- **Vantagens**: Máxima precisão, independente da cor dos contornos
+- **Melhor Para**: Ambientes com muitos elementos visuais semelhantes
+- **Falsos Positivos**: Mínimos, mas usa mais recursos computacionais
 
-## Configuração para Jogos Específicos
+### 3. Modo COR
+- **Como Funciona**: Usa apenas detecção por cor HSV para encontrar contornos roxos
+- **Vantagens**: Baixo uso de recursos, resposta mais rápida
+- **Melhor Para**: Sistemas com recursos limitados ou quando YOLO não está disponível
+- **Falsos Positivos**: Alguns (plantas, efeitos visuais com cores similares)
 
-### Valorant
-- No jogo, configure a cor de destaque de inimigos para roxo/púrpura
-- As configurações padrão são otimizadas para Valorant
-- Ajuste `target_offset` para mira na cabeça conforme necessário
+## Teclas de Controle
 
-## Desenvolvimento
+| Tecla | Função |
+|-------|--------|
+| F2 | Ativar/desativar o aim assist |
+| RMB (botão direito do mouse) | Ativar a assistência de mira (quando habilitada) |
+| F3 | Ativar/desativar modo de depuração |
+| F4 | Recarregar configurações |
+| F5 | Alternar entre modos de detecção (Híbrido → YOLO → Cor) |
+| F12 | Sair do programa |
 
-Para expandir ou modificar este projeto:
+## Configuração
 
-1. Clone o repositório
-2. Instale as dependências de desenvolvimento
-3. Modifique os módulos conforme necessário
-4. Contribua com pull requests
+O arquivo `settings.ini` controla todas as configurações do sistema:
+
+### Aimbot
+- `fov`: Tamanho do campo de visão para captura (padrão: 100)
+- `x_speed`/`y_speed`: Velocidade de movimento nos eixos X/Y (padrão: 0.4)
+- `target_offset`: Ajuste vertical para mira (valores maiores = mais baixo)
+- `smoothing`: Fator de suavização para movimentos naturais (0-1)
+
+### Color
+- `lower_color`/`upper_color`: Limites HSV para detecção de cor
+
+### Hotkeys
+Teclas personalizáveis para todas as funções
+
+### YOLO
+- `model_path`: Caminho para o modelo YOLO treinado
+- `confidence`: Limiar de confiança para detecções (0-1)
+- `default_mode`: Modo de detecção padrão (0: Híbrido, 1: YOLO, 2: Cor)
+
+## Modo de Depuração
+
+Ative o modo de depuração (F3) para:
+- Salvar imagens de detecção na pasta `debug/`
+- Ver estatísticas no console sobre detecções e falsos positivos
+- Analisar a eficácia dos diferentes modos
+
+## Clonagem de Mouse
+
+O utilitário de clonagem (`spoofer.py`) permite que seu Arduino Leonardo seja reconhecido pelo sistema como uma cópia exata do seu mouse atual:
+
+1. Execute `python spoofer.py`
+2. Selecione seu mouse atual na lista exibida
+3. Siga as instruções para clonar sua identificação USB
+4. Reconecte o Arduino para que as alterações tenham efeito
+
+Isso evita qualquer referência a "Arduino" nos dispositivos conectados, tornando a detecção praticamente impossível.
+
+## Uso em Valorant
+
+Para uso ótimo em Valorant:
+
+1. Configure a cor de destaque de inimigos para roxo/púrpura nas opções do jogo
+2. Ajuste `target_offset` em `settings.ini` para acertar a cabeça
+3. Use o modo depuração para verificar se as detecções estão precisas
+4. Experimente diferentes modos para encontrar o melhor para seu sistema
+
+O modelo YOLO incluído foi treinado especificamente com imagens de Valorant, garantindo máxima eficácia.
 
 ## Solução de Problemas
 
-- **Arduino não detectado**: Verifique a conexão USB e certifique-se de que a porta COM está correta
-- **Detecção imprecisa**: Ajuste os valores de cor HSV nas configurações
-- **Movimento instável**: Aumente o valor de `smoothing` para movimentos mais suaves
-- **Problemas de captura de tela**: Verifique se o jogo está em modo de janela sem bordas ou tela cheia
+- **Arduino não detectado**: Verifique a porta COM em `settings.ini`
+- **Detecção imprecisa**: Ajuste os valores HSV nas configurações
+- **Movimento instável**: Aumente o valor de `smoothing`
+- **Baixo desempenho**: Experimente o modo COR para reduzir o uso de recursos
 
 ## Aviso Legal
 
 Este software é fornecido apenas para fins educacionais. O uso deste software para obter vantagens injustas em jogos competitivos pode violar os termos de serviço dos jogos. Use por sua própria conta e risco.
+
+## Créditos
+
+Este projeto integra tecnologias e conceitos de várias fontes, incluindo o modelo YOLO treinado especificamente para detecção em jogos FPS.
 
 ## Licença
 
