@@ -74,13 +74,14 @@ class EnhancedAimAssist:
         self.y_history = [0] * self.history_length
         
         # Configurar hotkeys
+
         self.setup_hotkeys()
         
-        print("\nSistema inicializado com sucesso!")
+        print("\nSistema inicializado com sucesso!\n")
         print(f"Pressione '{self.aim_toggle_key}' para ativar/desativar")
         print(f"Segure '{self.aim_key_name}' para utilizar quando ativado")
         print(f"Pressione '{self.reload_key}' para recarregar as configurações")
-        print(f"Pressione '{self.exit_key}' para sair do programa")
+        print(f"Pressione '{self.exit_key}' para sair do programa\n")
     
     def load_settings(self):
         """
@@ -128,8 +129,8 @@ class EnhancedAimAssist:
         """
         self.aim_toggle = not self.aim_toggle
         self.play_sound(1000 if self.aim_toggle else 800, 100)
-        status = "✅" if self.aim_toggle else "❌"
-        print(f"\rAim Assist: {status}", end="")
+        status = "✅" if self.aim_toggle else "🛑"
+        print(f"\rStatus: {status}", end="")
     
     def reload_config(self):
         """
@@ -138,13 +139,13 @@ class EnhancedAimAssist:
         self.config.reload()
         self.load_settings()
         self.play_sound(1500, 200)
-        print("\nConfigurações recarregadas!")
+        print("\nConfigurações recarregadas! 🔄")
     
     def exit_program(self):
         """
         Finaliza o programa
         """
-        print("\nFinalizando programa...")
+        print("\nFinalizando programa... ⚠️")
         self.running = False
         self.mouse.close()
         time.sleep(0.5)
