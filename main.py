@@ -58,7 +58,10 @@ class EnhancedAimAssist:
             self.upper_color,
             self.aim_fov,
             self.target_offset,
-            self.yolo_model_path
+            self.yolo_model_path,
+            self.base_processing_time,
+            self.max_compensation,
+            self.compensation_exponent
         )
         
         print_status("INFO", f"Conectando ao Arduino na porta {self.com_port}...")
@@ -82,6 +85,10 @@ class EnhancedAimAssist:
         # Inicializar histórico para smooth aiming
         self.x_history = [0] * self.history_length
         self.y_history = [0] * self.history_length
+        
+        # Variáveis para mostrar estatísticas
+        self.last_stats_time = time.time()
+        self.stats_interval = 5.0  # Intervalo em segundos para mostrar estatísticas
         
         # Configurar hotkeys
         self.setup_hotkeys()
@@ -127,6 +134,11 @@ class EnhancedAimAssist:
         self.exit_key = self.config.get('Hotkeys', 'exit')
         self.debug_key = self.config.get('Hotkeys', 'debug')
         self.mode_toggle_key = self.config.get('Hotkeys', 'mode_toggle')
+        
+        # Configurações de compensação de velocidade YOLO
+        self.base_processing_time = self.config.get_float('YOLO', 'base_processing_time')
+        self.max_compensation = self.config.get_float('YOLO', 'max_compensation')
+        self.compensation_exponent = self.config.get_float('YOLO', 'compensation_exponent')
     
     def setup_hotkeys(self):
         """
@@ -177,6 +189,11 @@ class EnhancedAimAssist:
         
         # Atualizar configurações no detector
         self.target_detector.update_colors(self.lower_color, self.upper_color)
+        self.target_detector.set_compensation_parameters(
+            self.base_processing_time,
+            self.max_compensation,
+            self.compensation_exponent
+        )
         
         self.play_sound(1500, 200)
         print("\nConfigurações recarregadas!")
@@ -245,9 +262,37 @@ class EnhancedAimAssist:
         
         return int(final_x), int(final_y)
     
+    def show_stats(self, speed_factor=None):
+        """
+        Mostra estatísticas de desempenho quando em modo debug
+        
+        Args:
+            speed_factor (float, optional): Fator de compensação de velocidade atual
+        """
+        current_time = time.time()
+        
+        # Mostrar estatísticas a cada intervalo definido
+        if current_time - self.last_stats_time >= self.stats_interval:
+            self.last_stats_time = current_time
+            
+            # Obter FPS da captura de tela
+            capture_fps = self.screen_capturer.get_fps()
+            
+            # Construir mensagem de estatísticas
+            stats = f"\rModo: {self.target_detector.get_current_mode_name()} | "
+            stats += f"FPS: {capture_fps:.1f} | "
+            
+            if speed_factor is not None and speed_factor > 1.0:
+                stats += f"Compensação: {speed_factor:.2f}x | "
+            
+            # Mostrar modo atual e estado
+            stats += f"Status: {'ATIVADO' if self.aim_toggle else 'DESATIVADO'}"
+            
+            print(stats)
+    
     def run(self):
         """
-        Loop principal do programa
+        Loop principal do programa com compensação de velocidade
         """
         try:
             while self.running:
@@ -258,20 +303,27 @@ class EnhancedAimAssist:
                     # Detectar alvo usando o detector no modo atual
                     target_info = self.target_detector.detect_target(screen)
                     
+                    # Obter fator de compensação de velocidade - será 1.0 no modo COR
+                    speed_factor = self.target_detector.get_speed_compensation_factor()
+                    
                     if target_info:
                         target_x, target_y, distance = target_info
                         
                         # Verificar se está dentro da distância máxima
                         if distance < self.max_distance:
-                            # Calcular movimento baseado nos fatores de velocidade
-                            move_x = int(target_x * self.x_speed)
-                            move_y = int(target_y * self.y_speed)
+                            # Calcular movimento baseado nos fatores de velocidade com compensação
+                            move_x = int(target_x * self.x_speed * speed_factor)
+                            move_y = int(target_y * self.y_speed * speed_factor)
                             
                             # Aplicar suavização
                             smooth_x, smooth_y = self.apply_smoothing(move_x, move_y)
                             
                             # Enviar comando para o mouse
                             self.mouse.move(smooth_x, smooth_y)
+                    
+                    # Mostrar estatísticas se modo de depuração estiver ativado
+                    if self.debug_mode:
+                        self.show_stats(speed_factor)
                 
                 # Pequena pausa para reduzir o uso de CPU
                 time.sleep(0.005)

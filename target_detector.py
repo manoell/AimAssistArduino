@@ -34,7 +34,8 @@ class TargetDetector:
         MODE_COLOR_ONLY: "COR"
     }
     
-    def __init__(self, lower_color, upper_color, fov, target_offset=0, model_path="my_yolo_model.pt"):
+    def __init__(self, lower_color, upper_color, fov, target_offset=0, model_path="my_yolo_model.pt",
+                 base_processing_time=0.015, max_compensation=2.0, compensation_exponent=0.7):
         """
         Inicializa o detector de alvos com múltiplos modos de detecção.
         
@@ -44,12 +45,20 @@ class TargetDetector:
             fov (int): Campo de visão (diâmetro)
             target_offset (float): Deslocamento vertical para mira (valores positivos = mais baixo)
             model_path (str): Caminho para o modelo YOLO treinado
+            base_processing_time (float): Tempo base de processamento esperado em segundos
+            max_compensation (float): Fator máximo de compensação de velocidade
+            compensation_exponent (float): Expoente para cálculo de compensação não-linear
         """
         self.lower_color = lower_color
         self.upper_color = upper_color
         self.fov = fov
         self.target_offset = target_offset
         self.center = fov // 2
+        
+        # Parâmetros de compensação de velocidade
+        self.base_processing_time = base_processing_time
+        self.max_compensation = max_compensation
+        self.compensation_exponent = compensation_exponent
         
         # Modo atual de detecção (padrão: híbrido)
         self.detection_mode = self.MODE_HYBRID
@@ -93,7 +102,10 @@ class TargetDetector:
         self.confidence_threshold = 0.4  # Confiança mínima para considerar uma detecção
         
         # Variáveis para debug e otimização
-        self.last_detection_time = 0
+        self.last_detection_time = time.time()
+        self.frame_start_time = time.time()
+        self.processing_times = []  # Lista para armazenar tempos de processamento recentes
+        self.max_processing_times = 30  # Número de amostras para média móvel
         self.debug_mode = False
         self.debug_counter = 0
         
@@ -125,6 +137,9 @@ class TargetDetector:
         Returns:
             tuple: (diff_x, diff_y, distance) se um alvo for encontrado, None caso contrário
         """
+        # Registrar o tempo de início do processamento do frame
+        self.frame_start_time = time.time()
+        
         # IMPORTANTE: Converter BGRA para BGR (remover canal alpha)
         if screen.shape[2] == 4:  # Se a imagem tem 4 canais (BGRA)
             screen = cv2.cvtColor(screen, cv2.COLOR_BGRA2BGR)
@@ -140,9 +155,57 @@ class TargetDetector:
         else:
             target = self._get_color_target(screen)
         
+        # Registrar o tempo de processamento deste frame
+        processing_time = time.time() - self.frame_start_time
+        self._update_processing_times(processing_time)
+        
         # Processo unificado para todos os modos a partir daqui
         # Isso garante movimentação idêntica independente do modo
         return self._process_target_movement(target)
+    
+    def _update_processing_times(self, processing_time):
+        """
+        Atualiza a lista de tempos de processamento para cálculo de médias.
+        
+        Args:
+            processing_time (float): Tempo de processamento do frame atual em segundos
+        """
+        self.processing_times.append(processing_time)
+        if len(self.processing_times) > self.max_processing_times:
+            self.processing_times.pop(0)
+    
+    def get_speed_compensation_factor(self):
+        """
+        Calcula um fator de compensação de velocidade baseado no tempo de processamento recente.
+        
+        Returns:
+            float: Fator de compensação (>1.0 = mais rápido, 1.0 = normal)
+        """
+        # Se não estamos usando YOLO (modo COR), não há compensação necessária
+        if self.detection_mode == self.MODE_COLOR_ONLY:
+            return 1.0
+        
+        # Se não temos amostras suficientes, não compensa
+        if not self.processing_times:
+            return 1.0
+        
+        # Calculamos a média dos tempos de processamento recentes
+        avg_processing_time = sum(self.processing_times) / len(self.processing_times)
+        
+        # Limitar o tempo de processamento para cálculos (evita valores extremos)
+        capped_time = min(max(avg_processing_time, 0.005), 0.1)
+        
+        # Se o tempo está abaixo do base, não precisamos compensar
+        if capped_time <= self.base_processing_time:
+            return 1.0
+        
+        # Compensação não-linear para tempos maiores que o esperado
+        # Quanto maior o delay, maior a compensação
+        relative_delay = (capped_time - self.base_processing_time) / self.base_processing_time
+        compensation = 1.0 + pow(relative_delay, self.compensation_exponent) * 0.5
+        
+        # Limitar ao fator máximo de compensação
+        return min(compensation, self.max_compensation)
     
     def _process_target_movement(self, target):
         """
@@ -494,6 +557,7 @@ class TargetDetector:
         self.last_target_x = 0
         self.last_target_y = 0
         self.movement_history = []
+        self.processing_times = []  # Limpar histórico de tempos de processamento
             
         # Alterar o modo
         self.detection_mode = mode
@@ -527,6 +591,22 @@ class TargetDetector:
             str: Nome do modo de detecção
         """
         return self.MODE_NAMES[self.detection_mode]
+    
+    def set_compensation_parameters(self, base_time, max_compensation, exponent):
+        """
+        Atualiza os parâmetros de compensação de velocidade.
+        
+        Args:
+            base_time (float): Tempo base de processamento esperado em segundos
+            max_compensation (float): Fator máximo de compensação
+            exponent (float): Expoente para cálculo não-linear
+        """
+        self.base_processing_time = base_time
+        self.max_compensation = max_compensation
+        self.compensation_exponent = exponent
+        
+        # Limpar histórico de processamento ao alterar parâmetros
+        self.processing_times = []
     
     def update_colors(self, lower_color, upper_color):
         """
@@ -587,6 +667,12 @@ class TargetDetector:
                         cv2.FONT_HERSHEY_SIMPLEX, 0.7, (0, 0, 255), 2)
             cv2.putText(debug_img, f"Mode: {self.get_current_mode_name()}", (10, 60),
                         cv2.FONT_HERSHEY_SIMPLEX, 0.7, (0, 0, 255), 2)
+            
+            # Adicionar informações de compensação
+            if self.detection_mode != self.MODE_COLOR_ONLY:
+                comp_factor = self.get_speed_compensation_factor()
+                cv2.putText(debug_img, f"Comp: {comp_factor:.2f}x", (10, 90),
+                            cv2.FONT_HERSHEY_SIMPLEX, 0.7, (0, 255, 0), 2)
             
             # Salvar imagem
             filename = f"debug/detection_{timestamp}_{self.debug_counter}.png"

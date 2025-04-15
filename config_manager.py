@@ -67,7 +67,10 @@ class ConfigManager:
             'model_path': 'my_yolo_model.pt',  # Caminho para o modelo
             'confidence': '0.4',               # Limiar de confiança
             'enabled': 'true',                 # YOLO ativado por padrão
-            'default_mode': '0'                # 0: Híbrido, 1: YOLO, 2: Cor
+            'default_mode': '0',               # 0: Híbrido, 1: YOLO, 2: Cor
+            'base_processing_time': '0.015',   # Tempo base de processamento esperado (15ms)
+            'max_compensation': '2.0',         # Fator máximo de compensação
+            'compensation_exponent': '0.7'     # Expoente para cálculo de compensação não-linear
         }
         
         # Salvar configurações padrão
