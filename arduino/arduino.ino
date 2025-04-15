@@ -1,150 +1,72 @@
-#include "Mouse.h"
-#include <hiduniversal.h>
-#include "hidmouserptparser.h"
-#include "Keyboard.h"
+#include <Mouse.h>
 
-USB Usb;
-HIDUniversal Hid(&Usb);
-HIDMouseReportParser Mou(nullptr);
+// Variáveis globais para armazenar o comando e valores de movimento
+String command = "";         // Comando recebido do buffer serial
+int deltaX = 0, deltaY = 0;  // Valores de movimento para os eixos X e Y
 
-void setup()
-{
-  Mouse.begin();
-  Keyboard.begin();
-  Serial.begin(230400);
-  Serial.println("Start");
+// Gerenciamento de estado de clique
+bool isClicking = false;         // Rastreia se um clique do mouse está acontecendo
+unsigned long clickStartTime = 0; // Marca o momento em que o clique começa
+unsigned long clickDuration;     // Especifica quanto tempo o clique durará em milissegundos
 
-  if (Usb.Init() == -1)
-  {
-    Serial.println("OSC did not start.");
-  }
-  
-  delay(200);
-
-  if (!Hid.SetReportParser(0, &Mou))
-  {
-    Serial.println("SetReportParser failed");
-  }
-}
-
-void loop()
-{
-  Usb.Task();
-
-  if (Serial.available() > 0)
-  {
-    String command = Serial.readStringUntil('\n');
-    ParseSerialCommand(command);
-  }
-}
-
-void ParseSerialCommand(const String& command)
-{
-  if (command == "c")
-  {
-    Mouse.click();
-  }
-  else if (command == "r")
-  {
-    Mouse.release();
-  }
-  else if (command == "p")
-  {
-    Mouse.press();
-  }
-  else if (command.startsWith("m"))
-  {
-    ExecuteMouseMoveCommand(command);
-  }
-}
-
-void ExecuteMouseMoveCommand(const String& command)
-{
-  String moveCommand = command;
-  moveCommand.replace("m", "");
-
-  int commaIndex = moveCommand.indexOf(',');
-  if (commaIndex != -1) {
-    String xStr = moveCommand.substring(0, commaIndex);
-    String yStr = moveCommand.substring(commaIndex + 1);
+void setup() {
+    // Inicializar comunicação serial com uma taxa de transmissão de 115200
+    Serial.begin(115200);
+    Serial.setTimeout(1);  // Definir um timeout curto para leituras seriais
+    Mouse.begin();         // Inicializar controle do mouse
     
-    // Certificar-se de que estamos lidando com números
-    xStr.trim();
-    yStr.trim();
+    // Alimentar o gerador de números aleatórios para durações de clique variáveis
+    randomSeed(analogRead(0));  // Usar um pino analógico desconectado para melhor aleatoriedade
+}
+
+void loop() {
+    // Verificar se há algum comando aguardando no buffer serial
+    if (Serial.available() > 0) {
+        // Ler o comando de entrada até um caractere de nova linha
+        command = Serial.readStringUntil('\n');
+        command.trim();  // Limpar quaisquer espaços no início ou fim
+        
+        // Se o comando começa com 'M', é um comando de movimento do mouse
+        if (command.startsWith("M")) {
+            int commaIndex = command.indexOf(',');  // Encontrar a posição da vírgula
+            // Certificar-se de que o comando está formatado corretamente
+            if (commaIndex != -1) {
+                // Extrair os valores de movimento para os eixos X e Y
+                deltaX = command.substring(1, commaIndex).toInt();  // Obter movimento do eixo X
+                deltaY = command.substring(commaIndex + 1).toInt();  // Obter movimento do eixo Y
+                
+                // Mover o mouse incrementalmente para evitar saltos repentinos
+                // Isso divide movimentos grandes em etapas menores
+                while (deltaX != 0 || deltaY != 0) {
+                    int moveX = constrain(deltaX, -127, 127);  // Limitar o movimento X para evitar overflow
+                    int moveY = constrain(deltaY, -127, 127);  // Limitar o movimento Y de forma semelhante
+                    Mouse.move(moveX, moveY);  // Realizar o movimento do mouse
+                    deltaX -= moveX;  // Diminuir o movimento restante para o eixo X
+                    deltaY -= moveY;  // Diminuir o movimento restante para o eixo Y
+                    
+                    // Pequena pausa para tornar o movimento mais suave
+                    delayMicroseconds(500);
+                }
+            }
+        }
+        // Se o comando começa com 'C', é um comando de clique do mouse
+        else if (command.startsWith("C")) {
+            // Iniciar o processo de clique se ainda não estamos clicando
+            if (!isClicking) {
+                Mouse.press(MOUSE_LEFT);  // Pressionar o botão esquerdo do mouse
+                clickStartTime = millis();  // Registrar o tempo atual como o início do clique
+                clickDuration = random(40, 80);  // Escolher uma duração aleatória entre 40ms e 80ms
+                isClicking = true;  // Marcar que estamos em um estado de clique
+            }
+        }
+    }
     
-    // Converter para inteiros
-    int x = xStr.toInt();
-    int y = yStr.toInt();
-    
-    // Mover o mouse
-    Mouse.move(x, y, 0);
-  }
-}
-
-void onButtonDown(uint16_t buttonId)
-{
-  switch(buttonId)
-  {
-    case MOUSE_LEFT:
-      Mouse.press(MOUSE_LEFT);
-      break;
-    case MOUSE_RIGHT:
-      Mouse.press(MOUSE_RIGHT);
-      break;
-    case MOUSE_MIDDLE:
-      Mouse.press(MOUSE_MIDDLE);
-      break;
-    case MOUSE_PREV:
-      Keyboard.press(KEY_LEFT_ALT);
-      Keyboard.press(KEY_LEFT_ARROW);
-      break;
-    case MOUSE_NEXT: 
-      Keyboard.press(KEY_LEFT_ALT);
-      Keyboard.press(KEY_RIGHT_ARROW);
-      break;
-    default:
-      break;
-  }
-}
-
-void onButtonUp(uint16_t buttonId)
-{
-  switch(buttonId)
-  {
-    case MOUSE_LEFT:
-      Mouse.release(MOUSE_LEFT);
-      break;
-    case MOUSE_RIGHT:
-      Mouse.release(MOUSE_RIGHT);
-      break;
-    case MOUSE_MIDDLE:
-      Mouse.release(MOUSE_MIDDLE);
-      break;
-    case MOUSE_PREV:
-      Keyboard.release(KEY_LEFT_ALT);
-      Keyboard.release(KEY_LEFT_ARROW);
-      break;
-    case MOUSE_NEXT:
-      Keyboard.release(KEY_LEFT_ALT);
-      Keyboard.release(KEY_RIGHT_ARROW);
-      break;
-    default:
-      break;
-  }
-}
-
-void onTiltPress(int8_t tiltValue)
-{
-  Serial.print("Tilt pressed: ");
-  Serial.println(tiltValue);
-}
-
-void onMouseMove(int16_t x, int16_t y, int8_t wheel)
-{
-  Mouse.move(x, y, wheel);
-}
-
-void onScroll(int8_t scrollValue)
-{
-  Mouse.move(0, 0, scrollValue);
+    // Se um clique estiver em andamento, verificar se é hora de soltar o botão
+    if (isClicking) {
+        // Se a duração especificada do clique tiver passado, soltar o botão
+        if (millis() - clickStartTime >= clickDuration) {
+            Mouse.release(MOUSE_LEFT);  // Soltar o botão esquerdo do mouse
+            isClicking = false;  // Redefinir o estado de clique
+        }
+    }
 }
