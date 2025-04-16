@@ -10,12 +10,11 @@ from screen_capture import ScreenCapture
 from mouse_controller import MouseController
 from target_detector import TargetDetector
 from config_manager import ConfigManager
-from utils import print_banner, clear_console, print_status
+from utils import print_banner, clear_console
 
 class EnhancedAimAssist:
     """
     Classe principal que integra todos os componentes do sistema de aim assist.
-    Versão simplificada com foco exclusivo na detecção por cor.
     """
     
     def __init__(self):
@@ -30,7 +29,7 @@ class EnhancedAimAssist:
         self.config = ConfigManager('settings.ini')
         self.load_settings()
         
-        print_status("INFO", "Carregando configurações...")
+        print("Carregando configurações...")
         
         # Obter resolução da tela
         screen_size = pyautogui.size()
@@ -45,8 +44,7 @@ class EnhancedAimAssist:
             self.aim_fov
         )
         
-        # Inicializar detector de alvos simplificado (apenas cor)
-        print_status("INFO", "Inicializando detector baseado em cor...")
+        # Inicializar detector de alvos
         self.target_detector = TargetDetector(
             self.lower_color,
             self.upper_color,
@@ -54,41 +52,36 @@ class EnhancedAimAssist:
             self.target_offset
         )
         
-        print_status("INFO", f"Conectando ao Arduino na porta {self.com_port}...")
+        print(f"Conectando ao Arduino na porta {self.com_port}...")
         
         # Inicializar controlador do mouse
         try:
             self.mouse = MouseController(self.com_port)
-            print_status("SUCESSO", "Arduino conectado com sucesso!")
+            print("Arduino conectado com sucesso!")
         except Exception as e:
-            print_status("ERRO", f"Erro ao conectar ao Arduino: {e}")
-            print_status("INFO", "Verifique se o Arduino está conectado e a porta COM está correta.")
-            print_status("INFO", "Saindo em 5 segundos...")
+            print(f"Erro ao conectar ao Arduino: {e}")
+            print("Verifique se o Arduino está conectado e a porta COM está correta.")
+            print("Saindo em 5 segundos...")
             time.sleep(5)
             sys.exit(1)
 
         # Status de execução
         self.running = True
         self.aim_toggle = False
-        self.debug_mode = False
         
         # Inicializar histórico para smooth aiming
         self.x_history = [0] * self.history_length
         self.y_history = [0] * self.history_length
         
-        # Variáveis para mostrar estatísticas
-        self.last_stats_time = time.time()
-        self.stats_interval = 5.0  # Intervalo em segundos para mostrar estatísticas
-        
         # Configurar hotkeys
+
         self.setup_hotkeys()
         
-        print_status("SUCESSO", "Sistema inicializado com sucesso!")
-        print(f"\nPressione '{self.aim_toggle_key}' para ativar/desativar o aim assist")
-        print(f"Segure '{self.aim_key_name}' para utilizar o aim assist quando ativado")
-        print(f"Pressione '{self.debug_key}' para ativar/desativar modo de depuração")
+        print("\nSistema inicializado com sucesso!\n")
+        print(f"Pressione '{self.aim_toggle_key}' para ativar/desativar")
+        print(f"Segure '{self.aim_key_name}' para utilizar quando ativado")
         print(f"Pressione '{self.reload_key}' para recarregar as configurações")
-        print(f"Pressione '{self.exit_key}' para sair do programa")
+        print(f"Pressione '{self.exit_key}' para sair do programa\n")
     
     def load_settings(self):
         """
@@ -98,11 +91,9 @@ class EnhancedAimAssist:
         self.aim_fov = self.config.get_int('Aimbot', 'fov')
         self.x_speed = self.config.get_float('Aimbot', 'x_speed')
         self.y_speed = self.config.get_float('Aimbot', 'y_speed')
-        
         # Carrega o offset e aplica um multiplicador para aumentar seu efeito
         raw_offset = self.config.get_float('Aimbot', 'target_offset')
         self.target_offset = raw_offset * 5.0  # Amplifica ainda mais o efeito do offset
-        
         self.smoothing_factor = self.config.get_float('Aimbot', 'smoothing')
         self.max_distance = self.config.get_int('Aimbot', 'max_distance')
         self.history_length = self.config.get_int('Aimbot', 'history_length')
@@ -120,7 +111,6 @@ class EnhancedAimAssist:
         self.aim_toggle_key = self.config.get('Hotkeys', 'aim_toggle')
         self.reload_key = self.config.get('Hotkeys', 'reload')
         self.exit_key = self.config.get('Hotkeys', 'exit')
-        self.debug_key = self.config.get('Hotkeys', 'debug')
     
     def setup_hotkeys(self):
         """
@@ -128,7 +118,6 @@ class EnhancedAimAssist:
         """
         # Teclas para ativar/desativar funções
         keyboard.add_hotkey(self.aim_toggle_key, self.toggle_aim)
-        keyboard.add_hotkey(self.debug_key, self.toggle_debug)
         
         # Teclas de sistema
         keyboard.add_hotkey(self.reload_key, self.reload_config)
@@ -140,18 +129,8 @@ class EnhancedAimAssist:
         """
         self.aim_toggle = not self.aim_toggle
         self.play_sound(1000 if self.aim_toggle else 800, 100)
-        status = "ATIVADO" if self.aim_toggle else "DESATIVADO"
-        print(f"\rAim Assist: {status}", end="")
-    
-    def toggle_debug(self):
-        """
-        Alterna o modo de depuração
-        """
-        self.debug_mode = not self.debug_mode
-        self.target_detector.set_debug_mode(self.debug_mode)
-        status = "ATIVADO" if self.debug_mode else "DESATIVADO"
-        print(f"\rModo de depuração: {status}", end="")
-        self.play_sound(1200 if self.debug_mode else 600, 100)
+        status = "✅" if self.aim_toggle else "🛑"
+        print(f"\rStatus: {status}", end="")
     
     def reload_config(self):
         """
@@ -159,22 +138,20 @@ class EnhancedAimAssist:
         """
         self.config.reload()
         self.load_settings()
-        
-        # Atualizar configurações no detector
-        self.target_detector.update_colors(self.lower_color, self.upper_color)
-        
         self.play_sound(1500, 200)
-        print("\nConfigurações recarregadas!")
+        print("\nConfigurações recarregadas! 🔄")
     
     def exit_program(self):
         """
         Finaliza o programa
         """
-        print("\nFinalizando programa...")
+        print("\nFinalizando programa... ⚠️")
         self.running = False
         self.mouse.close()
         time.sleep(0.5)
         os._exit(0)
+    
+    # Função toggle_console removida por não ser necessária
     
     def play_sound(self, frequency, duration):
         """
@@ -230,27 +207,6 @@ class EnhancedAimAssist:
         
         return int(final_x), int(final_y)
     
-    def show_stats(self):
-        """
-        Mostra estatísticas de desempenho quando em modo debug
-        """
-        current_time = time.time()
-        
-        # Mostrar estatísticas a cada intervalo definido
-        if current_time - self.last_stats_time >= self.stats_interval:
-            self.last_stats_time = current_time
-            
-            # Obter FPS da captura de tela
-            capture_fps = self.screen_capturer.get_fps()
-            
-            # Construir mensagem de estatísticas
-            stats = f"\rModo: COR | FPS: {capture_fps:.1f} | "
-            
-            # Mostrar estado
-            stats += f"Status: {'ATIVADO' if self.aim_toggle else 'DESATIVADO'}"
-            
-            print(stats)
-    
     def run(self):
         """
         Loop principal do programa
@@ -261,7 +217,7 @@ class EnhancedAimAssist:
                     # Capturar tela
                     screen = self.screen_capturer.get_screen()
                     
-                    # Detectar alvo usando o detector por cor
+                    # Detectar alvo
                     target_info = self.target_detector.detect_target(screen)
                     
                     if target_info:
@@ -278,10 +234,6 @@ class EnhancedAimAssist:
                             
                             # Enviar comando para o mouse
                             self.mouse.move(smooth_x, smooth_y)
-                    
-                    # Mostrar estatísticas se modo de depuração estiver ativado
-                    if self.debug_mode:
-                        self.show_stats()
                 
                 # Pequena pausa para reduzir o uso de CPU
                 time.sleep(0.005)
@@ -294,6 +246,5 @@ class EnhancedAimAssist:
 
 
 if __name__ == "__main__":
-    # Iniciar o sistema simplificado
     aim_assist = EnhancedAimAssist()
     aim_assist.run()

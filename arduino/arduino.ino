@@ -11,7 +11,7 @@ unsigned long clickDuration;     // Especifica quanto tempo o clique durará em 
 
 void setup() {
     // Inicializar comunicação serial com uma taxa de transmissão de 115200
-    Serial.begin(250000);
+    Serial.begin(115200);
     Serial.setTimeout(1);  // Definir um timeout curto para leituras seriais
     Mouse.begin();         // Inicializar controle do mouse
     

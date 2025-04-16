@@ -5,7 +5,7 @@ import numpy as np
 class ConfigManager:
     """
     Classe responsável por gerenciar configurações do programa.
-    Versão simplificada removendo configurações relacionadas ao YOLO.
+    Facilita leitura/escrita de valores de diversos tipos no arquivo de configuração.
     """
     
     def __init__(self, config_file):
@@ -39,7 +39,7 @@ class ConfigManager:
             'fov': '100',          # FOV para detecção
             'x_speed': '0.4',      # Velocidade no eixo X
             'y_speed': '0.4',      # Velocidade no eixo Y
-            'target_offset': '2.0', # Offset para mirar (cabeça)
+            'target_offset': '5.0', # Offset para mirar (cabeça)
             'smoothing': '0.7',    # Fator de suavização (0-1)
             'max_distance': '100',  # Distância máxima para auxiliar
             'history_length': '5'   # Tamanho do histórico para suavização
@@ -57,8 +57,7 @@ class ConfigManager:
             'aim_key_name': 'RMB',       # Nome para exibição
             'aim_toggle': 'F2',          # Tecla para ativar/desativar aimbot
             'reload': 'F4',              # Tecla para recarregar configurações
-            'exit': 'F12',               # Tecla para sair
-            'debug': 'F3'                # Tecla para modo de depuração
+            'exit': 'F12'                # Tecla para sair
         }
         
         # Salvar configurações padrão
