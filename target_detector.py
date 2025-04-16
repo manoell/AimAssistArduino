@@ -2,52 +2,22 @@ import cv2
 import numpy as np
 import time
 import os
-import sys
-import logging
-from ultralytics import YOLO
-
-# Configurar logging para capturar a saída do YOLO
-logging.basicConfig(filename='yolo.log', level=logging.ERROR)
-
-# Redirecionar stderr para arquivo de log
-sys.stderr = open('yolo_stderr.log', 'w')
 
 class TargetDetector:
     """
-    Classe responsável por detectar alvos na tela usando múltiplos modos:
-    1. HÍBRIDO: Detecção por cor + confirmação YOLO (máxima precisão)
-    2. YOLO: Apenas detecção YOLO em toda a tela (preciso, mais pesado)
-    3. COR: Apenas detecção por cor (rápido, menos preciso)
-    
-    Todos os modos usam EXATAMENTE o mesmo processamento final para 
-    garantir uma experiência de movimentação idêntica.
+    Classe responsável por detectar alvos na tela usando detecção por cor.
+    Versão simplificada focada exclusivamente em detecção baseada em HSV.
     """
     
-    # Constantes para modos de detecção
-    MODE_HYBRID = 0
-    MODE_YOLO_ONLY = 1
-    MODE_COLOR_ONLY = 2
-    
-    MODE_NAMES = {
-        MODE_HYBRID: "HÍBRIDO (Cor + YOLO)",
-        MODE_YOLO_ONLY: "YOLO",
-        MODE_COLOR_ONLY: "COR"
-    }
-    
-    def __init__(self, lower_color, upper_color, fov, target_offset=0, model_path="my_yolo_model.pt",
-                 base_processing_time=0.015, max_compensation=2.0, compensation_exponent=0.7):
+    def __init__(self, lower_color, upper_color, fov, target_offset=0):
         """
-        Inicializa o detector de alvos com múltiplos modos de detecção.
+        Inicializa o detector de alvos otimizado para detecção por cor.
         
         Args:
             lower_color (numpy.ndarray): Limite inferior para detecção de cor (HSV)
             upper_color (numpy.ndarray): Limite superior para detecção de cor (HSV)
             fov (int): Campo de visão (diâmetro)
             target_offset (float): Deslocamento vertical para mira (valores positivos = mais baixo)
-            model_path (str): Caminho para o modelo YOLO treinado
-            base_processing_time (float): Tempo base de processamento esperado em segundos
-            max_compensation (float): Fator máximo de compensação de velocidade
-            compensation_exponent (float): Expoente para cálculo de compensação não-linear
         """
         self.lower_color = lower_color
         self.upper_color = upper_color
@@ -55,81 +25,28 @@ class TargetDetector:
         self.target_offset = target_offset
         self.center = fov // 2
         
-        # Parâmetros de compensação de velocidade
-        self.base_processing_time = base_processing_time
-        self.max_compensation = max_compensation
-        self.compensation_exponent = compensation_exponent
-        
-        # Modo atual de detecção (padrão: híbrido)
-        self.detection_mode = self.MODE_HYBRID
-        
         # Kernel para operações morfológicas
         self.kernel = np.ones((3, 3), np.uint8)
         
-        # Carregar o modelo YOLO silenciosamente
-        print(f"Carregando modelo YOLO de {model_path}...")
-        try:
-            # Redirecionar stdout/stderr temporariamente
-            old_stdout = sys.stdout
-            old_stderr = sys.stderr
-            sys.stdout = open(os.devnull, 'w')
-            sys.stderr = open(os.devnull, 'w')
-            
-            # Carregar modelo
-            self.yolo_model = YOLO(model_path)
-            
-            # Restaurar stdout/stderr
-            sys.stdout.close()
-            sys.stderr.close()
-            sys.stdout = old_stdout
-            sys.stderr = old_stderr
-            
-            print("Modelo YOLO carregado com sucesso!")
-            
-            # Obter classes do modelo para referência
-            self.class_names = self.yolo_model.names
-            print(f"Classes detectadas pelo modelo: {self.class_names}")
-            self.headshot_keyword = "headshot"  # Palavra-chave para detecção de cabeça
-            self.model_loaded = True
-        except Exception as e:
-            print(f"Erro ao carregar modelo YOLO: {e}")
-            print("Continuando apenas com detecção por cor...")
-            self.model_loaded = False
-            # Se YOLO não carregou, forçar modo de detecção por cor
-            self.detection_mode = self.MODE_COLOR_ONLY
-        
-        # Configurações para detecção
-        self.confidence_threshold = 0.4  # Confiança mínima para considerar uma detecção
-        
         # Variáveis para debug e otimização
-        self.last_detection_time = time.time()
-        self.frame_start_time = time.time()
-        self.processing_times = []  # Lista para armazenar tempos de processamento recentes
-        self.max_processing_times = 30  # Número de amostras para média móvel
         self.debug_mode = False
         self.debug_counter = 0
-        
-        # Estatísticas
-        self.total_detections = 0
-        self.yolo_confirmations = 0
-        self.false_positives = 0
         
         # Estado do alvo e histórico para suavização de movimento
         self.has_target = False
         self.last_target_x = 0
         self.last_target_y = 0
         
-        # Histórico para média ponderada (como no modo COR)
+        # Histórico para média ponderada
         self.movement_history = []
         self.max_history = 10
         
-        # Fator de suavização bem alto para movimento natural
+        # Fator de suavização para movimento natural
         self.smoothing = 0.9
     
     def detect_target(self, screen):
         """
-        Detecta o alvo usando o modo de detecção atualmente selecionado
-        e aplica o mesmo processamento final para todos os modos.
+        Detecta o alvo usando detecção por cor HSV e aplica suavização.
         
         Args:
             screen (numpy.ndarray): Imagem capturada da tela
@@ -137,80 +54,19 @@ class TargetDetector:
         Returns:
             tuple: (diff_x, diff_y, distance) se um alvo for encontrado, None caso contrário
         """
-        # Registrar o tempo de início do processamento do frame
-        self.frame_start_time = time.time()
-        
         # IMPORTANTE: Converter BGRA para BGR (remover canal alpha)
         if screen.shape[2] == 4:  # Se a imagem tem 4 canais (BGRA)
             screen = cv2.cvtColor(screen, cv2.COLOR_BGRA2BGR)
         
-        # Detectar alvo com base no modo selecionado
-        # Cada modo retorna (x, y) absolutas na tela ou None
-        target = None
+        # Detectar alvo usando cores
+        target = self._get_color_target(screen)
         
-        if self.detection_mode == self.MODE_HYBRID and self.model_loaded:
-            target = self._get_hybrid_target(screen)
-        elif self.detection_mode == self.MODE_YOLO_ONLY and self.model_loaded:
-            target = self._get_yolo_target(screen)
-        else:
-            target = self._get_color_target(screen)
-        
-        # Registrar o tempo de processamento deste frame
-        processing_time = time.time() - self.frame_start_time
-        self._update_processing_times(processing_time)
-        
-        # Processo unificado para todos os modos a partir daqui
-        # Isso garante movimentação idêntica independente do modo
+        # Processar o movimento usando o mesmo pipeline de processamento
         return self._process_target_movement(target)
-    
-    def _update_processing_times(self, processing_time):
-        """
-        Atualiza a lista de tempos de processamento para cálculo de médias.
-        
-        Args:
-            processing_time (float): Tempo de processamento do frame atual em segundos
-        """
-        self.processing_times.append(processing_time)
-        if len(self.processing_times) > self.max_processing_times:
-            self.processing_times.pop(0)
-    
-    def get_speed_compensation_factor(self):
-        """
-        Calcula um fator de compensação de velocidade baseado no tempo de processamento recente.
-        
-        Returns:
-            float: Fator de compensação (>1.0 = mais rápido, 1.0 = normal)
-        """
-        # Se não estamos usando YOLO (modo COR), não há compensação necessária
-        if self.detection_mode == self.MODE_COLOR_ONLY:
-            return 1.0
-        
-        # Se não temos amostras suficientes, não compensa
-        if not self.processing_times:
-            return 1.0
-        
-        # Calculamos a média dos tempos de processamento recentes
-        avg_processing_time = sum(self.processing_times) / len(self.processing_times)
-        
-        # Limitar o tempo de processamento para cálculos (evita valores extremos)
-        capped_time = min(max(avg_processing_time, 0.005), 0.1)
-        
-        # Se o tempo está abaixo do base, não precisamos compensar
-        if capped_time <= self.base_processing_time:
-            return 1.0
-        
-        # Compensação não-linear para tempos maiores que o esperado
-        # Quanto maior o delay, maior a compensação
-        relative_delay = (capped_time - self.base_processing_time) / self.base_processing_time
-        compensation = 1.0 + pow(relative_delay, self.compensation_exponent) * 0.5
-        
-        # Limitar ao fator máximo de compensação
-        return min(compensation, self.max_compensation)
     
     def _process_target_movement(self, target):
         """
         Processa o alvo detectado para produzir uma movimentação suave.
-        Este método é único para todos os modos, garantindo consistência.
         
         Args:
             target: Tuple (x, y, distance) ou None
@@ -275,245 +131,9 @@ class TargetDetector:
         
         return (smooth_x, smooth_y, distance)
     
-    def _get_hybrid_target(self, screen):
-        """
-        Implementa o modo híbrido: detecção por cor + validação YOLO + finalização com cor.
-        YOLO é usado APENAS para confirmação (eliminar falsos positivos como plantas ou skills),
-        enquanto a detecção por cor é usada para o cálculo de movimento final, resultando em
-        movimentos mais fluidos e naturais.
-        
-        Args:
-            screen (numpy.ndarray): Imagem da tela
-            
-        Returns:
-            tuple: (x, y, distance) do alvo se encontrado, ou None
-        """
-        # 1. Encontrar contornos roxos na imagem - DETECÇÃO POR COR
-        hsv = cv2.cvtColor(screen, cv2.COLOR_BGR2HSV)
-        mask = cv2.inRange(hsv, self.lower_color, self.upper_color)
-        dilated = cv2.dilate(mask, self.kernel, iterations=3)
-        opening = cv2.morphologyEx(dilated, cv2.MORPH_OPEN, self.kernel, iterations=1)
-        closing = cv2.morphologyEx(opening, cv2.MORPH_CLOSE, self.kernel, iterations=2)
-        
-        contours, _ = cv2.findContours(closing, cv2.RETR_EXTERNAL, cv2.CHAIN_APPROX_SIMPLE)
-        
-        # Se não há contornos, não há alvo
-        if not contours:
-            return None
-        
-        # Filtrar contornos muito pequenos e armazenar informações completas de cada um
-        valid_contours_info = []
-        for contour in contours:
-            area = cv2.contourArea(contour)
-            if area < 30:
-                continue
-            
-            # Extrair informações detalhadas do contorno
-            x, y, w, h = cv2.boundingRect(contour)
-            
-            # Calcular centro usando o contorno original (melhor precisão)
-            M = cv2.moments(contour)
-            if M["m00"] > 0:
-                cx = int(M["m10"] / M["m00"])
-                cy = int(M["m01"] / M["m00"])
-            else:
-                cx = x + w // 2
-                cy = y + h // 2
-                
-            # Calcular retângulo com padding para o YOLO
-            padding = 15  # Aumentado para garantir que captura todo o personagem
-            x1 = max(0, x - padding)
-            y1 = max(0, y - padding)
-            x2 = min(screen.shape[1], x + w + padding)
-            y2 = min(screen.shape[0], y + h + padding)
-            
-            # Extrair os pontos de contorno e ordená-los por coordenada Y (altura)
-            # Isso ajuda a identificar os pontos superiores para mira na cabeça
-            points = np.array(sorted(contour[:, 0, :], key=lambda p: p[1]))
-            
-            # Armazenar todas as informações relevantes do contorno
-            valid_contours_info.append({
-                'contour': contour,
-                'x': x, 'y': y, 'w': w, 'h': h,
-                'cx': cx, 'cy': cy,
-                'x1': x1, 'y1': y1, 'x2': x2, 'y2': y2,
-                'area': area,
-                'aspect_ratio': w / h if h > 0 else 0,
-                'vertical_position': y / self.fov,  # Posição vertical normalizada
-                'points': points  # Pontos ordenados por altura (Y crescente)
-            })
-        
-        if not valid_contours_info:
-            return None
-        
-        # 2. Para cada contorno, usar YOLO APENAS para verificar se é um personagem válido
-        # YOLO age como um filtro binário: é personagem ou não é
-        confirmed_contours = []
-        
-        # Redirecionar stdout/stderr para evitar logs
-        old_stdout = sys.stdout
-        old_stderr = sys.stderr
-        sys.stdout = open(os.devnull, 'w')
-        sys.stderr = open(os.devnull, 'w')
-        
-        try:
-            for contour_info in valid_contours_info:
-                # Extrair região de interesse (ROI) para o YOLO
-                x1, y1, x2, y2 = contour_info['x1'], contour_info['y1'], contour_info['x2'], contour_info['y2']
-                roi = screen[y1:y2, x1:x2]
-                
-                # Ignorar ROIs muito pequenas
-                if roi.shape[0] < 10 or roi.shape[1] < 10:
-                    continue
-                
-                # Executar YOLO na ROI apenas para validação
-                results = self.yolo_model(roi, conf=self.confidence_threshold)[0]
-                
-                # Se YOLO detectou um personagem, confirmar este contorno
-                if len(results.boxes) > 0:
-                    # Extrair informações da melhor detecção do YOLO
-                    best_box = results.boxes[0]  # Pegamos apenas o mais confiável
-                    cls_id = int(best_box.cls[0])
-                    label = self.class_names[cls_id]
-                    conf = float(best_box.conf[0])
-                    
-                    # Armazenar o contorno confirmado com informação extra do YOLO
-                    contour_info['yolo_confirmed'] = True
-                    contour_info['label'] = label
-                    contour_info['confidence'] = conf
-                    contour_info['is_headshot'] = self.headshot_keyword in label.lower()
-                    
-                    confirmed_contours.append(contour_info)
-        finally:
-            # Restaurar stdout/stderr
-            sys.stdout.close()
-            sys.stderr.close()
-            sys.stdout = old_stdout
-            sys.stderr = old_stderr
-        
-        # 3. Se nenhum contorno foi confirmado pelo YOLO, não temos alvo válido
-        if not confirmed_contours:
-            return None
-        
-        # 4. Ordenar os contornos confirmados por:
-        #    - Headshot (prioridade maior)
-        #    - Confiança do YOLO
-        #    - Distância ao centro da tela
-        for contour in confirmed_contours:
-            # Calcular distância do centro do contorno ao centro da tela
-            distance = np.sqrt((contour['cx'] - self.center) ** 2 + (contour['cy'] - self.center) ** 2)
-            contour['distance'] = distance
-        
-        # Ordenar os contornos confirmados
-        confirmed_contours.sort(key=lambda c: (
-            0 if c['is_headshot'] else 1,  # Priorizar headshots
-            -c['confidence'],              # Maior confiança primeiro
-            c['distance']                  # Menor distância primeiro
-        ))
-        
-        # 5. Usar o MELHOR contorno para cálculo final (100% baseado em cor para fluidez)
-        best_contour = confirmed_contours[0]
-        
-        # Usar os pontos superiores do contorno para mira precisa
-        top_points = best_contour['points'][:min(5, len(best_contour['points']))]
-        
-        if len(top_points) > 0:
-            # Calcular o ponto médio dos pontos superiores (para centralizar na cabeça)
-            target_x = int(np.mean(top_points[:, 0]))
-            
-            # Para Y, pegar o ponto mais alto (menor Y) e aplicar offset
-            if best_contour['is_headshot']:
-                # Headshot confirmado - mirar exatamente no topo
-                target_y = int(np.min(top_points[:, 1]))
-            else:
-                # Mirar no topo com offset configurado
-                target_y = int(np.min(top_points[:, 1])) + int(self.target_offset)
-            
-            # Calcular distância final
-            distance = np.sqrt((target_x - self.center) ** 2 + (target_y - self.center) ** 2)
-            
-            # Retornar o alvo final baseado 100% na detecção por cor (movimento fluido)
-            # mas confirmado pelo YOLO (sem falsos positivos)
-            return (target_x, target_y, distance)
-        
-        # Fallback se não conseguirmos extrair pontos superiores
-        return (best_contour['cx'], best_contour['y'] + int(self.target_offset), best_contour['distance'])
-    
-    def _get_yolo_target(self, screen):
-        """
-        Implementa o modo YOLO: detecção apenas com YOLO.
-        
-        Args:
-            screen (numpy.ndarray): Imagem da tela
-            
-        Returns:
-            tuple: (x, y, distance) do alvo se encontrado, ou None
-        """
-        # Redirecionar stdout/stderr para evitar logs
-        old_stdout = sys.stdout
-        old_stderr = sys.stderr
-        sys.stdout = open(os.devnull, 'w')
-        sys.stderr = open(os.devnull, 'w')
-        
-        try:
-            # Executar YOLO na tela inteira
-            results = self.yolo_model(screen, conf=self.confidence_threshold)[0]
-            
-            # Se não há detecções, não há alvo
-            if len(results.boxes) == 0:
-                return None
-            
-            # Processar detecções
-            best_target = None
-            min_score = float('inf')
-            
-            for box in results.boxes:
-                # Extrair coordenadas
-                x1, y1, x2, y2 = map(int, box.xyxy[0])
-                cls_id = int(box.cls[0])
-                label = self.class_names[cls_id]
-                
-                # Calcular centro e ajustar para mirar
-                cx = (x1 + x2) // 2
-                
-                # Determinar posição vertical baseada no tipo
-                if self.headshot_keyword in label.lower():
-                    cy = (y1 + y2) // 2
-                    priority = 1  # Prioridade máxima
-                else:
-                    # Mirar no topo + offset
-                    cy = y1 + int((y2 - y1) * 0.1)  # Bem próximo ao topo
-                    cy += int(self.target_offset)
-                    priority = 2
-                
-                # Calcular distância ao centro
-                distance = np.sqrt((cx - self.center) ** 2 + (cy - self.center) ** 2)
-                
-                # Calcular pontuação
-                score = priority * distance
-                
-                # Atualizar melhor alvo
-                if score < min_score:
-                    min_score = score
-                    best_target = (cx, cy, distance)
-            
-            return best_target
-                
-        except Exception as e:
-            if self.debug_mode:
-                print(f"Erro ao processar YOLO: {e}")
-            return None
-            
-        finally:
-            # Restaurar stdout/stderr
-            sys.stdout.close()
-            sys.stderr.close()
-            sys.stdout = old_stdout
-            sys.stderr = old_stderr
-    
     def _get_color_target(self, screen):
         """
-        Implementa o modo COR: detecção apenas por cor.
+        Implementa a detecção por cor HSV.
         
         Args:
             screen (numpy.ndarray): Imagem da tela
@@ -566,16 +186,26 @@ class TargetDetector:
         min_distance = float('inf')
         
         for contour in valid_contours:
-            # Obter bounding box
-            x, y, w, h = cv2.boundingRect(contour)
+            # Extrair pontos do contorno e ordená-los por coordenada Y
+            points = np.array(sorted(contour[:, 0, :], key=lambda p: p[1]))
             
-            # Calcular centro e ajustar para mirar
-            cx = x + w // 2
-            cy = y + int(h * 0.1)  # Próximo ao topo
-            cy += int(self.target_offset)
+            if len(points) > 0:
+                # Usar os pontos superiores do contorno para mira precisa
+                top_points = points[:min(5, len(points))]
+                
+                # Calcular o ponto médio dos pontos superiores (para centralizar na cabeça)
+                target_x = int(np.mean(top_points[:, 0]))
+                
+                # Para Y, pegar o ponto mais alto (menor Y) e aplicar offset
+                target_y = int(np.min(top_points[:, 1])) + int(self.target_offset)
+            else:
+                # Caso falhe, usar bounding box
+                x, y, w, h = cv2.boundingRect(contour)
+                target_x = x + w // 2
+                target_y = y + int(self.target_offset)
             
             # Calcular distância ao centro
-            distance = np.sqrt((cx - self.center) ** 2 + (cy - self.center) ** 2)
+            distance = np.sqrt((target_x - self.center) ** 2 + (target_y - self.center) ** 2)
             
             # Considerar posição vertical
             height_factor = 1.0
@@ -588,84 +218,13 @@ class TargetDetector:
             # Atualizar melhor alvo
             if adjusted_distance < min_distance:
                 min_distance = adjusted_distance
-                best_target = (cx, cy, distance)
+                best_target = (target_x, target_y, distance)
+        
+        # Salvar imagem de debug se necessário
+        if self.debug_mode and best_target is not None:
+            self._save_debug_image(screen, "cor", best_target[0], best_target[1])
         
         return best_target
-    
-    def set_detection_mode(self, mode):
-        """
-        Define o modo de detecção.
-        
-        Args:
-            mode (int): Modo de detecção (0: Híbrido, 1: YOLO, 2: Cor)
-        
-        Returns:
-            bool: True se o modo foi alterado com sucesso, False caso contrário
-        """
-        # Verificar se o modo é válido
-        if mode not in self.MODE_NAMES:
-            return False
-            
-        # Se o modo requer YOLO, verificar se o modelo está carregado
-        if (mode == self.MODE_HYBRID or mode == self.MODE_YOLO_ONLY) and not self.model_loaded:
-            print(f"Não é possível alternar para o modo {self.MODE_NAMES[mode]} porque o modelo YOLO não está carregado.")
-            return False
-            
-        # Resetar o estado de movimento ao mudar de modo
-        self.has_target = False
-        self.last_target_x = 0
-        self.last_target_y = 0
-        self.movement_history = []
-        self.processing_times = []  # Limpar histórico de tempos de processamento
-            
-        # Alterar o modo
-        self.detection_mode = mode
-        print(f"Modo de detecção alterado para: {self.MODE_NAMES[mode]}")
-        return True
-    
-    def cycle_detection_mode(self):
-        """
-        Alterna ciclicamente entre os modos de detecção disponíveis.
-        
-        Returns:
-            str: Nome do novo modo de detecção
-        """
-        current_mode = self.detection_mode
-        
-        # Se o modelo YOLO está carregado, ciclar entre todos os modos
-        if self.model_loaded:
-            new_mode = (current_mode + 1) % 3
-        else:
-            # Se o modelo YOLO não está carregado, só temos o modo de cor
-            new_mode = self.MODE_COLOR_ONLY
-            
-        self.set_detection_mode(new_mode)
-        return self.MODE_NAMES[new_mode]
-    
-    def get_current_mode_name(self):
-        """
-        Retorna o nome do modo de detecção atual.
-        
-        Returns:
-            str: Nome do modo de detecção
-        """
-        return self.MODE_NAMES[self.detection_mode]
-    
-    def set_compensation_parameters(self, base_time, max_compensation, exponent):
-        """
-        Atualiza os parâmetros de compensação de velocidade.
-        
-        Args:
-            base_time (float): Tempo base de processamento esperado em segundos
-            max_compensation (float): Fator máximo de compensação
-            exponent (float): Expoente para cálculo não-linear
-        """
-        self.base_processing_time = base_time
-        self.max_compensation = max_compensation
-        self.compensation_exponent = exponent
-        
-        # Limpar histórico de processamento ao alterar parâmetros
-        self.processing_times = []
     
     def update_colors(self, lower_color, upper_color):
         """
@@ -699,7 +258,7 @@ class TargetDetector:
         
         Args:
             image (numpy.ndarray): Imagem original
-            label (str): Classe detectada
+            label (str): Rótulo para a imagem
             target_x (int): Coordenada X do alvo
             target_y (int): Coordenada Y do alvo
         """
@@ -722,16 +281,8 @@ class TargetDetector:
             cv2.circle(debug_img, (self.center, self.center), 3, (0, 0, 255), -1)  # Centro
             
             # Adicionar texto informativo
-            cv2.putText(debug_img, f"Class: {label}", (10, 30), 
+            cv2.putText(debug_img, f"Mode: COLOR", (10, 30), 
                         cv2.FONT_HERSHEY_SIMPLEX, 0.7, (0, 0, 255), 2)
-            cv2.putText(debug_img, f"Mode: {self.get_current_mode_name()}", (10, 60),
-                        cv2.FONT_HERSHEY_SIMPLEX, 0.7, (0, 0, 255), 2)
-            
-            # Adicionar informações de compensação
-            if self.detection_mode != self.MODE_COLOR_ONLY:
-                comp_factor = self.get_speed_compensation_factor()
-                cv2.putText(debug_img, f"Comp: {comp_factor:.2f}x", (10, 90),
-                            cv2.FONT_HERSHEY_SIMPLEX, 0.7, (0, 255, 0), 2)
             
             # Salvar imagem
             filename = f"debug/detection_{timestamp}_{self.debug_counter}.png"

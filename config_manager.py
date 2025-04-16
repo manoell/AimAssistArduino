@@ -5,7 +5,7 @@ import numpy as np
 class ConfigManager:
     """
     Classe responsável por gerenciar configurações do programa.
-    Facilita leitura/escrita de valores de diversos tipos no arquivo de configuração.
+    Versão simplificada removendo configurações relacionadas ao YOLO.
     """
     
     def __init__(self, config_file):
@@ -58,19 +58,7 @@ class ConfigManager:
             'aim_toggle': 'F2',          # Tecla para ativar/desativar aimbot
             'reload': 'F4',              # Tecla para recarregar configurações
             'exit': 'F12',               # Tecla para sair
-            'debug': 'F3',               # Tecla para modo de depuração
-            'mode_toggle': 'F5'          # Tecla para alternar modos de detecção
-        }
-        
-        # Seção de configurações YOLO
-        self.config['YOLO'] = {
-            'model_path': 'my_yolo_model.pt',  # Caminho para o modelo
-            'confidence': '0.4',               # Limiar de confiança
-            'enabled': 'true',                 # YOLO ativado por padrão
-            'default_mode': '0',               # 0: Híbrido, 1: YOLO, 2: Cor
-            'base_processing_time': '0.015',   # Tempo base de processamento esperado (15ms)
-            'max_compensation': '2.0',         # Fator máximo de compensação
-            'compensation_exponent': '0.7'     # Expoente para cálculo de compensação não-linear
+            'debug': 'F3'                # Tecla para modo de depuração
         }
         
         # Salvar configurações padrão

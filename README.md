@@ -1,13 +1,11 @@
-# Enhanced Arduino Aim Assist
+# Arduino Aim Assist - Versão Simplificada
 
-Um sistema avançado de assistência de mira para jogos FPS, combinando técnicas de visão computacional e controle de hardware via Arduino Leonardo.
+Um sistema eficiente de assistência de mira para jogos FPS, usando técnicas de detecção por cor e controle de hardware via Arduino Leonardo.
 
 ## Características Principais
 
-- **Sistema Multi-modo**: Alterne entre Híbrido (Cor+YOLO), YOLO puro ou Cor pura
-- **Detecção Híbrida**: Detecção por cor para velocidade + YOLO para precisão
-- **Zero Falsos Positivos**: Filtragem inteligente de plantas e outros elementos visuais
-- **Detecção Precisa**: Modelo YOLO treinado especificamente para jogos FPS
+- **Detecção por Cor**: Sistema otimizado para identificar contornos de inimigos com base em cores HSV
+- **Zero Falsos Positivos**: Filtragem inteligente com parâmetros ajustáveis para minimizar detecções incorretas
 - **Movimentos Naturais**: Suavização avançada para movimentos realistas
 - **Clonagem de Dispositivo**: O Arduino aparece para o sistema como seu próprio mouse
 
@@ -16,7 +14,6 @@ Um sistema avançado de assistência de mira para jogos FPS, combinando técnica
 ### Hardware
 - Arduino Leonardo (ou compatível com HID)
 - Cabo USB
-- PC com GPU (recomendável para melhor desempenho do YOLO)
 
 ### Software
 - Python 3.8+ (recomendado Python 3.8.10)
@@ -29,7 +26,6 @@ Um sistema avançado de assistência de mira para jogos FPS, combinando técnica
   pyautogui
   keyboard
   pywin32
-  ultralytics
   ```
 
 ## Instalação
@@ -41,42 +37,29 @@ Um sistema avançado de assistência de mira para jogos FPS, combinando técnica
 pip install -r requirements.txt
 ```
 
-3. Baixe o arquivo do modelo YOLO (`my_yolo_model.pt`) e coloque-o na pasta raiz do projeto.
-
-4. Configure seu Arduino:
-   - **Método Simples**: Carregue o arquivo `arduino_code.ino` usando o Arduino IDE
+3. Configure seu Arduino:
+   - **Método Simples**: Carregue o arquivo `arduino/arduino.ino` usando o Arduino IDE
    - **Método Avançado**: Execute `python spoofer.py` para clonar seu mouse
 
-5. Configure o arquivo `settings.ini` para:
+4. Configure o arquivo `settings.ini` para:
    - Definir a porta COM correta para seu Arduino
    - Ajustar velocidades, FOV e outras preferências
+   - Configurar os valores HSV para a cor dos inimigos
 
-6. Execute o programa:
+5. Execute o programa:
 ```
 python main.py
 ```
 
-## Modos de Detecção
+## Modo de Detecção
 
-O sistema oferece três modos diferentes que podem ser alternados durante o uso:
+O sistema usa exclusivamente detecção por cor HSV para identificar alvos, proporcionando excelente desempenho:
 
-### 1. Modo HÍBRIDO (Cor + YOLO)
-- **Como Funciona**: Usa detecção de cor para encontrar candidatos e YOLO para confirmar
-- **Vantagens**: Combina velocidade da detecção por cor com precisão do YOLO
-- **Melhor Para**: Uso geral, equilíbrio entre desempenho e precisão
-- **Falsos Positivos**: Praticamente zero (YOLO filtra plantas e outros elementos)
-
-### 2. Modo YOLO
-- **Como Funciona**: Usa apenas o modelo YOLO para detectar alvos diretamente
-- **Vantagens**: Máxima precisão, independente da cor dos contornos
-- **Melhor Para**: Ambientes com muitos elementos visuais semelhantes
-- **Falsos Positivos**: Mínimos, mas usa mais recursos computacionais
-
-### 3. Modo COR
-- **Como Funciona**: Usa apenas detecção por cor HSV para encontrar contornos roxos
-- **Vantagens**: Baixo uso de recursos, resposta mais rápida
-- **Melhor Para**: Sistemas com recursos limitados ou quando YOLO não está disponível
-- **Falsos Positivos**: Alguns (plantas, efeitos visuais com cores similares)
+### Detecção por COR
+- **Como Funciona**: Usa detecção por cor HSV para encontrar contornos de cor específica (geralmente roxo/púrpura)
+- **Vantagens**: Baixo uso de recursos, resposta rápida, eficiente
+- **Melhor Para**: Todos os sistemas, especialmente aqueles com recursos limitados
+- **Configuração Ideal**: Usar com cores de contorno de inimigo bem definidas nos jogos
 
 ## Teclas de Controle
 
@@ -86,7 +69,6 @@ O sistema oferece três modos diferentes que podem ser alternados durante o uso:
 | RMB (botão direito do mouse) | Ativar a assistência de mira (quando habilitada) |
 | F3 | Ativar/desativar modo de depuração |
 | F4 | Recarregar configurações |
-| F5 | Alternar entre modos de detecção (Híbrido → YOLO → Cor) |
 | F12 | Sair do programa |
 
 ## Configuração
@@ -105,17 +87,12 @@ O arquivo `settings.ini` controla todas as configurações do sistema:
 ### Hotkeys
 Teclas personalizáveis para todas as funções
 
-### YOLO
-- `model_path`: Caminho para o modelo YOLO treinado
-- `confidence`: Limiar de confiança para detecções (0-1)
-- `default_mode`: Modo de detecção padrão (0: Híbrido, 1: YOLO, 2: Cor)
-
 ## Modo de Depuração
 
 Ative o modo de depuração (F3) para:
 - Salvar imagens de detecção na pasta `debug/`
-- Ver estatísticas no console sobre detecções e falsos positivos
-- Analisar a eficácia dos diferentes modos
+- Ver estatísticas no console sobre detecções e FPS
+- Analisar a eficácia da detecção
 
 ## Clonagem de Mouse
 
@@ -135,24 +112,31 @@ Para uso ótimo em Valorant:
 1. Configure a cor de destaque de inimigos para roxo/púrpura nas opções do jogo
 2. Ajuste `target_offset` em `settings.ini` para acertar a cabeça
 3. Use o modo depuração para verificar se as detecções estão precisas
-4. Experimente diferentes modos para encontrar o melhor para seu sistema
-
-O modelo YOLO incluído foi treinado especificamente com imagens de Valorant, garantindo máxima eficácia.
+4. Refine os valores HSV para detecção perfeita
 
 ## Solução de Problemas
 
 - **Arduino não detectado**: Verifique a porta COM em `settings.ini`
 - **Detecção imprecisa**: Ajuste os valores HSV nas configurações
 - **Movimento instável**: Aumente o valor de `smoothing`
-- **Baixo desempenho**: Experimente o modo COR para reduzir o uso de recursos
+- **Sem detecção**: Verifique se a cor de destaque dos inimigos no jogo corresponde aos valores HSV configurados
+
+## Dicas para Ajustes de Cores HSV
+
+Para obter o melhor desempenho de detecção:
+
+1. Ative o modo de depuração (F3)
+2. Verifique as imagens salvas na pasta `debug/`
+3. Se estiver detectando objetos errados:
+   - Diminua o intervalo entre `lower_color` e `upper_color`
+   - Aumente o valor mínimo em `lower_color` (segundo número)
+4. Se estiver perdendo alvos:
+   - Aumente o intervalo entre `lower_color` e `upper_color`
+   - Diminua o valor mínimo em `lower_color` (segundo número)
 
 ## Aviso Legal
 
 Este software é fornecido apenas para fins educacionais. O uso deste software para obter vantagens injustas em jogos competitivos pode violar os termos de serviço dos jogos. Use por sua própria conta e risco.
-
-## Créditos
-
-Este projeto integra tecnologias e conceitos de várias fontes, incluindo o modelo YOLO treinado especificamente para detecção em jogos FPS.
 
 ## Licença
 

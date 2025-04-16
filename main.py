@@ -15,22 +15,16 @@ from utils import print_banner, clear_console, print_status
 class EnhancedAimAssist:
     """
     Classe principal que integra todos os componentes do sistema de aim assist.
-    Versão atualizada com suporte a múltiplos modos de detecção: Híbrido, YOLO e Cor.
+    Versão simplificada com foco exclusivo na detecção por cor.
     """
     
-    def __init__(self, yolo_model_path="my_yolo_model.pt"):
+    def __init__(self):
         """
         Inicializa o sistema de aim assist, carregando configurações e preparando componentes.
-        
-        Args:
-            yolo_model_path (str): Caminho para o modelo YOLO treinado
         """
         # Inicializar banner e console
         clear_console()
         print_banner()
-        
-        # Salvar caminho do modelo
-        self.yolo_model_path = yolo_model_path
         
         # Inicializar componentes
         self.config = ConfigManager('settings.ini')
@@ -51,17 +45,13 @@ class EnhancedAimAssist:
             self.aim_fov
         )
         
-        # Inicializar detector de alvos com múltiplos modos
-        print_status("INFO", "Inicializando detector com sistema multi-modo...")
+        # Inicializar detector de alvos simplificado (apenas cor)
+        print_status("INFO", "Inicializando detector baseado em cor...")
         self.target_detector = TargetDetector(
             self.lower_color,
             self.upper_color,
             self.aim_fov,
-            self.target_offset,
-            self.yolo_model_path,
-            self.base_processing_time,
-            self.max_compensation,
-            self.compensation_exponent
+            self.target_offset
         )
         
         print_status("INFO", f"Conectando ao Arduino na porta {self.com_port}...")
@@ -96,11 +86,9 @@ class EnhancedAimAssist:
         print_status("SUCESSO", "Sistema inicializado com sucesso!")
         print(f"\nPressione '{self.aim_toggle_key}' para ativar/desativar o aim assist")
         print(f"Segure '{self.aim_key_name}' para utilizar o aim assist quando ativado")
-        print(f"Pressione '{self.mode_toggle_key}' para alternar entre modos de detecção")
         print(f"Pressione '{self.debug_key}' para ativar/desativar modo de depuração")
         print(f"Pressione '{self.reload_key}' para recarregar as configurações")
         print(f"Pressione '{self.exit_key}' para sair do programa")
-        print(f"\nModo atual: {self.target_detector.get_current_mode_name()}")
     
     def load_settings(self):
         """
@@ -133,12 +121,6 @@ class EnhancedAimAssist:
         self.reload_key = self.config.get('Hotkeys', 'reload')
         self.exit_key = self.config.get('Hotkeys', 'exit')
         self.debug_key = self.config.get('Hotkeys', 'debug')
-        self.mode_toggle_key = self.config.get('Hotkeys', 'mode_toggle')
-        
-        # Configurações de compensação de velocidade YOLO
-        self.base_processing_time = self.config.get_float('YOLO', 'base_processing_time')
-        self.max_compensation = self.config.get_float('YOLO', 'max_compensation')
-        self.compensation_exponent = self.config.get_float('YOLO', 'compensation_exponent')
     
     def setup_hotkeys(self):
         """
@@ -147,7 +129,6 @@ class EnhancedAimAssist:
         # Teclas para ativar/desativar funções
         keyboard.add_hotkey(self.aim_toggle_key, self.toggle_aim)
         keyboard.add_hotkey(self.debug_key, self.toggle_debug)
-        keyboard.add_hotkey(self.mode_toggle_key, self.toggle_detection_mode)
         
         # Teclas de sistema
         keyboard.add_hotkey(self.reload_key, self.reload_config)
@@ -172,14 +153,6 @@ class EnhancedAimAssist:
         print(f"\rModo de depuração: {status}", end="")
         self.play_sound(1200 if self.debug_mode else 600, 100)
     
-    def toggle_detection_mode(self):
-        """
-        Alterna entre os modos de detecção disponíveis
-        """
-        new_mode = self.target_detector.cycle_detection_mode()
-        self.play_sound(1400, 100)
-        print(f"\nModo de detecção alterado para: {new_mode}")
-    
     def reload_config(self):
         """
         Recarrega as configurações do arquivo settings.ini
@@ -189,11 +162,6 @@ class EnhancedAimAssist:
         
         # Atualizar configurações no detector
         self.target_detector.update_colors(self.lower_color, self.upper_color)
-        self.target_detector.set_compensation_parameters(
-            self.base_processing_time,
-            self.max_compensation,
-            self.compensation_exponent
-        )
         
         self.play_sound(1500, 200)
         print("\nConfigurações recarregadas!")
@@ -262,12 +230,9 @@ class EnhancedAimAssist:
         
         return int(final_x), int(final_y)
     
-    def show_stats(self, speed_factor=None):
+    def show_stats(self):
         """
         Mostra estatísticas de desempenho quando em modo debug
-        
-        Args:
-            speed_factor (float, optional): Fator de compensação de velocidade atual
         """
         current_time = time.time()
         
@@ -279,20 +244,16 @@ class EnhancedAimAssist:
             capture_fps = self.screen_capturer.get_fps()
             
             # Construir mensagem de estatísticas
-            stats = f"\rModo: {self.target_detector.get_current_mode_name()} | "
-            stats += f"FPS: {capture_fps:.1f} | "
+            stats = f"\rModo: COR | FPS: {capture_fps:.1f} | "
             
-            if speed_factor is not None and speed_factor > 1.0:
-                stats += f"Compensação: {speed_factor:.2f}x | "
-            
-            # Mostrar modo atual e estado
+            # Mostrar estado
             stats += f"Status: {'ATIVADO' if self.aim_toggle else 'DESATIVADO'}"
             
             print(stats)
     
     def run(self):
         """
-        Loop principal do programa com compensação de velocidade
+        Loop principal do programa
         """
         try:
             while self.running:
@@ -300,20 +261,17 @@ class EnhancedAimAssist:
                     # Capturar tela
                     screen = self.screen_capturer.get_screen()
                     
-                    # Detectar alvo usando o detector no modo atual
+                    # Detectar alvo usando o detector por cor
                     target_info = self.target_detector.detect_target(screen)
-                    
-                    # Obter fator de compensação de velocidade - será 1.0 no modo COR
-                    speed_factor = self.target_detector.get_speed_compensation_factor()
                     
                     if target_info:
                         target_x, target_y, distance = target_info
                         
                         # Verificar se está dentro da distância máxima
                         if distance < self.max_distance:
-                            # Calcular movimento baseado nos fatores de velocidade com compensação
-                            move_x = int(target_x * self.x_speed * speed_factor)
-                            move_y = int(target_y * self.y_speed * speed_factor)
+                            # Calcular movimento baseado nos fatores de velocidade
+                            move_x = int(target_x * self.x_speed)
+                            move_y = int(target_y * self.y_speed)
                             
                             # Aplicar suavização
                             smooth_x, smooth_y = self.apply_smoothing(move_x, move_y)
@@ -323,7 +281,7 @@ class EnhancedAimAssist:
                     
                     # Mostrar estatísticas se modo de depuração estiver ativado
                     if self.debug_mode:
-                        self.show_stats(speed_factor)
+                        self.show_stats()
                 
                 # Pequena pausa para reduzir o uso de CPU
                 time.sleep(0.005)
@@ -336,15 +294,6 @@ class EnhancedAimAssist:
 
 
 if __name__ == "__main__":
-    # Verificar se o modelo YOLO existe no caminho padrão
-    model_path = "my_yolo_model.pt"
-    if not os.path.exists(model_path):
-        print(f"Modelo YOLO não encontrado no caminho: {model_path}")
-        print("Por favor, verifique se o arquivo está presente ou especifique o caminho correto.")
-        model_path = input("Digite o caminho para o modelo YOLO ou pressione Enter para continuar: ")
-        if not model_path:
-            model_path = None
-    
-    # Iniciar o sistema com o modelo YOLO (se disponível)
-    aim_assist = EnhancedAimAssist(model_path)
+    # Iniciar o sistema simplificado
+    aim_assist = EnhancedAimAssist()
     aim_assist.run()
