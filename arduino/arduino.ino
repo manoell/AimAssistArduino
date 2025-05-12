@@ -3,20 +3,29 @@
 // Variáveis globais para armazenar o comando e valores de movimento
 String command = "";         // Comando recebido do buffer serial
 int deltaX = 0, deltaY = 0;  // Valores de movimento para os eixos X e Y
-
 // Gerenciamento de estado de clique
 bool isClicking = false;         // Rastreia se um clique do mouse está acontecendo
 unsigned long clickStartTime = 0; // Marca o momento em que o clique começa
 unsigned long clickDuration;     // Especifica quanto tempo o clique durará em milissegundos
+unsigned long lastPingTime = 0;  // Último momento que recebemos um ping
 
 void setup() {
     // Inicializar comunicação serial com uma taxa de transmissão de 115200
     Serial.begin(115200);
     Serial.setTimeout(1);  // Definir um timeout curto para leituras seriais
+    
+    // Esperar a conexão serial ser estabelecida (importante para o Leonardo)
+    while (!Serial) {
+        ; // Aguardar conexão serial (Leonardo-específico)
+    }
+    
     Mouse.begin();         // Inicializar controle do mouse
     
     // Alimentar o gerador de números aleatórios para durações de clique variáveis
     randomSeed(analogRead(0));  // Usar um pino analógico desconectado para melhor aleatoriedade
+    
+    // Enviar mensagem de identificação para o handshake
+    Serial.println("ARDUINO_MOUSE_READY");
 }
 
 void loop() {
@@ -26,8 +35,15 @@ void loop() {
         command = Serial.readStringUntil('\n');
         command.trim();  // Limpar quaisquer espaços no início ou fim
         
+        // Atualizar timestamp do último comando recebido
+        lastPingTime = millis();
+        
+        // Se o comando é um ping, responder com pong
+        if (command.equals("PING")) {
+            Serial.println("PONG");
+        }
         // Se o comando começa com 'M', é um comando de movimento do mouse
-        if (command.startsWith("M")) {
+        else if (command.startsWith("M")) {
             int commaIndex = command.indexOf(',');  // Encontrar a posição da vírgula
             // Certificar-se de que o comando está formatado corretamente
             if (commaIndex != -1) {
@@ -47,6 +63,9 @@ void loop() {
                     // Pequena pausa para tornar o movimento mais suave
                     delayMicroseconds(500);
                 }
+                
+                // Responder com confirmação opcional
+                Serial.println("OK");
             }
         }
         // Se o comando começa com 'C', é um comando de clique do mouse
@@ -57,6 +76,9 @@ void loop() {
                 clickStartTime = millis();  // Registrar o tempo atual como o início do clique
                 clickDuration = random(40, 80);  // Escolher uma duração aleatória entre 40ms e 80ms
                 isClicking = true;  // Marcar que estamos em um estado de clique
+                
+                // Responder com confirmação
+                Serial.println("CLICK_START");
             }
         }
     }
@@ -67,6 +89,7 @@ void loop() {
         if (millis() - clickStartTime >= clickDuration) {
             Mouse.release(MOUSE_LEFT);  // Soltar o botão esquerdo do mouse
             isClicking = false;  // Redefinir o estado de clique
+            Serial.println("CLICK_END");
         }
     }
 }
