@@ -129,7 +129,7 @@ class EnhancedAimAssist:
         """
         self.aim_toggle = not self.aim_toggle
         self.play_sound(1000 if self.aim_toggle else 800, 100)
-        status = " ON" if self.aim_toggle else "OFF"
+        status = "✅" if self.aim_toggle else "🛑"
         print(f"\rStatus: {status}", end="")
     
     def reload_config(self):

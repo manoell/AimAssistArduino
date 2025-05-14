@@ -1,55 +1,51 @@
 import os
-import platform
-import time
+import sys
 from datetime import datetime
+import colorama
+from colorama import Fore, Style
+
+colorama.init()
 
 def clear_console():
-    """
-    Limpa o console de acordo com o sistema operacional.
-    """
-    if platform.system() == 'Windows':
-        os.system('cls')
-    else:
-        os.system('clear')
+    """Limpa o console."""
+    os.system('cls' if os.name == 'nt' else 'clear')
 
 def print_banner():
-    """
-    Imprime o banner do programa.
-    """
+    """Imprime o banner do programa."""
     banner = """
-     █████╗ ██╗███╗   ███╗      █████╗ ███████╗███████╗██╗███████╗████████╗
-    ██╔══██╗██║████╗ ████║     ██╔══██╗██╔════╝██╔════╝██║██╔════╝╚══██╔══╝
-    ███████║██║██╔████╔██║     ███████║███████╗███████╗██║███████╗   ██║   
-    ██╔══██║██║██║╚██╔╝██║     ██╔══██║╚════██║╚════██║██║╚════██║   ██║   
-    ██║  ██║██║██║ ╚═╝ ██║     ██║  ██║███████║███████║██║███████║   ██║   
-    ╚═╝  ╚═╝╚═╝╚═╝     ╚═╝     ╚═╝  ╚═╝╚══════╝╚══════╝╚═╝╚══════╝   ╚═╝   
-    """
+█████╗ ██╗███╗   ███╗      █████╗ ███████╗███████╗██╗███████╗████████╗
+██╔══██╗██║████╗ ████║     ██╔══██╗██╔════╝██╔════╝██║██╔════╝╚══██╔══╝
+███████║██║██╔████╔██║     ███████║███████╗███████╗██║███████╗   ██║   
+██╔══██║██║██║╚██╔╝██║     ██╔══██║╚════██║╚════██║██║╚════██║   ██║   
+██║  ██║██║██║ ╚═╝ ██║     ██║  ██║███████║███████║██║███████║   ██║   
+╚═╝  ╚═╝╚═╝╚═╝     ╚═╝     ╚═╝  ╚═╝╚══════╝╚══════╝╚═╝╚══════╝   ╚═╝   
+"""
     print(banner)
-    print()
 
-def print_status(status, message, end="\n"):
+def print_status(status_type, message, end="\n"):
     """
     Imprime uma mensagem de status formatada.
     
     Args:
-        status (str): Tipo de status (INFO, ERRO, SUCESSO)
-        message (str): Mensagem a ser exibida
-        end (str, optional): Caractere de término da linha. Padrão: "\n"
+        status_type: Tipo de status (INFO, SUCESSO, AVISO, ERRO)
+        message: Mensagem a ser exibida
+        end: Caractere final da linha (padrão: nova linha)
     """
-    timestamp = datetime.now().strftime('%H:%M:%S')
+    current_time = datetime.now().strftime("%H:%M:%S")
     
-    if status.upper() == "INFO":
-        prefix = f"[{timestamp}] [INFO] "
-    elif status.upper() == "ERRO":
-        prefix = f"[{timestamp}] [ERRO] "
-    elif status.upper() == "SUCESSO":
-        prefix = f"[{timestamp}] [SUCESSO] "
-    elif status.upper() == "AVISO":
-        prefix = f"[{timestamp}] [AVISO] "
+    if status_type == "INFO":
+        color = Fore.BLUE
+    elif status_type == "SUCESSO":
+        color = Fore.GREEN
+    elif status_type == "AVISO":
+        color = Fore.YELLOW
+    elif status_type == "ERRO":
+        color = Fore.RED
     else:
-        prefix = f"[{timestamp}] [{status}] "
+        color = Fore.WHITE
     
-    print(f"{prefix}{message}", end=end)
+    print(f"[{current_time}] [{color}{status_type}{Style.RESET_ALL}] {message}", end=end)
+    sys.stdout.flush()
 
 def get_time_str():
     """

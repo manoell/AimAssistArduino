@@ -1,95 +1,141 @@
-#include <Mouse.h>
+#include <hidboot.h>
+#include <usbhub.h>
+#include "HID-Project.h"
 
-// Variáveis globais para armazenar o comando e valores de movimento
-String command = "";         // Comando recebido do buffer serial
-int deltaX = 0, deltaY = 0;  // Valores de movimento para os eixos X e Y
-// Gerenciamento de estado de clique
-bool isClicking = false;         // Rastreia se um clique do mouse está acontecendo
-unsigned long clickStartTime = 0; // Marca o momento em que o clique começa
-unsigned long clickDuration;     // Especifica quanto tempo o clique durará em milissegundos
-unsigned long lastPingTime = 0;  // Último momento que recebemos um ping
+// Declaração para o USB Host Shield
+USB Usb;
+USBHub Hub(&Usb);
+HIDBoot<USB_HID_PROTOCOL_MOUSE> HidMouse(&Usb);
+
+// Variáveis globais
+String command = "";
+bool isClicking = false;
+unsigned long clickStartTime = 0;
+unsigned long clickDuration = 0;
+
+// Classe para tratar eventos do mouse
+class MouseRptParser : public MouseReportParser {
+  protected:
+    void OnMouseMove(MOUSEINFO *mi);
+    void OnLeftButtonUp(MOUSEINFO *mi);
+    void OnLeftButtonDown(MOUSEINFO *mi);
+    void OnRightButtonUp(MOUSEINFO *mi);
+    void OnRightButtonDown(MOUSEINFO *mi);
+    void OnMiddleButtonUp(MOUSEINFO *mi);     // Readicionado
+    void OnMiddleButtonDown(MOUSEINFO *mi);   // Readicionado
+    void Parse(USBHID *hid, bool is_rpt_id, uint8_t len, uint8_t *buf);
+};
+
+void MouseRptParser::OnMouseMove(MOUSEINFO *mi) {
+  // Envia o movimento para o computador - sem prints para não atrasar
+  Mouse.move(mi->dX, mi->dY, 0);
+}
+
+void MouseRptParser::OnLeftButtonUp(MOUSEINFO *mi) {
+  Mouse.release(MOUSE_LEFT);
+}
+
+void MouseRptParser::OnLeftButtonDown(MOUSEINFO *mi) {
+  Mouse.press(MOUSE_LEFT);
+}
+
+void MouseRptParser::OnRightButtonUp(MOUSEINFO *mi) {
+  Mouse.release(MOUSE_RIGHT);
+}
+
+void MouseRptParser::OnRightButtonDown(MOUSEINFO *mi) {
+  Mouse.press(MOUSE_RIGHT);
+}
+
+// Readicionados os métodos para o botão do meio
+void MouseRptParser::OnMiddleButtonUp(MOUSEINFO *mi) {
+  Mouse.release(MOUSE_MIDDLE);
+}
+
+void MouseRptParser::OnMiddleButtonDown(MOUSEINFO *mi) {
+  Mouse.press(MOUSE_MIDDLE);
+}
+
+// Implementação do método Parse para capturar o scroll
+void MouseRptParser::Parse(USBHID *hid, bool is_rpt_id, uint8_t len, uint8_t *buf) {
+  // Chama o método Parse original
+  MouseReportParser::Parse(hid, is_rpt_id, len, buf);
+  
+  // Se o mouse suportar scroll e este for o 4º byte
+  if (len > 3) {
+    int8_t wheel = (int8_t)buf[3];
+    if (wheel != 0) {
+      Mouse.move(0, 0, wheel);
+    }
+  }
+}
+
+MouseRptParser Prs;
 
 void setup() {
-    // Inicializar comunicação serial com uma taxa de transmissão de 115200
-    Serial.begin(115200);
-    Serial.setTimeout(1);  // Definir um timeout curto para leituras seriais
-    
-    // Esperar a conexão serial ser estabelecida (importante para o Leonardo)
-    while (!Serial) {
-        ; // Aguardar conexão serial (Leonardo-específico)
-    }
-    
-    Mouse.begin();         // Inicializar controle do mouse
-    
-    // Alimentar o gerador de números aleatórios para durações de clique variáveis
-    randomSeed(analogRead(0));  // Usar um pino analógico desconectado para melhor aleatoriedade
-    
-    // Enviar mensagem de identificação para o handshake
-    Serial.println("ARDUINO_MOUSE_READY");
+  // Inicializar comunicação serial
+  Serial.begin(115200);
+  Serial.setTimeout(1);
+  
+  // Seed aleatória
+  randomSeed(analogRead(0));
+  
+  // Sem wait pelo Serial, apenas inicia
+  
+  if (Usb.Init() == -1) {
+    if (Serial) Serial.println("USB Host Shield não inicializado!");
+    while (1); //Trava se falhar
+  }
+  
+  // Conecta o parser ao mouse USB
+  HidMouse.SetReportParser(0, &Prs);
+  
+  // Inicializa as funções de emulação de mouse
+  Mouse.begin();
 }
 
 void loop() {
-    // Verificar se há algum comando aguardando no buffer serial
-    if (Serial.available() > 0) {
-        // Ler o comando de entrada até um caractere de nova linha
-        command = Serial.readStringUntil('\n');
-        command.trim();  // Limpar quaisquer espaços no início ou fim
+  // Executar tarefas USB Host Shield
+  Usb.Task();
+  
+  // Verificar comandos seriais (sem bloquear o fluxo)
+  if (Serial.available() > 0) {
+    command = Serial.readStringUntil('\n');
+    command.trim();
+    
+    // Comando de movimento: M<X>,<Y>
+    if (command.startsWith("M")) {
+      int commaIndex = command.indexOf(',');
+      if (commaIndex != -1) {
+        int deltaX = command.substring(1, commaIndex).toInt();
+        int deltaY = command.substring(commaIndex + 1).toInt();
         
-        // Atualizar timestamp do último comando recebido
-        lastPingTime = millis();
-        
-        // Se o comando é um ping, responder com pong
-        if (command.equals("PING")) {
-            Serial.println("PONG");
-        }
-        // Se o comando começa com 'M', é um comando de movimento do mouse
-        else if (command.startsWith("M")) {
-            int commaIndex = command.indexOf(',');  // Encontrar a posição da vírgula
-            // Certificar-se de que o comando está formatado corretamente
-            if (commaIndex != -1) {
-                // Extrair os valores de movimento para os eixos X e Y
-                deltaX = command.substring(1, commaIndex).toInt();  // Obter movimento do eixo X
-                deltaY = command.substring(commaIndex + 1).toInt();  // Obter movimento do eixo Y
-                
-                // Mover o mouse incrementalmente para evitar saltos repentinos
-                // Isso divide movimentos grandes em etapas menores
-                while (deltaX != 0 || deltaY != 0) {
-                    int moveX = constrain(deltaX, -127, 127);  // Limitar o movimento X para evitar overflow
-                    int moveY = constrain(deltaY, -127, 127);  // Limitar o movimento Y de forma semelhante
-                    Mouse.move(moveX, moveY);  // Realizar o movimento do mouse
-                    deltaX -= moveX;  // Diminuir o movimento restante para o eixo X
-                    deltaY -= moveY;  // Diminuir o movimento restante para o eixo Y
-                    
-                    // Pequena pausa para tornar o movimento mais suave
-                    delayMicroseconds(500);
-                }
-                
-                // Responder com confirmação opcional
-                Serial.println("OK");
-            }
-        }
-        // Se o comando começa com 'C', é um comando de clique do mouse
-        else if (command.startsWith("C")) {
-            // Iniciar o processo de clique se ainda não estamos clicando
-            if (!isClicking) {
-                Mouse.press(MOUSE_LEFT);  // Pressionar o botão esquerdo do mouse
-                clickStartTime = millis();  // Registrar o tempo atual como o início do clique
-                clickDuration = random(40, 80);  // Escolher uma duração aleatória entre 40ms e 80ms
-                isClicking = true;  // Marcar que estamos em um estado de clique
-                
-                // Responder com confirmação
-                Serial.println("CLICK_START");
-            }
-        }
+        // Mover o mouse de uma vez só, sem delays
+        Mouse.move(deltaX, deltaY);
+      }
     }
     
-    // Se um clique estiver em andamento, verificar se é hora de soltar o botão
-    if (isClicking) {
-        // Se a duração especificada do clique tiver passado, soltar o botão
-        if (millis() - clickStartTime >= clickDuration) {
-            Mouse.release(MOUSE_LEFT);  // Soltar o botão esquerdo do mouse
-            isClicking = false;  // Redefinir o estado de clique
-            Serial.println("CLICK_END");
-        }
+    // Comando de clique: C
+    else if (command.startsWith("C")) {
+      if (!isClicking) {
+        Mouse.press(MOUSE_LEFT);
+        clickStartTime = millis();
+        clickDuration = random(40, 80);
+        isClicking = true;
+      }
     }
+    
+    // Comando de teste: TEST
+    else if (command == "TEST") {
+      Serial.println("OK");
+    }
+  }
+  
+  // Liberar o clique após o tempo definido
+  if (isClicking && (millis() - clickStartTime >= clickDuration)) {
+    Mouse.release(MOUSE_LEFT);
+    isClicking = false;
+  }
+  
+  // Sem delay no final do loop!
 }
