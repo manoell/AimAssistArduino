@@ -1,0 +1,413 @@
+
+    =========================== USB Port2 ===========================
+
+Connection Status        : 0x01 (Device is connected)
+Port Chain               : 3-4-2
+Properties               : 0x00
+ IsUserConnectable       : no
+ PortIsDebugCapable      : no
+ PortHasMultiCompanions  : no
+ PortConnectorIsTypeC    : no
+ConnectionIndex          : 0x02 (Port 2)
+
+      ========================== Summary =========================
+Vendor ID                : 0x046D (Logitech Inc.)
+Product ID               : 0xC547
+Manufacturer String      : Logitech
+Product String           : USB Receiver
+Serial                   : ---
+USB Version              : 2.0 -> but Device is Full-Speed only
+Port maximum Speed       : High-Speed
+Device maximum Speed     : Full-Speed
+Device Connection Speed  : Full-Speed
+Self powered             : no
+Demanded Current         : 98 mA
+Used Endpoints           : 4
+
+      ======================== USB Device ========================
+
+        +++++++++++++++++ Device Information ++++++++++++++++++
+Device Description       : USB Composite Device
+Device Path              : \\?\USB#VID_046D&PID_C547#7&2b511563&0&2#{a5dcbf10-6530-11d2-901f-00c04fb951ed} (GUID_DEVINTERFACE_USB_DEVICE)
+Kernel Name              : \Device\USBPDO-13
+Device ID                : USB\VID_046D&PID_C547\7&2B511563&0&2
+Hardware IDs             : USB\VID_046D&PID_C547&REV_0402 USB\VID_046D&PID_C547
+Driver KeyName           : {36fc9e60-c465-11cf-8056-444553540000}\0019 (GUID_DEVCLASS_USB)
+Driver                   : \SystemRoot\System32\drivers\usbccgp.sys (Version: 10.0.19041.5794  Date: 2025-05-01  Company: Microsoft Corporation)
+Driver Inf               : C:\Windows\inf\usb.inf
+Legacy BusType           : PNPBus
+Class                    : USB
+Class GUID               : {36fc9e60-c465-11cf-8056-444553540000} (GUID_DEVCLASS_USB)
+Service                  : usbccgp
+Enumerator               : USB
+Location Info            : Port_#0002.Hub_#0006
+Address                  : 2
+Location IDs             : PCIROOT(0)#PCI(0801)#PCI(0003)#USBROOT(0)#USB(4)#USB(2), ACPI(_SB_)#ACPI(PCI0)#ACPI(GP13)#ACPI(XHC0)#ACPI(RHUB)#ACPI(PRT4)#USB(2)
+Container ID             : {f056a0c3-3417-11f0-888c-a85e451e3cda}
+Manufacturer Info        : (Standard USB Host Controller)
+Capabilities             : 0x84 (Removable, SurpriseRemovalOK)
+Status                   : 0x0180600A (DN_DRIVER_LOADED, DN_STARTED, DN_DISABLEABLE, DN_REMOVABLE, DN_NT_ENUMERATOR, DN_NT_DRIVER)
+Problem Code             : 0
+Address                  : 2
+EnhancedPowerMgmtEnabled : 0
+Power State              : D0 (supported: D0, D1, D2, D3, wake from D0, wake from D1, wake from D2)
+
+        +++++++++++++++++ Registry USB Flags +++++++++++++++++
+HKEY_LOCAL_MACHINE\SYSTEM\CurrentControlSet\Control\usbflags\046DC5470402
+ osvc                    : REG_BINARY 00 00
+ NewInterfaceUsage       : REG_DWORD 00000000 (0)
+
+        ---------------- Connection Information ---------------
+Connection Index         : 0x02 (Port 2)
+Connection Status        : 0x01 (DeviceConnected)
+Current Config Value     : 0x01 (Configuration 1)
+Device Address           : 0x04 (4)
+Is Hub                   : 0x00 (no)
+Device Bus Speed         : 0x01 (Full-Speed)
+Number of open Pipes     : 0x03 (3 pipes to data endpoints)
+Pipe[0]                  : EndpointID=1  Direction=IN   ScheduleOffset=0  Type=Interrupt  wMaxPacketSize=0x40    bInterval=1   -> 718 Bits/ms = 89750 Bytes/s
+Pipe[1]                  : EndpointID=2  Direction=IN   ScheduleOffset=0  Type=Interrupt  wMaxPacketSize=0x40    bInterval=1   -> 718 Bits/ms = 89750 Bytes/s
+Pipe[2]                  : EndpointID=3  Direction=IN   ScheduleOffset=0  Type=Interrupt  wMaxPacketSize=0x40    bInterval=1   -> 718 Bits/ms = 89750 Bytes/s
+Data (HexDump)           : 02 00 00 00 12 01 00 02 00 00 00 40 6D 04 47 C5   ...........@m.G.
+                           02 04 01 02 00 01 01 01 00 04 00 03 00 00 00 01   ................
+                           00 00 00 07 05 81 03 40 00 01 00 00 00 00 07 05   .......@........
+                           82 03 40 00 01 00 00 00 00 07 05 83 03 40 00 01   ..@..........@..
+                           00 00 00 00                                       ....
+
+        --------------- Connection Information V2 -------------
+Connection Index         : 0x02 (2)
+Length                   : 0x10 (16 bytes)
+SupportedUsbProtocols    : 0x03
+ Usb110                  : 1 (yes, port supports USB 1.1)
+ Usb200                  : 1 (yes, port supports USB 2.0)
+ Usb300                  : 0 (no, port not supports USB 3.0)
+ ReservedMBZ             : 0x00
+Flags                    : 0x00
+ DevIsOpAtSsOrHigher     : 0 (Device is not operating at SuperSpeed or higher)
+ DevIsSsCapOrHigher      : 0 (Device is not SuperSpeed capable or higher)
+ DevIsOpAtSsPlusOrHigher : 0 (Device is not operating at SuperSpeedPlus or higher)
+ DevIsSsPlusCapOrHigher  : 0 (Device is not SuperSpeedPlus capable or higher)
+ ReservedMBZ             : 0x00
+Data (HexDump)           : 02 00 00 00 10 00 00 00 03 00 00 00 00 00 00 00   ................
+
+    ---------------------- Device Descriptor ----------------------
+bLength                  : 0x12 (18 bytes)
+bDescriptorType          : 0x01 (Device Descriptor)
+bcdUSB                   : 0x200 (USB Version 2.0) -> but device is Full-Speed only
+bDeviceClass             : 0x00 (defined by the interface descriptors)
+bDeviceSubClass          : 0x00
+bDeviceProtocol          : 0x00
+bMaxPacketSize0          : 0x40 (64 bytes)
+idVendor                 : 0x046D (Logitech Inc.)
+idProduct                : 0xC547
+bcdDevice                : 0x0402
+iManufacturer            : 0x01 (String Descriptor 1)
+ Language 0x0409         : "Logitech"
+iProduct                 : 0x02 (String Descriptor 2)
+ Language 0x0409         : "USB Receiver"
+iSerialNumber            : 0x00 (No String Descriptor)
+bNumConfigurations       : 0x01 (1 Configuration)
+Data (HexDump)           : 12 01 00 02 00 00 00 40 6D 04 47 C5 02 04 01 02   .......@m.G.....
+                           00 01                                             ..
+
+    ------------------ Configuration Descriptor -------------------
+bLength                  : 0x09 (9 bytes)
+bDescriptorType          : 0x02 (Configuration Descriptor)
+wTotalLength             : 0x0054 (84 bytes)
+bNumInterfaces           : 0x03 (3 Interfaces)
+bConfigurationValue      : 0x01 (Configuration 1)
+iConfiguration           : 0x04 (String Descriptor 4)
+ Language 0x0409         : "MPR04.02_B0009"
+bmAttributes             : 0xA0
+ D7: Reserved, set 1     : 0x01
+ D6: Self Powered        : 0x00 (no)
+ D5: Remote Wakeup       : 0x01 (yes)
+ D4..0: Reserved, set 0  : 0x00
+MaxPower                 : 0x31 (98 mA)
+Data (HexDump)           : 09 02 54 00 03 01 04 A0 31 09 04 00 00 01 03 01   ..T.....1.......
+                           02 00 09 21 11 01 00 01 22 54 00 07 05 81 03 40   ...!...."T.....@
+                           00 01 09 04 01 00 01 03 01 01 00 09 21 11 01 00   ............!...
+                           01 22 85 00 07 05 82 03 40 00 01 09 04 02 00 01   ."......@.......
+                           03 00 00 00 09 21 11 01 00 01 22 42 00 07 05 83   .....!...."B....
+                           03 40 00 01                                       .@..
+
+        ---------------- Interface Descriptor -----------------
+bLength                  : 0x09 (9 bytes)
+bDescriptorType          : 0x04 (Interface Descriptor)
+bInterfaceNumber         : 0x00 (Interface 0)
+bAlternateSetting        : 0x00
+bNumEndpoints            : 0x01 (1 Endpoint)
+bInterfaceClass          : 0x03 (HID - Human Interface Device)
+bInterfaceSubClass       : 0x01 (Boot Interface)
+bInterfaceProtocol       : 0x02 (Mouse)
+iInterface               : 0x00 (No String Descriptor)
+Data (HexDump)           : 09 04 00 00 01 03 01 02 00                        .........
+
+        ------------------- HID Descriptor --------------------
+bLength                  : 0x09 (9 bytes)
+bDescriptorType          : 0x21 (HID Descriptor)
+bcdHID                   : 0x0111 (HID Version 1.11)
+bCountryCode             : 0x00 (00 = not localized)
+bNumDescriptors          : 0x01
+Data (HexDump)           : 09 21 11 01 00 01 22 54 00                        .!...."T.
+Descriptor 1:
+bDescriptorType          : 0x22 (Class=Report)
+wDescriptorLength        : 0x0054 (84 bytes)
+  05 01             Usage Page (Generic Desktop Controls)
+  09 02             Usage (Mouse)
+  A1 01             Collection (Application)
+  09 01               Usage (Pointer)
+  A1 00               Collection (Physical)
+  05 09                 Usage Page (Buttons)
+  19 01                 Usage Minimum (1)
+  29 08                 Usage Maximum (8)
+  15 00                 Logical Minimum (0)
+  25 01                 Logical Maximum (1)
+  95 08                 Report Count (8)
+  75 01                 Report Size (1)
+  81 02                 Input (Var)
+  05 01                 Usage Page (Generic Desktop Controls)
+  09 30                 Usage (Direction-X)
+  09 31                 Usage (Direction-Y)
+  16 01 80              Logical Minimum (-32767)
+  26 FF 7F              Logical Maximum (32767)
+  95 02                 Report Count (2)
+  75 10                 Report Size (16)
+  81 06                 Input (Var, Rel)
+  09 38                 Usage (Wheel)
+  15 81                 Logical Minimum (-127)
+  25 7F                 Logical Maximum (127)
+  95 01                 Report Count (1)
+  75 08                 Report Size (8)
+  81 06                 Input (Var, Rel)
+  05 0C                 Usage Page (Consumer)
+  0A 38 02              Usage (AC Pan)
+  15 81                 Logical Minimum (-127)
+  25 7F                 Logical Maximum (127)
+  95 01                 Report Count (1)
+  75 08                 Report Size (8)
+  81 06                 Input (Var, Rel)
+  06 FF 00              Usage Page (Vendor Specific)
+  09 01                 Usage (unk)
+  95 01                 Report Count (1)
+  75 08                 Report Size (8)
+  81 02                 Input (Var)
+  C0                  End Collection
+  C0                End Collection
+Data (HexDump)           : 05 01 09 02 A1 01 09 01 A1 00 05 09 19 01 29 08   ..............).
+                           15 00 25 01 95 08 75 01 81 02 05 01 09 30 09 31   ..%...u......0.1
+                           16 01 80 26 FF 7F 95 02 75 10 81 06 09 38 15 81   ...&....u....8..
+                           25 7F 95 01 75 08 81 06 05 0C 0A 38 02 15 81 25   %...u......8...%
+                           7F 95 01 75 08 81 06 06 FF 00 09 01 95 01 75 08   ...u..........u.
+                           81 02 C0 C0                                       ....
+
+        ----------------- Endpoint Descriptor -----------------
+bLength                  : 0x07 (7 bytes)
+bDescriptorType          : 0x05 (Endpoint Descriptor)
+bEndpointAddress         : 0x81 (Direction=IN EndpointID=1)
+bmAttributes             : 0x03 (TransferType=Interrupt)
+wMaxPacketSize           : 0x0040 (64 bytes)
+bInterval                : 0x01 (1 ms)
+Data (HexDump)           : 07 05 81 03 40 00 01                              ....@..
+
+        ---------------- Interface Descriptor -----------------
+bLength                  : 0x09 (9 bytes)
+bDescriptorType          : 0x04 (Interface Descriptor)
+bInterfaceNumber         : 0x01 (Interface 1)
+bAlternateSetting        : 0x00
+bNumEndpoints            : 0x01 (1 Endpoint)
+bInterfaceClass          : 0x03 (HID - Human Interface Device)
+bInterfaceSubClass       : 0x01 (Boot Interface)
+bInterfaceProtocol       : 0x01 (Keyboard)
+iInterface               : 0x00 (No String Descriptor)
+Data (HexDump)           : 09 04 01 00 01 03 01 01 00                        .........
+
+        ------------------- HID Descriptor --------------------
+bLength                  : 0x09 (9 bytes)
+bDescriptorType          : 0x21 (HID Descriptor)
+bcdHID                   : 0x0111 (HID Version 1.11)
+bCountryCode             : 0x00 (00 = not localized)
+bNumDescriptors          : 0x01
+Data (HexDump)           : 09 21 11 01 00 01 22 85 00                        .!...."..
+Descriptor 1:
+bDescriptorType          : 0x22 (Class=Report)
+wDescriptorLength        : 0x0085 (133 bytes)
+  05 01             Usage Page (Generic Desktop Controls)
+  09 06             Usage (Keyboard)
+  A1 01             Collection (Application)
+  05 07               Usage Page (Keyboard)
+  19 E0               Usage Minimum (-32)
+  29 E7               Usage Maximum (-25)
+  15 00               Logical Minimum (0)
+  25 01               Logical Maximum (1)
+  95 08               Report Count (8)
+  75 01               Report Size (1)
+  81 02               Input (Var)
+  95 01               Report Count (1)
+  75 08               Report Size (8)
+  81 01               Input (Const)
+  05 07               Usage Page (Keyboard)
+  19 00               Usage Minimum (0)
+  29 65               Usage Maximum (101)
+  15 00               Logical Minimum (0)
+  25 65               Logical Maximum (101)
+  95 06               Report Count (6)
+  75 08               Report Size (8)
+  81 00               Input ()
+  05 08               Usage Page (LEDs)
+  19 01               Usage Minimum (1)
+  29 05               Usage Maximum (5)
+  95 05               Report Count (5)
+  75 01               Report Size (1)
+  91 02               Output (Var)
+  95 03               Report Count (3)
+  75 01               Report Size (1)
+  91 01               Output (Const)
+  05 0C               Usage Page (Consumer)
+  09 01               Usage (Consumer Control)
+  A1 01               Collection (Application)
+  0A E2 00              Usage (Mute)
+  0A E9 00              Usage (Volume Increment)
+  0A EA 00              Usage (Volume Decrement)
+  0A CD 00              Usage (Play/Pause)
+  0A B7 00              Usage (Stop)
+  0A B6 00              Usage (Scan Previous Track)
+  0A B5 00              Usage (Scan Next Track)
+  0A 83 01              Usage (AL Consumer Control Configuration)
+  15 00                 Logical Minimum (0)
+  25 01                 Logical Maximum (1)
+  95 08                 Report Count (8)
+  75 01                 Report Size (1)
+  81 02                 Input (Var)
+  C0                  End Collection
+  05 01               Usage Page (Generic Desktop Controls)
+  09 80               Usage (System Control)
+  A1 01               Collection (Application)
+  09 81                 Usage (System Power Down)
+  09 82                 Usage (System Sleep)
+  09 83                 Usage (System Wake Up)
+  15 00                 Logical Minimum (0)
+  25 01                 Logical Maximum (1)
+  95 03                 Report Count (3)
+  75 01                 Report Size (1)
+  81 02                 Input (Var)
+  95 05                 Report Count (5)
+  75 01                 Report Size (1)
+  81 01                 Input (Const)
+  C0                  End Collection
+  C0                End Collection
+Data (HexDump)           : 05 01 09 06 A1 01 05 07 19 E0 29 E7 15 00 25 01   ..........)...%.
+                           95 08 75 01 81 02 95 01 75 08 81 01 05 07 19 00   ..u.....u.......
+                           29 65 15 00 25 65 95 06 75 08 81 00 05 08 19 01   )e..%e..u.......
+                           29 05 95 05 75 01 91 02 95 03 75 01 91 01 05 0C   )...u.....u.....
+                           09 01 A1 01 0A E2 00 0A E9 00 0A EA 00 0A CD 00   ................
+                           0A B7 00 0A B6 00 0A B5 00 0A 83 01 15 00 25 01   ..............%.
+                           95 08 75 01 81 02 C0 05 01 09 80 A1 01 09 81 09   ..u.............
+                           82 09 83 15 00 25 01 95 03 75 01 81 02 95 05 75   .....%...u.....u
+                           01 81 01 C0 C0                                    .....
+
+        ----------------- Endpoint Descriptor -----------------
+bLength                  : 0x07 (7 bytes)
+bDescriptorType          : 0x05 (Endpoint Descriptor)
+bEndpointAddress         : 0x82 (Direction=IN EndpointID=2)
+bmAttributes             : 0x03 (TransferType=Interrupt)
+wMaxPacketSize           : 0x0040 (64 bytes)
+bInterval                : 0x01 (1 ms)
+Data (HexDump)           : 07 05 82 03 40 00 01                              ....@..
+
+        ---------------- Interface Descriptor -----------------
+bLength                  : 0x09 (9 bytes)
+bDescriptorType          : 0x04 (Interface Descriptor)
+bInterfaceNumber         : 0x02 (Interface 2)
+bAlternateSetting        : 0x00
+bNumEndpoints            : 0x01 (1 Endpoint)
+bInterfaceClass          : 0x03 (HID - Human Interface Device)
+bInterfaceSubClass       : 0x00 (None)
+bInterfaceProtocol       : 0x00 (None)
+iInterface               : 0x00 (No String Descriptor)
+Data (HexDump)           : 09 04 02 00 01 03 00 00 00                        .........
+
+        ------------------- HID Descriptor --------------------
+bLength                  : 0x09 (9 bytes)
+bDescriptorType          : 0x21 (HID Descriptor)
+bcdHID                   : 0x0111 (HID Version 1.11)
+bCountryCode             : 0x00 (00 = not localized)
+bNumDescriptors          : 0x01
+Data (HexDump)           : 09 21 11 01 00 01 22 42 00                        .!...."B.
+Descriptor 1:
+bDescriptorType          : 0x22 (Class=Report)
+wDescriptorLength        : 0x0042 (66 bytes)
+  06 00 FF          Usage Page (Vendor Defined)
+  09 01             Usage (unk)
+  A1 01             Collection (Application)
+  09 02               Usage (unk)
+  15 00               Logical Minimum (0)
+  26 FF 00            Logical Maximum (255)
+  75 08               Report Size (8)
+  95 40               Report Count (64)
+  81 02               Input (Var)
+  09 03               Usage (unk)
+  15 00               Logical Minimum (0)
+  26 FF 00            Logical Maximum (255)
+  75 08               Report Size (8)
+  95 40               Report Count (64)
+  91 02               Output (Var)
+  09 04               Usage (unk)
+  15 00               Logical Minimum (0)
+  25 01               Logical Maximum (1)
+  75 01               Report Size (1)
+  95 08               Report Count (8)
+  B1 02               Feature (Var)
+  09 05               Usage (unk)
+  15 00               Logical Minimum (0)
+  25 0F               Logical Maximum (15)
+  75 04               Report Size (4)
+  95 01               Report Count (1)
+  B1 02               Feature (Var)
+  09 06               Usage (unk)
+  75 04               Report Size (4)
+  95 01               Report Count (1)
+  B1 01               Feature (Const)
+  C0                End Collection
+Data (HexDump)           : 06 00 FF 09 01 A1 01 09 02 15 00 26 FF 00 75 08   ...........&..u.
+                           95 40 81 02 09 03 15 00 26 FF 00 75 08 95 40 91   .@......&..u..@.
+                           02 09 04 15 00 25 01 75 01 95 08 B1 02 09 05 15   .....%.u........
+                           00 25 0F 75 04 95 01 B1 02 09 06 75 04 95 01 B1   .%.u.......u....
+                           01 C0                                             ..
+
+        ----------------- Endpoint Descriptor -----------------
+bLength                  : 0x07 (7 bytes)
+bDescriptorType          : 0x05 (Endpoint Descriptor)
+bEndpointAddress         : 0x83 (Direction=IN EndpointID=3)
+bmAttributes             : 0x03 (TransferType=Interrupt)
+wMaxPacketSize           : 0x0040 (64 bytes)
+bInterval                : 0x01 (1 ms)
+Data (HexDump)           : 07 05 83 03 40 00 01                              ....@..
+
+    ----------------- Device Qualifier Descriptor -----------------
+Error                    : ERROR_GEN_FAILURE  (because the device is Full-Speed only)
+
+      -------------------- String Descriptors -------------------
+             ------ String Descriptor 0 ------
+bLength                  : 0x04 (4 bytes)
+bDescriptorType          : 0x03 (String Descriptor)
+Language ID[0]           : 0x0409 (English - United States)
+Data (HexDump)           : 04 03 09 04                                       ....
+             ------ String Descriptor 1 ------
+bLength                  : 0x12 (18 bytes)
+bDescriptorType          : 0x03 (String Descriptor)
+Language 0x0409          : "Logitech"
+Data (HexDump)           : 12 03 4C 00 6F 00 67 00 69 00 74 00 65 00 63 00   ..L.o.g.i.t.e.c.
+                           68 00                                             h.
+             ------ String Descriptor 2 ------
+bLength                  : 0x1A (26 bytes)
+bDescriptorType          : 0x03 (String Descriptor)
+Language 0x0409          : "USB Receiver"
+Data (HexDump)           : 1A 03 55 00 53 00 42 00 20 00 52 00 65 00 63 00   ..U.S.B. .R.e.c.
+                           65 00 69 00 76 00 65 00 72 00                     e.i.v.e.r.
+             ------ String Descriptor 4 ------
+bLength                  : 0x1E (30 bytes)
+bDescriptorType          : 0x03 (String Descriptor)
+Language 0x0409          : "MPR04.02_B0009"
+Data (HexDump)           : 1E 03 4D 00 50 00 52 00 30 00 34 00 2E 00 30 00   ..M.P.R.0.4...0.
+                           32 00 5F 00 42 00 30 00 30 00 30 00 39 00         2._.B.0.0.0.9.
