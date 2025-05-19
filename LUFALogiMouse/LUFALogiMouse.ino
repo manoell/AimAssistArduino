@@ -34,18 +34,5 @@ void loop() {
   // USB tasks
   USB_USBTask();
   
-  // Reset movement após processamento (se necessário)
-  static uint16_t reset_counter = 0;
-  reset_counter++;
-  if (reset_counter > 50) {  // Reset a cada ~50 loops
-    if (!newCommandReceived) {
-      // Manter mouse_x/y até serem enviados pelo HID_Task
-      // Não resetar aqui - deixar o HID_Task fazer isso
-    }
-    newCommandReceived = false;
-    reset_counter = 0;
-  }
-  
-  // Delay mínimo para não sobrecarregar
-  _delay_ms(1);
+  // SEM DELAYS - processar o máximo de vezes possível para menor latência
 }

@@ -122,14 +122,14 @@ const USB_Descriptor_HIDReport_Datatype_t PROGMEM KeyboardHIDReport[] = {
   HID_RI_END_COLLECTION(0)
 };
 
-// Generic HID Report Descriptor (66 bytes - APENAS IN, sem OUT endpoint)
+// Generic HID Report Descriptor (COM IN e OUT endpoints)
 const USB_Descriptor_HIDReport_Datatype_t PROGMEM GenericHIDReport[] = {
-  // Descriptor simplificado - apenas INPUT (IN endpoint)
+  // Descriptor COM input e output reports
   0x06, 0x00, 0xFF,  // Usage Page (Vendor Defined)
   0x09, 0x01,        // Usage (unk)
   0xA1, 0x01,        // Collection (Application)
   
-  // Input Report (apenas para debug/status via IN endpoint)
+  // Input Report (para status via IN endpoint)
   0x09, 0x02,        //   Usage (unk)
   0x15, 0x00,        //   Logical Minimum (0)
   0x26, 0xFF, 0x00,  //   Logical Maximum (255)
@@ -137,11 +137,16 @@ const USB_Descriptor_HIDReport_Datatype_t PROGMEM GenericHIDReport[] = {
   0x95, 0x40,        //   Report Count (64)
   0x81, 0x02,        //   Input (Data,Var,Abs)
   
-  // IMPORTANTE: NÃO incluir Output Report
-  // LUFA HID recebe dados via control endpoint, não via OUT endpoint
+  // Output Report (para receber comandos via OUT endpoint)
+  0x09, 0x03,        //   Usage (unk)
+  0x15, 0x00,        //   Logical Minimum (0)
+  0x26, 0xFF, 0x00,  //   Logical Maximum (255)
+  0x75, 0x08,        //   Report Size (8)
+  0x95, 0x40,        //   Report Count (64)
+  0x91, 0x02,        //   Output (Data,Var,Abs)
   
   0xC0               // End Collection
-  // Total: 23 bytes (muito menor que antes)
+  // Total: 30 bytes
 };
 
 // Device Descriptor - Cópia exata do Logitech C547
@@ -163,7 +168,7 @@ const USB_Descriptor_Device_t PROGMEM DeviceDescriptor = {
   .NumberOfConfigurations = FIXED_NUM_CONFIGURATIONS
 };
 
-// Configuration Descriptor - 3 interfaces, MAS sem OUT endpoint na interface 2
+// Configuration Descriptor - 3 interfaces, COM OUT endpoint na interface 2
 const USB_Descriptor_Configuration_t PROGMEM ConfigurationDescriptor = {
   .Config = {
     .Header                 = {.Size = sizeof(USB_Descriptor_Configuration_Header_t), .Type = DTYPE_Configuration},
@@ -233,12 +238,12 @@ const USB_Descriptor_Configuration_t PROGMEM ConfigurationDescriptor = {
     .PollingIntervalMS      = 0x01 // 1ms
   },
 
-  // Interface 2 - HID Genérico (APENAS 1 ENDPOINT IN, sem OUT)
+  // Interface 2 - HID Genérico (COM 2 ENDPOINTS: IN e OUT)
   .HID_GenericInterface = {
     .Header                 = {.Size = sizeof(USB_Descriptor_Interface_t), .Type = DTYPE_Interface},
     .InterfaceNumber        = INTERFACE_ID_Generic,
     .AlternateSetting       = 0x00,
-    .TotalEndpoints         = 1,  // APENAS 1 endpoint (IN)
+    .TotalEndpoints         = 2,  // 2 endpoints (IN e OUT)
     .Class                  = HID_CSCP_HIDClass,
     .SubClass               = HID_CSCP_NonBootSubclass,
     .Protocol               = HID_CSCP_NonBootProtocol,
@@ -254,17 +259,23 @@ const USB_Descriptor_Configuration_t PROGMEM ConfigurationDescriptor = {
     .HIDReportLength        = sizeof(GenericHIDReport)
   },
 
-  // APENAS endpoint IN - sem endpoint OUT
+  // Endpoint IN - para enviar status
   .HID_GenericEndpointIN = {
     .Header                 = {.Size = sizeof(USB_Descriptor_Endpoint_t), .Type = DTYPE_Endpoint},
     .EndpointAddress        = GENERIC_IN_EPADDR,
     .Attributes             = (EP_TYPE_INTERRUPT | ENDPOINT_ATTR_NO_SYNC | ENDPOINT_USAGE_DATA),
     .EndpointSize           = GENERIC_EPSIZE,
     .PollingIntervalMS      = 0x01 // 1ms
-  }
+  },
 
-  // IMPORTANTE: HID_GenericEndpointOUT removido!
-  // LUFA HID recebe dados via control endpoint
+  // Endpoint OUT - para receber comandos do PC
+  .HID_GenericEndpointOUT = {
+    .Header                 = {.Size = sizeof(USB_Descriptor_Endpoint_t), .Type = DTYPE_Endpoint},
+    .EndpointAddress        = GENERIC_OUT_EPADDR,
+    .Attributes             = (EP_TYPE_INTERRUPT | ENDPOINT_ATTR_NO_SYNC | ENDPOINT_USAGE_DATA),
+    .EndpointSize           = GENERIC_EPSIZE,
+    .PollingIntervalMS      = 0x01 // 1ms
+  }
 };
 
 // String Descriptors

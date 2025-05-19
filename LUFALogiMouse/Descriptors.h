@@ -22,12 +22,11 @@ enum StringDescriptors_t {
   STRING_ID_Configuration = 4, // "MPR04.02_B0009"
 };
 
-// Endpoint Addresses - APENAS IN endpoints (LUFA HID não usa OUT)
+// Endpoint Addresses - INCLUINDO OUT para Interface 2
 #define MOUSE_IN_EPADDR    (ENDPOINT_DIR_IN  | 1)  // Endpoint 1 IN
 #define KEYBOARD_IN_EPADDR (ENDPOINT_DIR_IN  | 2)  // Endpoint 2 IN  
-#define GENERIC_IN_EPADDR  (ENDPOINT_DIR_IN  | 3)  // Endpoint 3 IN (apenas status)
-
-// REMOVIDO: GENERIC_OUT_EPADDR - LUFA HID usa control endpoint para receber dados
+#define GENERIC_IN_EPADDR  (ENDPOINT_DIR_IN  | 3)  // Endpoint 3 IN
+#define GENERIC_OUT_EPADDR (ENDPOINT_DIR_OUT | 4)  // Endpoint 4 OUT
 
 // Endpoint Sizes (64 bytes como o original)
 #define MOUSE_EPSIZE       64
@@ -40,7 +39,7 @@ enum StringDescriptors_t {
 
 // Type Defines
 
-// Configuration Descriptor Structure - CORRIGIDA sem endpoint OUT
+// Configuration Descriptor Structure - CORRIGIDA COM endpoint OUT
 typedef struct {
   USB_Descriptor_Configuration_Header_t Config;
 
@@ -54,12 +53,11 @@ typedef struct {
   USB_HID_Descriptor_HID_t              HID_KeyboardHID;
   USB_Descriptor_Endpoint_t             HID_KeyboardEndpoint;
 
-  // Generic HID Interface (APENAS com endpoint IN)
+  // Generic HID Interface (COM endpoint IN e OUT)
   USB_Descriptor_Interface_t            HID_GenericInterface;
   USB_HID_Descriptor_HID_t              HID_GenericHID;
-  USB_Descriptor_Endpoint_t             HID_GenericEndpointIN;  // Apenas IN
-  
-  // REMOVIDO: HID_GenericEndpointOUT - não usado pelo LUFA HID
+  USB_Descriptor_Endpoint_t             HID_GenericEndpointIN;   // Endpoint IN
+  USB_Descriptor_Endpoint_t             HID_GenericEndpointOUT;  // Endpoint OUT
 } USB_Descriptor_Configuration_t;
 
 // HID Report Descriptors (external declarations)

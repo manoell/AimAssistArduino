@@ -62,6 +62,7 @@ void EVENT_USB_Device_Disconnect(void) {
     communication_status = 0x00; // Desconectado
 }
 
+// EVENT_USB_Device_ConfigurationChanged - CORRIGIDO COM ENDPOINT OUT
 void EVENT_USB_Device_ConfigurationChanged(void) {
     bool ConfigSuccess = true;
 
@@ -71,100 +72,17 @@ void EVENT_USB_Device_ConfigurationChanged(void) {
     // Configure Keyboard Endpoint  
     ConfigSuccess &= Endpoint_ConfigureEndpoint(KEYBOARD_IN_EPADDR, EP_TYPE_INTERRUPT, KEYBOARD_EPSIZE, 1);
 
-    // Configure Generic HID IN Endpoint ONLY (no OUT endpoint for LUFA HID)
+    // Configure Generic HID IN Endpoint
     ConfigSuccess &= Endpoint_ConfigureEndpoint(GENERIC_IN_EPADDR, EP_TYPE_INTERRUPT, GENERIC_EPSIZE, 1);
+    
+    // Configure Generic HID OUT Endpoint (ADICIONADO)
+    ConfigSuccess &= Endpoint_ConfigureEndpoint(GENERIC_OUT_EPADDR, EP_TYPE_INTERRUPT, GENERIC_EPSIZE, 1);
     
     if (ConfigSuccess) {
         communication_status = 0x02; // Configurado
     } else {
         communication_status = 0xEE; // Erro de configuração
     }
-}
-
-// FUNÇÃO CORRIGIDA - Aqui chegam os dados via control endpoint
-void EVENT_USB_Device_ControlRequest(void) {
-    // LED indica atividade no control endpoint
-    PORTC |= (1 << 7);  // Acender LED
-    
-    // Handle HID Class specific requests
-    switch (USB_ControlRequest.bRequest) {
-        case HID_REQ_GetReport:
-            if (USB_ControlRequest.bmRequestType == (REQDIR_DEVICETOHOST | REQTYPE_CLASS | REQREC_INTERFACE)) {
-                uint8_t* ReportData = NULL;
-                uint16_t ReportSize = 0;
-
-                switch (USB_ControlRequest.wIndex) {
-                    case INTERFACE_ID_Mouse:
-                        ReportData = (uint8_t*)&CurrentMouseReport;
-                        ReportSize = sizeof(MouseReport_t);
-                        break;
-                    case INTERFACE_ID_Keyboard:
-                        ReportData = (uint8_t*)&CurrentKeyboardReport;
-                        ReportSize = sizeof(KeyboardReport_t);
-                        break;
-                    case INTERFACE_ID_Generic:
-                        ReportData = GenericHIDBuffer;
-                        ReportSize = sizeof(GenericHIDBuffer);
-                        break;
-                }
-
-                if (ReportData != NULL) {
-                    Endpoint_ClearSETUP();
-                    Endpoint_Write_Control_Stream_LE(ReportData, ReportSize);
-                    Endpoint_ClearOUT();
-                }
-            }
-            break;
-
-        case HID_REQ_SetReport:
-            if (USB_ControlRequest.bmRequestType == (REQDIR_HOSTTODEVICE | REQTYPE_CLASS | REQREC_INTERFACE)) {
-                // AQUI CHEGAM OS DADOS DO PC VIA CONTROL ENDPOINT!
-                
-                Endpoint_ClearSETUP();
-                
-                // Buffer para receber dados
-                uint8_t TempBuffer[64];
-                memset(TempBuffer, 0, sizeof(TempBuffer));
-                
-                // Ler dados do control stream
-                uint16_t BytesReceived = 0;
-                if (USB_ControlRequest.wLength > 0) {
-                    BytesReceived = Endpoint_Read_Control_Stream_LE(TempBuffer, 
-                                        (USB_ControlRequest.wLength < sizeof(TempBuffer)) ? 
-                                        USB_ControlRequest.wLength : sizeof(TempBuffer));
-                }
-                
-                Endpoint_ClearIN();
-                
-                // PROCESSAR DADOS RECEBIDOS
-                if (BytesReceived > 0) {
-                    // Incrementar contador
-                    commands_received++;
-                    
-                    // Processar comando
-                    processGenericHIDData(TempBuffer, BytesReceived);
-                }
-            }
-            break;
-
-        case HID_REQ_GetProtocol:
-            if (USB_ControlRequest.bmRequestType == (REQDIR_DEVICETOHOST | REQTYPE_CLASS | REQREC_INTERFACE)) {
-                Endpoint_ClearSETUP();
-                Endpoint_Write_8(0x01);
-                Endpoint_ClearIN();
-            }
-            break;
-
-        case HID_REQ_SetProtocol:
-            if (USB_ControlRequest.bmRequestType == (REQDIR_HOSTTODEVICE | REQTYPE_CLASS | REQREC_INTERFACE)) {
-                Endpoint_ClearSETUP();
-                Endpoint_ClearStatusStage();
-            }
-            break;
-    }
-    
-    // Apagar LED após processar
-    PORTC &= ~(1 << 7);
 }
 
 // Process commands - VERSÃO CORRIGIDA
@@ -197,6 +115,7 @@ void processGenericHIDData(uint8_t* buffer, uint16_t length) {
                     int16_t delta_x = (int16_t)(buffer[1] | (buffer[2] << 8));
                     int16_t delta_y = (int16_t)(buffer[3] | (buffer[4] << 8));
                     
+                    // IMPORTANTE: Manter como int16 aqui - conversão será feita no HID_Task()
                     mouse_x = delta_x;
                     mouse_y = delta_y;
                     
@@ -204,6 +123,7 @@ void processGenericHIDData(uint8_t* buffer, uint16_t length) {
                     if (length > 6) mouse_wheel = (int8_t)buffer[6];
                     
                     newCommandReceived = true;
+                    commands_received++; // CORREÇÃO: Incrementar contador
                 }
                 else if (length >= 3) {
                     // Formato simples: [cmd][x][y]
@@ -214,6 +134,7 @@ void processGenericHIDData(uint8_t* buffer, uint16_t length) {
                     mouse_y = (int16_t)delta_y;
                     
                     newCommandReceived = true;
+                    commands_received++; // CORREÇÃO: Incrementar contador
                 }
             }
             break;
@@ -223,6 +144,7 @@ void processGenericHIDData(uint8_t* buffer, uint16_t length) {
                 if (length >= 2) {
                     mouse_buttons = buffer[1];
                     newCommandReceived = true;
+                    commands_received++; // CORREÇÃO: Incrementar contador
                 }
             }
             break;
@@ -232,6 +154,7 @@ void processGenericHIDData(uint8_t* buffer, uint16_t length) {
                 if (length >= 2) {
                     mouse_wheel = (int8_t)buffer[1];
                     newCommandReceived = true;
+                    commands_received++; // CORREÇÃO: Incrementar contador
                 }
             }
             break;
@@ -243,6 +166,7 @@ void processGenericHIDData(uint8_t* buffer, uint16_t length) {
                 mouse_buttons = 0;
                 mouse_wheel = 0;
                 newCommandReceived = true;
+                commands_received++; // CORREÇÃO: Incrementar contador
             }
             break;
             
@@ -252,6 +176,7 @@ void processGenericHIDData(uint8_t* buffer, uint16_t length) {
                 mouse_x = (int16_t)((int8_t)buffer[1]);
                 mouse_y = (int16_t)((int8_t)buffer[2]);
                 newCommandReceived = true;
+                commands_received++; // CORREÇÃO: Incrementar contador
             }
             break;
     }
@@ -260,27 +185,109 @@ void processGenericHIDData(uint8_t* buffer, uint16_t length) {
     PORTC &= ~(1 << 7);
 }
 
-// HID Task - SEM ENDPOINT OUT (LUFA HID não usa)
+// Control Request (mantido para compatibilidade)
+void EVENT_USB_Device_ControlRequest(void) {
+    // Handle HID Class specific requests
+    switch (USB_ControlRequest.bRequest) {
+        case HID_REQ_GetReport:
+            if (USB_ControlRequest.bmRequestType == (REQDIR_DEVICETOHOST | REQTYPE_CLASS | REQREC_INTERFACE)) {
+                uint8_t* ReportData = NULL;
+                uint16_t ReportSize = 0;
+
+                switch (USB_ControlRequest.wIndex) {
+                    case INTERFACE_ID_Mouse:
+                        ReportData = (uint8_t*)&CurrentMouseReport;
+                        ReportSize = sizeof(MouseReport_t);
+                        break;
+                    case INTERFACE_ID_Keyboard:
+                        ReportData = (uint8_t*)&CurrentKeyboardReport;
+                        ReportSize = sizeof(KeyboardReport_t);
+                        break;
+                    case INTERFACE_ID_Generic:
+                        ReportData = GenericHIDBuffer;
+                        ReportSize = sizeof(GenericHIDBuffer);
+                        break;
+                }
+
+                if (ReportData != NULL) {
+                    Endpoint_ClearSETUP();
+                    Endpoint_Write_Control_Stream_LE(ReportData, ReportSize);
+                    Endpoint_ClearOUT();
+                }
+            }
+            break;
+
+        case HID_REQ_SetReport:
+            if (USB_ControlRequest.bmRequestType == (REQDIR_HOSTTODEVICE | REQTYPE_CLASS | REQREC_INTERFACE)) {
+                Endpoint_ClearSETUP();
+                
+                // Buffer para receber dados
+                uint8_t TempBuffer[64];
+                memset(TempBuffer, 0, sizeof(TempBuffer));
+                
+                // Ler dados do control stream
+                uint16_t BytesReceived = 0;
+                if (USB_ControlRequest.wLength > 0) {
+                    BytesReceived = Endpoint_Read_Control_Stream_LE(TempBuffer, 
+                                        (USB_ControlRequest.wLength < sizeof(TempBuffer)) ? 
+                                        USB_ControlRequest.wLength : sizeof(TempBuffer));
+                }
+                
+                Endpoint_ClearIN();
+                
+                // PROCESSAR DADOS RECEBIDOS
+                if (BytesReceived > 0) {
+                    processGenericHIDData(TempBuffer, BytesReceived);
+                }
+            }
+            break;
+
+        case HID_REQ_GetProtocol:
+            if (USB_ControlRequest.bmRequestType == (REQDIR_DEVICETOHOST | REQTYPE_CLASS | REQREC_INTERFACE)) {
+                Endpoint_ClearSETUP();
+                Endpoint_Write_8(0x01);
+                Endpoint_ClearIN();
+            }
+            break;
+
+        case HID_REQ_SetProtocol:
+            if (USB_ControlRequest.bmRequestType == (REQDIR_HOSTTODEVICE | REQTYPE_CLASS | REQREC_INTERFACE)) {
+                Endpoint_ClearSETUP();
+                Endpoint_ClearStatusStage();
+            }
+            break;
+    }
+}
+
+// HID Task - CORRIGIDO COM ENDPOINT OUT
 void HID_Task(void) {
     // Device must be connected and configured
     if (USB_DeviceState != DEVICE_STATE_Configured)
         return;
-
-    // DEBUG: Piscar LED devagar para mostrar que está vivo
-    static uint16_t debug_counter = 0;
-    debug_counter++;
-    if (debug_counter > 3000) {  // A cada ~3 segundos
-        debug_counter = 0;
-        PORTC ^= (1 << 7);  // Toggle LED
-    }
 
     // Handle Mouse Endpoint (ENVIAR movimento)
     Endpoint_SelectEndpoint(MOUSE_IN_EPADDR);
     if (Endpoint_IsINReady()) {
         // Atualizar relatório do mouse
         CurrentMouseReport.buttons = mouse_buttons;
-        CurrentMouseReport.x = mouse_x;
-        CurrentMouseReport.y = mouse_y;
+        
+        // CORREÇÃO: Converter int16 para int8 (limite HID Report)
+        if (mouse_x > 127) {
+            CurrentMouseReport.x = 127;
+        } else if (mouse_x < -127) {
+            CurrentMouseReport.x = -127;
+        } else {
+            CurrentMouseReport.x = (int8_t)mouse_x;
+        }
+        
+        if (mouse_y > 127) {
+            CurrentMouseReport.y = 127;
+        } else if (mouse_y < -127) {
+            CurrentMouseReport.y = -127;
+        } else {
+            CurrentMouseReport.y = (int8_t)mouse_y;
+        }
+        
         CurrentMouseReport.wheel = mouse_wheel;
         CurrentMouseReport.hWheel = 0;
         
@@ -301,7 +308,7 @@ void HID_Task(void) {
         Endpoint_ClearIN();
     }
 
-    // Handle Generic HID IN (para status/debug)
+    // Handle Generic HID IN (para status)
     Endpoint_SelectEndpoint(GENERIC_IN_EPADDR);
     if (Endpoint_IsINReady()) {
         // Enviar status para debug
@@ -319,8 +326,25 @@ void HID_Task(void) {
         Endpoint_ClearIN();
     }
     
-    // NOTA: NÃO há endpoint OUT - dados chegam via control request!
-    // O LUFA HID usa control endpoint para receber dados do PC
+    // Handle Generic HID OUT (RECEBER comandos) - ADICIONADO
+    Endpoint_SelectEndpoint(GENERIC_OUT_EPADDR);
+    if (Endpoint_IsOUTReceived()) {
+        // Buffer para receber dados
+        uint8_t TempBuffer[64];
+        memset(TempBuffer, 0, sizeof(TempBuffer));
+        
+        // Ler dados do endpoint OUT
+        uint16_t BytesReceived = Endpoint_Read_Stream_LE(TempBuffer, sizeof(TempBuffer), NULL);
+        
+        // Limpar endpoint
+        Endpoint_ClearOUT();
+        
+        // Processar comandos recebidos
+        if (BytesReceived > 0) {
+            // Processar dados
+            processGenericHIDData(TempBuffer, BytesReceived);
+        }
+    }
 }
 
 // Utility functions (mantidas iguais)

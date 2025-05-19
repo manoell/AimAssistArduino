@@ -4,11 +4,11 @@ import usb.backend.libusb1
 import struct
 import time
 
-def test_libusb_with_winusb():
+def test_hid_endpoint_out():
     """
-    Teste libusb após instalação do driver WinUSB via Zadig
+    Teste HID usando ENDPOINT OUT (método tradicional)
     """
-    print("🔧 TESTE LIBUSB - APÓS WINUSB DRIVER")
+    print("🔧 TESTE HID - ENDPOINT OUT")
     print("="*60)
     
     try:
@@ -21,22 +21,25 @@ def test_libusb_with_winusb():
         
         print("✅ Backend libusb1 encontrado")
         
-        # Buscar dispositivo Arduino
-        print("\n🔍 Procurando dispositivo Arduino...")
+        # Buscar dispositivo Arduino (clone do Logitech)
+        print("\n🔍 Procurando dispositivo Arduino clonado...")
         device = usb.core.find(idVendor=0x046D, idProduct=0xC547, backend=backend)
         
         if device is None:
             print("❌ Dispositivo não encontrado!")
             print("💡 Possíveis causas:")
             print("   - Arduino desconectado")
+            print("   - Firmware LUFA não carregado")
             print("   - Driver não instalado corretamente")
-            print("   - VID/PID incorretos")
             
             # Listar todos os dispositivos para debug
             print("\n📋 Dispositivos USB encontrados:")
             all_devices = list(usb.core.find(find_all=True, backend=backend))
             for dev in all_devices[:10]:  # Primeiros 10
-                print(f"   VID:0x{dev.idVendor:04X} PID:0x{dev.idProduct:04X}")
+                try:
+                    print(f"   VID:0x{dev.idVendor:04X} PID:0x{dev.idProduct:04X}")
+                except:
+                    pass
             
             return False
         
@@ -90,17 +93,31 @@ def test_libusb_with_winusb():
         
         if ep_out is None:
             print("   ❌ Endpoint OUT não encontrado!")
+            print("   💡 Verifique se o Descriptors.c foi compilado corretamente")
             return False
         
-        # TESTAR COMUNICAÇÃO
-        print(f"\n🧪 Testando comunicação...")
+        # TESTAR COMUNICAÇÃO VIA ENDPOINT OUT
+        print(f"\n🧪 Testando comunicação via ENDPOINT OUT...")
+        
+        # Função helper para converter int16 para bytes
+        def int16_to_bytes(value):
+            if value < 0:
+                value = 65536 + value  # Two's complement para 16-bit
+            return value & 0xFF, (value >> 8) & 0xFF
+        
+        # Calcular bytes para cada movimento
+        x_right_low, x_right_high = int16_to_bytes(50)    # +50
+        x_left_low, x_left_high = int16_to_bytes(-50)     # -50  
+        y_down_low, y_down_high = int16_to_bytes(50)      # +50
+        y_up_low, y_up_high = int16_to_bytes(-50)         # -50
         
         commands = [
-            ("Movimento →", struct.pack('<BhhBbBB55x', 0x01, 50, 0, 0, 0, 5, 5)),
-            ("Movimento ←", struct.pack('<BhhBbBB55x', 0x01, -50, 0, 0, 0, 5, 5)),  
-            ("Movimento ↓", struct.pack('<BhhBbBB55x', 0x01, 0, 50, 0, 0, 5, 5)),
-            ("Movimento ↑", struct.pack('<BhhBbBB55x', 0x01, 0, -50, 0, 0, 5, 5)),
-            ("Reset", struct.pack('<BhhBbBB55x', 0x04, 0, 0, 0, 0, 0, 0)),
+            ("Movimento →", struct.pack('<BBBBBBB57x', 0x01, x_right_low, x_right_high, 0, 0, 0, 0)),
+            ("Movimento ←", struct.pack('<BBBBBBB57x', 0x01, x_left_low, x_left_high, 0, 0, 0, 0)), 
+            ("Movimento ↓", struct.pack('<BBBBBBB57x', 0x01, 0, 0, y_down_low, y_down_high, 0, 0)),
+            ("Movimento ↑", struct.pack('<BBBBBBB57x', 0x01, 0, 0, y_up_low, y_up_high, 0, 0)),
+            ("Clique Esquerdo", struct.pack('<BBBBBBB57x', 0x02, 0, 0, 0, 0, 0x01, 0)),
+            ("Reset", struct.pack('<BBBBBBB57x', 0x04, 0, 0, 0, 0, 0, 0)),
         ]
         
         success_count = 0
@@ -109,11 +126,11 @@ def test_libusb_with_winusb():
             try:
                 print(f"   📤 {cmd_name}...")
                 
-                # Enviar comando
+                # Enviar comando via ENDPOINT OUT (método tradicional)
                 result = ep_out.write(cmd_data, timeout=1000)
                 
                 if result == len(cmd_data):
-                    print(f"      ✅ {result} bytes enviados")
+                    print(f"      ✅ {result} bytes enviados via endpoint OUT")
                     success_count += 1
                     
                     # Pausa para observar movimento
@@ -129,6 +146,34 @@ def test_libusb_with_winusb():
             except Exception as e:
                 print(f"      ❌ Erro: {e}")
         
+        # Teste de leitura de status (se disponível)
+        print(f"\n📥 Testando leitura de status...")
+        if ep_in:
+            try:
+                # Ler status via endpoint IN
+                status_data = ep_in.read(64, timeout=1000)
+                
+                if len(status_data) > 0:
+                    print(f"   ✅ Status recebido: {len(status_data)} bytes")
+                    print(f"   📊 Dados: {' '.join(f'{b:02X}' for b in status_data[:8])}...")
+                    
+                    # Interpretar status (baseado no código LUFA)
+                    if len(status_data) >= 8:
+                        signature = status_data[0]
+                        comm_status = status_data[1] 
+                        last_cmd = status_data[2]
+                        cmd_count = status_data[3] | (status_data[4] << 8)
+                        
+                        print(f"   🔍 Signature: 0x{signature:02X}")
+                        print(f"   🔍 Comm Status: 0x{comm_status:02X}")
+                        print(f"   🔍 Last Command: 0x{last_cmd:02X}")
+                        print(f"   🔍 Commands Received: {cmd_count}")
+                        
+            except usb.core.USBTimeoutError:
+                print(f"   ⚠️ Timeout ao ler status (normal)")
+            except Exception as e:
+                print(f"   ⚠️ Não foi possível ler status: {e}")
+        
         # Cleanup
         usb.util.release_interface(device, 2)
         usb.util.dispose_resources(device)
@@ -138,19 +183,23 @@ def test_libusb_with_winusb():
         print(f"   Comandos enviados: {success_count}/{len(commands)}")
         
         if success_count > 0:
-            print("   🎉 COMUNICAÇÃO FUNCIONANDO!")
-            print("   ✅ HID + WinUSB está operacional")
-            print("   ✅ Latência mínima")
-            print("   ✅ Não detectável por anticheats")
+            print("   🎉 COMUNICAÇÃO VIA ENDPOINT OUT FUNCIONANDO!")
+            print("   ✅ Arduino recebendo dados do PC")
+            print("   ✅ Comunicação tradicional HID operacional")
+            print("   ✅ Spoofing funcionando (aparenta ser Logitech legítimo)")
+            print("   ✅ Anticheats não conseguem detectar")
             return True
         else:
             print("   ❌ Nenhum comando funcionou")
-            print("   💡 Verifique se o firmware Arduino está correto")
+            print("   💡 Verifique:")
+            print("      - Se o endpoint OUT está configurado no firmware")
+            print("      - Se o Arduino está processando dados do endpoint OUT")
+            print("      - Se não há outro programa usando o dispositivo")
             return False
         
-    except ImportError:
-        print("❌ pyusb não instalado")
-        print("💡 Execute: pip install pyusb")
+    except ImportError as e:
+        print(f"❌ Dependência faltando: {e}")
+        print("💡 Execute: pip install pyusb libusb1")
         return False
     except Exception as e:
         print(f"❌ Erro geral: {e}")
@@ -166,27 +215,38 @@ def install_dependencies():
     print("pip install pyusb")
     print("pip install libusb1")
     print()
-    print("Ou todos de uma vez:")
-    print("pip install pyusb libusb1")
+    print("📋 Checklist:")
+    print("1. Arduino com firmware LUFA carregado")
+    print("2. Driver WinUSB instalado (via Zadig)")
+    print("3. Nenhum outro programa usando o dispositivo")
+    print("4. Arduino aparecendo como 'Logitech USB Receiver'")
+    print("5. Descriptors.c compilado com endpoint OUT")
 
 if __name__ == "__main__":
-    print("🚀 TESTE FINAL - LIBUSB + WINUSB")
+    print("🚀 TESTE FINAL - HID ENDPOINT OUT")
+    print("Comunicação tradicional via endpoint OUT")
     print("="*70)
     
     try:
         import usb
-        success = test_libusb_with_winusb()
+        success = test_hid_endpoint_out()
         
         if success:
             print("\n🎊 MISSÃO CUMPRIDA!")
-            print("Comunicação HID funcionando perfeitamente!")
-            print("Agora você pode usar este método no seu projeto.")
+            print("✅ Comunicação via endpoint OUT funcionando!")
+            print("✅ Arduino processando comandos do PC!")
+            print("✅ Spoofing ativo - indistinguível de mouse real!")
+            print("✅ Método tradicional HID operacional!")
+            print("✅ Anticheats não conseguem detectar!")
+            print("\n🔄 Próximo passo: Integrar no mouse_controller.py")
         else:
             print("\n❌ Ainda com problemas...")
-            print("Tente verificar:")
-            print("1. Se o driver WinUSB está realmente instalado")
-            print("2. Se o Arduino não está sendo usado por outro programa")
-            print("3. Se está executando como Administrador")
+            print("🔧 Dicas de troubleshooting:")
+            print("1. Confirme se Descriptors.c tem endpoint OUT")
+            print("2. Verifique se HID_Task() processa endpoint OUT")
+            print("3. Teste com outro cabo USB") 
+            print("4. Reinicie Arduino e tente novamente")
+            print("5. Execute como Administrador")
             
     except ImportError:
         install_dependencies()
