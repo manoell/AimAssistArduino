@@ -21,16 +21,61 @@ static uint32_t commands_received = 0;
 static uint8_t last_command_type = 0;
 static uint8_t communication_status = 0;
 
-// Setup Hardware Function
+// CORREÇÃO CRÍTICA: Variáveis para acumular movimento
+static float accumulated_x = 0.0;
+static float accumulated_y = 0.0;
+
+// Setup Hardware Function - CORRIGIDO COM VBUS FIX
 void SetupHardware(void) {
+    // ============ CORREÇÃO CRÍTICA PARA ARDUINO LEONARDO ============
+    // PROBLEMA: Caterina bootloader deixa VBUS detection ativo
+    // SOLUÇÃO: Resetar manualmente o VBUS detection antes de inicializar USB
+    
     // Disable watchdog if enabled by bootloader/fuses
     MCUSR &= ~(1 << WDRF);
     wdt_disable();
 
-    // Disable clock division before initializing the USB hardware
+    // Disable clock division
     clock_prescale_set(clock_div_1);
-
-    // Initialize USB Stack
+    
+    // ============ FIX PARA LEONARDO BOOTLOADER ============
+    // Esta correção resolve o problema de VBUS detection
+    // que impede o LUFA de funcionar após o bootloader
+    
+    // Primeiro: desabilitar USB completamente
+    USB_Disable();
+    
+    // Aguardar estabilização
+    _delay_ms(100);
+    
+    // Forçar reset do hardware USB
+    USBCON &= ~(1 << USBE);        // Desabilitar USB engine
+    USBCON &= ~(1 << OTGPADE);     // Desabilitar USB pad (NOME CORRETO)
+    
+    // Aguardar reset
+    _delay_ms(50);
+    
+    // Resetar registros USB críticos
+    UDCON = 0;                     // Reset device control
+    UDIEN = 0;                     // Reset device interrupt enable
+    UDINT = 0;                     // Clear device interrupts
+    
+    // CRÍTICO: Configurar VBUS detection manualmente
+    USBCON |= (1 << OTGPADE);      // Re-habilitar USB pad (NOME CORRETO)
+    USBCON |= (1 << VBUSTE);       // Habilitar VBUS transition interrupt
+    
+    // Aguardar VBUS se estabilizar
+    _delay_ms(100);
+    
+    // Agora habilitar USB engine
+    USBCON |= (1 << USBE);         // Habilitar USB engine
+    
+    // Aguardar estabilização final
+    _delay_ms(50);
+    
+    // ============ FIM DO FIX ============
+    
+    // Agora inicializar LUFA normalmente
     USB_Init();
     
     // Initialize mouse state
@@ -49,14 +94,31 @@ void SetupHardware(void) {
     last_command_type = 0;
     communication_status = 0xFF; // Indica que está pronto
     
+    // Reset accumulation
+    accumulated_x = 0.0;
+    accumulated_y = 0.0;
+    
     // Configure LED pin for debug (Pin 13 = PC7)
     DDRC |= (1 << 7);   // Pin 13 as output
     PORTC &= ~(1 << 7); // LED off initially
+    
+    // ============ TESTE DE CONEXÃO USB ============
+    // Piscar LED para indicar que chegou até aqui
+    for (int i = 0; i < 5; i++) {
+        PORTC |= (1 << 7);
+        _delay_ms(200);
+        PORTC &= ~(1 << 7);
+        _delay_ms(200);
+    }
 }
 
 // USB Event Handlers
 void EVENT_USB_Device_Connect(void) {
     communication_status = 0x01; // Conectado
+    // Piscar LED 1 vez quando conectar
+    PORTC |= (1 << 7);
+    _delay_ms(100);
+    PORTC &= ~(1 << 7);
 }
 
 void EVENT_USB_Device_Disconnect(void) {
@@ -81,8 +143,8 @@ void EVENT_USB_Device_ConfigurationChanged(void) {
     
     if (ConfigSuccess) {
         communication_status = 0x02; // Configurado com sucesso
-        // Piscar LED 2 vezes para indicar configuração bem-sucedida
-        for (int i = 0; i < 2; i++) {
+        // Piscar LED 3 vezes para indicar configuração bem-sucedida
+        for (int i = 0; i < 3; i++) {
             PORTC |= (1 << 7);
             _delay_ms(100);
             PORTC &= ~(1 << 7);
@@ -90,11 +152,12 @@ void EVENT_USB_Device_ConfigurationChanged(void) {
         }
     } else {
         communication_status = 0xEE; // Erro de configuração
+        // Manter LED aceso se erro
         PORTC |= (1 << 7);
     }
 }
 
-// Process commands - VERSÃO CORRIGIDA para int8_t (Boot Protocol)
+// CORREÇÃO PRINCIPAL: Process commands - VERSÃO CORRIGIDA
 void processGenericHIDData(uint8_t* buffer, uint16_t length) {
     if (length < 1) {
         return;
@@ -109,6 +172,20 @@ void processGenericHIDData(uint8_t* buffer, uint16_t length) {
     
     uint8_t command_type = data[0];
     last_command_type = command_type;
+    commands_received++;
+    
+    // Piscar LED para indicar comando recebido
+    PORTC |= (1 << 7);
+    _delay_ms(30);
+    PORTC &= ~(1 << 7);
+    _delay_ms(30);
+    PORTC |= (1 << 7);
+    _delay_ms(30);
+    PORTC &= ~(1 << 7);
+    _delay_ms(30);
+    PORTC |= (1 << 7);
+    _delay_ms(30);
+    PORTC &= ~(1 << 7);
     
     // PROCESSAR COMANDOS
     switch (command_type) {
@@ -119,20 +196,34 @@ void processGenericHIDData(uint8_t* buffer, uint16_t length) {
                     int16_t delta_x_16 = (int16_t)(data[1] | (data[2] << 8));
                     int16_t delta_y_16 = (int16_t)(data[3] | (data[4] << 8));
                     
-                    // CONVERSÃO CRÍTICA: int16 para int8 (Boot Protocol)
-                    if (delta_x_16 > 127) mouse_x = 127;
-                    else if (delta_x_16 < -127) mouse_x = -127;
-                    else mouse_x = (int8_t)delta_x_16;
+                    // NOVA ABORDAGEM: Acumular movimento com precisão decimal
+                    // Em vez de truncar imediatamente para int8_t, acumular como float
+                    accumulated_x += (float)delta_x_16;
+                    accumulated_y += (float)delta_y_16;
                     
-                    if (delta_y_16 > 127) mouse_y = 127;
-                    else if (delta_y_16 < -127) mouse_y = -127;
-                    else mouse_y = (int8_t)delta_y_16;
+                    // Converter apenas quando o acúmulo formar pelo menos 1 pixel
+                    if (accumulated_x >= 1.0 || accumulated_x <= -1.0) {
+                        mouse_x = (int8_t)accumulated_x;
+                        if (mouse_x > 127) mouse_x = 127;
+                        if (mouse_x < -127) mouse_x = -127;
+                        accumulated_x -= mouse_x; // Subtrair apenas o que foi usado
+                    } else {
+                        mouse_x = 0;
+                    }
+                    
+                    if (accumulated_y >= 1.0 || accumulated_y <= -1.0) {
+                        mouse_y = (int8_t)accumulated_y;
+                        if (mouse_y > 127) mouse_y = 127;
+                        if (mouse_y < -127) mouse_y = -127;
+                        accumulated_y -= mouse_y; // Subtrair apenas o que foi usado
+                    } else {
+                        mouse_y = 0;
+                    }
                     
                     if (length > 5) mouse_buttons = data[5];
                     if (length > 6) mouse_wheel = (int8_t)data[6];
                     
                     newCommandReceived = true;
-                    commands_received++;
                 }
                 else if (length >= 3) {
                     // Formato simples: [cmd][x][y] 
@@ -140,7 +231,6 @@ void processGenericHIDData(uint8_t* buffer, uint16_t length) {
                     mouse_y = (int8_t)data[2];
                     
                     newCommandReceived = true;
-                    commands_received++;
                 }
             }
             break;
@@ -150,7 +240,6 @@ void processGenericHIDData(uint8_t* buffer, uint16_t length) {
                 if (length >= 2) {
                     mouse_buttons = data[1];
                     newCommandReceived = true;
-                    commands_received++;
                 }
             }
             break;
@@ -160,7 +249,6 @@ void processGenericHIDData(uint8_t* buffer, uint16_t length) {
                 if (length >= 2) {
                     mouse_wheel = (int8_t)data[1];
                     newCommandReceived = true;
-                    commands_received++;
                 }
             }
             break;
@@ -171,8 +259,9 @@ void processGenericHIDData(uint8_t* buffer, uint16_t length) {
                 mouse_y = 0;
                 mouse_buttons = 0;
                 mouse_wheel = 0;
+                accumulated_x = 0.0;
+                accumulated_y = 0.0;
                 newCommandReceived = true;
-                commands_received++;
             }
             break;
             
@@ -182,7 +271,6 @@ void processGenericHIDData(uint8_t* buffer, uint16_t length) {
                 mouse_x = (int8_t)data[1];
                 mouse_y = (int8_t)data[2];
                 newCommandReceived = true;
-                commands_received++;
             }
             break;
     }
@@ -259,7 +347,7 @@ void EVENT_USB_Device_ControlRequest(void) {
     }
 }
 
-// HID Task - VERSÃO FINAL CORRIGIDA
+// HID Task - VERSÃO FINAL CORRIGIDA COM FORÇAR ENVIO
 void HID_Task(void) {
     // Device must be connected and configured
     if (USB_DeviceState != DEVICE_STATE_Configured)
@@ -268,9 +356,6 @@ void HID_Task(void) {
     // 1. PROCESSAR dados do endpoint OUT (COMANDOS)
     Endpoint_SelectEndpoint(GENERIC_OUT_EPADDR);
     if (Endpoint_IsOUTReceived()) {
-        // LED ON para indicar recepção
-        PORTC |= (1 << 7);
-        
         // Buffer para receber dados
         uint8_t ReceivedData[64];
         memset(ReceivedData, 0, sizeof(ReceivedData));
@@ -287,34 +372,27 @@ void HID_Task(void) {
         
         // PROCESSAR os dados IMEDIATAMENTE
         if (BytesReceived > 0) {
-            // Debug: piscar LED 3 vezes
-            for (int i = 0; i < 3; i++) {
-                PORTC ^= (1 << 7);
-                _delay_ms(30);
-            }
-            
-            // PROCESSAR comandos
             processGenericHIDData(ReceivedData, BytesReceived);
         }
-        
-        // LED OFF
-        PORTC &= ~(1 << 7);
     }
 
-    // 2. ENVIAR movimento do mouse
+    // 2. ENVIAR movimento do mouse - FORÇAR ENVIO COM DELAY
     Endpoint_SelectEndpoint(MOUSE_IN_EPADDR);
     if (Endpoint_IsINReady()) {
-        // Atualizar relatório do mouse (Boot Protocol: int8_t)
+        // SEMPRE enviar um relatório de mouse, mesmo que seja zero
         CurrentMouseReport.buttons = mouse_buttons;
-        CurrentMouseReport.x = mouse_x;     // int8_t (-127 a +127)
-        CurrentMouseReport.y = mouse_y;     // int8_t (-127 a +127)
+        CurrentMouseReport.x = mouse_x;
+        CurrentMouseReport.y = mouse_y;
         CurrentMouseReport.wheel = mouse_wheel;
         
-        // Enviar relatório
+        // FORÇAR envio do relatório
         Endpoint_Write_Stream_LE(&CurrentMouseReport, sizeof(MouseReport_t), NULL);
         Endpoint_ClearIN();
         
-        // Reset após envio
+        // ESPERAR que o host processe
+        _delay_us(100);
+        
+        // Reset apenas após confirmar envio
         mouse_x = 0;
         mouse_y = 0;
         mouse_wheel = 0;
@@ -336,8 +414,8 @@ void HID_Task(void) {
         GenericHIDBuffer[2] = last_command_type;
         GenericHIDBuffer[3] = commands_received & 0xFF;
         GenericHIDBuffer[4] = (commands_received >> 8) & 0xFF;
-        GenericHIDBuffer[5] = mouse_x;
-        GenericHIDBuffer[6] = mouse_y;
+        GenericHIDBuffer[5] = (int8_t)accumulated_x; // Debug: mostrar acúmulo
+        GenericHIDBuffer[6] = (int8_t)accumulated_y; // Debug: mostrar acúmulo
         GenericHIDBuffer[7] = mouse_buttons;
         
         Endpoint_Write_Stream_LE(GenericHIDBuffer, sizeof(GenericHIDBuffer), NULL);
