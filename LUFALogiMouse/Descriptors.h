@@ -26,6 +26,7 @@ enum StringDescriptors_t {
 #define MOUSE_IN_EPADDR    (ENDPOINT_DIR_IN  | 1)  // Endpoint 1 IN
 #define KEYBOARD_IN_EPADDR (ENDPOINT_DIR_IN  | 2)  // Endpoint 2 IN  
 #define GENERIC_IN_EPADDR  (ENDPOINT_DIR_IN  | 3)  // Endpoint 3 IN
+#define GENERIC_OUT_EPADDR (ENDPOINT_DIR_OUT | 4)  // Endpoint 4 OUT
 
 // Endpoint Sizes (64 bytes como o original)
 #define MOUSE_EPSIZE       64
@@ -52,16 +53,17 @@ typedef struct {
   USB_HID_Descriptor_HID_t              HID_KeyboardHID;
   USB_Descriptor_Endpoint_t             HID_KeyboardEndpoint;
 
-  // Generic HID Interface
+  // Generic HID Interface (with IN and OUT endpoints)
   USB_Descriptor_Interface_t            HID_GenericInterface;
   USB_HID_Descriptor_HID_t              HID_GenericHID;
-  USB_Descriptor_Endpoint_t             HID_GenericEndpoint;
+  USB_Descriptor_Endpoint_t             HID_GenericEndpointIN;
+  USB_Descriptor_Endpoint_t             HID_GenericEndpointOUT;
 } USB_Descriptor_Configuration_t;
 
 // HID Report Descriptors (external declarations)
 extern const USB_Descriptor_HIDReport_Datatype_t PROGMEM MouseHIDReport[];
 extern const USB_Descriptor_HIDReport_Datatype_t PROGMEM KeyboardHIDReport[];
-extern const uint8_t PROGMEM GenericHIDReport[];
+extern const USB_Descriptor_HIDReport_Datatype_t PROGMEM GenericHIDReport[];
 
 // Function Prototypes
 uint16_t CALLBACK_USB_GetDescriptor(const uint16_t wValue,
