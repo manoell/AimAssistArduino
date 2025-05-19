@@ -128,7 +128,7 @@ Data (HexDump)           : 09 02 54 00 03 01 04 A0 31 09 04 00 00 01 03 01   ..T
                            02 00 09 21 11 01 00 01 22 53 00 07 05 81 03 40   ...!...."S.....@
                            00 01 09 04 01 00 01 03 01 01 00 09 21 11 01 00   ............!...
                            01 22 85 00 07 05 82 03 40 00 01 09 04 02 00 01   ."......@.......
-                           03 00 00 00 09 21 11 01 00 01 22 2E 00 07 05 83   .....!....".....
+                           03 00 00 00 09 21 11 01 00 01 22 36 00 07 05 83   .....!...."6....
                            03 40 00 01                                       .@..
 
         ---------------- Interface Descriptor -----------------
@@ -333,10 +333,10 @@ bDescriptorType          : 0x21 (HID Descriptor)
 bcdHID                   : 0x0111 (HID Version 1.11)
 bCountryCode             : 0x00 (00 = not localized)
 bNumDescriptors          : 0x01
-Data (HexDump)           : 09 21 11 01 00 01 22 2E 00                        .!...."..
+Data (HexDump)           : 09 21 11 01 00 01 22 36 00                        .!...."6.
 Descriptor 1:
 bDescriptorType          : 0x22 (Class=Report)
-wDescriptorLength        : 0x002E (46 bytes)
+wDescriptorLength        : 0x0036 (54 bytes)
   06 00 FF          Usage Page (Vendor Defined)
   09 01             Usage (unk)
   A1 01             Collection (Application)
@@ -358,10 +358,15 @@ wDescriptorLength        : 0x002E (46 bytes)
   75 01               Report Size (1)
   95 08               Report Count (8)
   B1 02               Feature (Var)
-  C0                End Collection
+  09 05               Usage (unk)
+  15 00               Logical Minimum (0)
+  25 0F               Logical Maximum (15)
+  75 04               Report Size (4)
+  95                  Report Count (0)
 Data (HexDump)           : 06 00 FF 09 01 A1 01 09 02 15 00 26 FF 00 75 08   ...........&..u.
                            95 40 81 02 09 03 15 00 26 FF 00 75 08 95 40 91   .@......&..u..@.
-                           02 09 04 15 00 25 01 75 01 95 08 B1 02 C0         .....%.u......
+                           02 09 04 15 00 25 01 75 01 95 08 B1 02 09 05 15   .....%.u........
+                           00 25 0F 75 04 95                                 .%.u..
 
         ----------------- Endpoint Descriptor -----------------
 bLength                  : 0x07 (7 bytes)

@@ -1,156 +1,38 @@
 #include "Descriptors.h"
 
-// Mouse HID Report Descriptor - AJUSTE FINAL para 83 bytes
+// Mouse HID Report Descriptor - COPIADO EXATO do adaptador (83 bytes)
 const USB_Descriptor_HIDReport_Datatype_t PROGMEM MouseHIDReport[] = {
-  // HEX DUMP atual que resulta em 84 bytes - vou remover 1 byte específico
-  // Atual: 05 01 09 02 A1 01 09 01 A1 00 05 09 19 01 29 08 15 00 25 01 95 08 75 01 81 02 05 01 09 30 09 31 16 01 80 26 FF 7F 95 02 75 10 81 06 09 38 15 81 25 7F 95 01 75 08 81 06 05 0C 0A 38 02 15 81 25 7F 95 01 75 08 81 06 06 FF 00 09 01 95 01 75 08 81 02 C0 C0
-  0x05, 0x01,        // Usage Page (Generic Desktop)
-  0x09, 0x02,        // Usage (Mouse)
-  0xA1, 0x01,        // Collection (Application)
-  0x09, 0x01,        //   Usage (Pointer)
-  0xA1, 0x00,        //   Collection (Physical)
-  0x05, 0x09,        //     Usage Page (Buttons)
-  0x19, 0x01,        //     Usage Minimum (1)
-  0x29, 0x08,        //     Usage Maximum (8)
-  0x15, 0x00,        //     Logical Minimum (0)
-  0x25, 0x01,        //     Logical Maximum (1)
-  0x95, 0x08,        //     Report Count (8)
-  0x75, 0x01,        //     Report Size (1)
-  0x81, 0x02,        //     Input (Var)
-  0x05, 0x01,        //     Usage Page (Generic Desktop)
-  0x09, 0x30,        //     Usage (X)
-  0x09, 0x31,        //     Usage (Y)
-  0x16, 0x01, 0x80,  //     Logical Minimum (-32767)
-  0x26, 0xFF, 0x7F,  //     Logical Maximum (32767)
-  0x95, 0x02,        //     Report Count (2)
-  0x75, 0x10,        //     Report Size (16)
-  0x81, 0x06,        //     Input (Var, Rel)
-  0x09, 0x38,        //     Usage (Wheel)
-  0x15, 0x81,        //     Logical Minimum (-127)
-  0x25, 0x7F,        //     Logical Maximum (127)
-  0x95, 0x01,        //     Report Count (1)
-  0x75, 0x08,        //     Report Size (8)
-  0x81, 0x06,        //     Input (Var, Rel)
-  0x05, 0x0C,        //     Usage Page (Consumer)
-  0x0A, 0x38, 0x02,  //     Usage (AC Pan)
-  0x15, 0x81,        //     Logical Minimum (-127)
-  0x25, 0x7F,        //     Logical Maximum (127)
-  0x95, 0x01,        //     Report Count (1)
-  0x75, 0x08,        //     Report Size (8)
-  0x81, 0x06,        //     Input (Var, Rel)
-  0x06, 0xFF, 0x00,  //     Usage Page (Vendor)
-  0x09, 0x01,        //     Usage (unk)
-  // REMOVIDO: 0x95, 0x01,  // Report Count (1) - remove este para -2 bytes
-  0x75, 0x08,        //     Report Size (8)
-  0x81, 0x02,        //     Input (Var)
-  0xC0,              //   End Collection
-  0xC0,              // End Collection  
-  0x00               // PADDING - adiciona 1 byte para ficar 84-2+1=83
-  // Total: deve resultar em 83 bytes
+  // HEX exato do adaptador: 05 01 09 02 A1 01 09 01 A1 00 05 09 19 01 29 08 15 00 25 01 95 08 75 01 81 02 05 01 09 30 09 31 16 01 80 26 FF 7F 95 02 75 10 81 06 09 38 15 81 25 7F 95 01 75 08 81 06 05 0C 0A 38 02 15 81 25 7F 95 01 75 08 81 06 06 FF 00 09 01 75 08 81 02 C0 C0 00
+  0x05, 0x01, 0x09, 0x02, 0xA1, 0x01, 0x09, 0x01, 0xA1, 0x00, 0x05, 0x09, 0x19, 0x01, 0x29, 0x08,
+  0x15, 0x00, 0x25, 0x01, 0x95, 0x08, 0x75, 0x01, 0x81, 0x02, 0x05, 0x01, 0x09, 0x30, 0x09, 0x31,
+  0x16, 0x01, 0x80, 0x26, 0xFF, 0x7F, 0x95, 0x02, 0x75, 0x10, 0x81, 0x06, 0x09, 0x38, 0x15, 0x81,
+  0x25, 0x7F, 0x95, 0x01, 0x75, 0x08, 0x81, 0x06, 0x05, 0x0C, 0x0A, 0x38, 0x02, 0x15, 0x81, 0x25,
+  0x7F, 0x95, 0x01, 0x75, 0x08, 0x81, 0x06, 0x06, 0xFF, 0x00, 0x09, 0x01, 0x75, 0x08, 0x81, 0x02,
+  0xC0, 0xC0, 0x00
 };
 
-// Keyboard HID Report Descriptor (133 bytes - já está correto)
+// Keyboard HID Report Descriptor - COPIADO EXATO do adaptador (133 bytes)
 const USB_Descriptor_HIDReport_Datatype_t PROGMEM KeyboardHIDReport[] = {
-  HID_RI_USAGE_PAGE(8, 0x01),     // Generic Desktop
-  HID_RI_USAGE(8, 0x06),          // Keyboard
-  HID_RI_COLLECTION(8, 0x01),     // Application
-    // Modifier keys
-    HID_RI_USAGE_PAGE(8, 0x07),   // Keyboard/Keypad
-    HID_RI_USAGE_MINIMUM(8, 0xE0), // Left Control
-    HID_RI_USAGE_MAXIMUM(8, 0xE7), // Right GUI
-    HID_RI_LOGICAL_MINIMUM(8, 0x00),
-    HID_RI_LOGICAL_MAXIMUM(8, 0x01),
-    HID_RI_REPORT_COUNT(8, 0x08),
-    HID_RI_REPORT_SIZE(8, 0x01),
-    HID_RI_INPUT(8, HID_IOF_DATA | HID_IOF_VARIABLE | HID_IOF_ABSOLUTE),
-    // Reserved byte
-    HID_RI_REPORT_COUNT(8, 0x01),
-    HID_RI_REPORT_SIZE(8, 0x08),
-    HID_RI_INPUT(8, HID_IOF_CONSTANT),
-    // Key codes
-    HID_RI_USAGE_PAGE(8, 0x07),   // Keyboard/Keypad
-    HID_RI_USAGE_MINIMUM(8, 0x00),
-    HID_RI_USAGE_MAXIMUM(8, 0x65),
-    HID_RI_LOGICAL_MINIMUM(8, 0x00),
-    HID_RI_LOGICAL_MAXIMUM(8, 0x65),
-    HID_RI_REPORT_COUNT(8, 0x06),
-    HID_RI_REPORT_SIZE(8, 0x08),
-    HID_RI_INPUT(8, HID_IOF_DATA | HID_IOF_ARRAY),
-    // Output report (LEDs)
-    HID_RI_USAGE_PAGE(8, 0x08),   // LEDs
-    HID_RI_USAGE_MINIMUM(8, 0x01), // Num Lock
-    HID_RI_USAGE_MAXIMUM(8, 0x05), // Kana
-    HID_RI_REPORT_COUNT(8, 0x05),
-    HID_RI_REPORT_SIZE(8, 0x01),
-    HID_RI_OUTPUT(8, HID_IOF_DATA | HID_IOF_VARIABLE | HID_IOF_ABSOLUTE),
-    HID_RI_REPORT_COUNT(8, 0x03),
-    HID_RI_REPORT_SIZE(8, 0x01),
-    HID_RI_OUTPUT(8, HID_IOF_CONSTANT),
-    // Consumer controls (reduced set)
-    HID_RI_USAGE_PAGE(8, 0x0C),   // Consumer
-    HID_RI_USAGE(8, 0x01),        // Consumer Control
-    HID_RI_COLLECTION(8, 0x01),   // Application
-      HID_RI_USAGE(16, 0x00E2),   // Mute
-      HID_RI_USAGE(16, 0x00E9),   // Volume Up
-      HID_RI_USAGE(16, 0x00EA),   // Volume Down
-      HID_RI_USAGE(16, 0x00CD),   // Play/Pause
-      HID_RI_USAGE(16, 0x00B7),   // Stop
-      HID_RI_USAGE(16, 0x00B6),   // Previous Track
-      HID_RI_USAGE(16, 0x00B5),   // Next Track
-      HID_RI_USAGE(16, 0x0183),   // Media Player
-      HID_RI_LOGICAL_MINIMUM(8, 0x00),
-      HID_RI_LOGICAL_MAXIMUM(8, 0x01),
-      HID_RI_REPORT_COUNT(8, 0x08),
-      HID_RI_REPORT_SIZE(8, 0x01),
-      HID_RI_INPUT(8, HID_IOF_DATA | HID_IOF_VARIABLE | HID_IOF_ABSOLUTE),
-    HID_RI_END_COLLECTION(0),
-    // System controls
-    HID_RI_USAGE_PAGE(8, 0x01),   // Generic Desktop
-    HID_RI_USAGE(8, 0x80),        // System Control
-    HID_RI_COLLECTION(8, 0x01),   // Application
-      HID_RI_USAGE(8, 0x81),      // System Power Down
-      HID_RI_USAGE(8, 0x82),      // System Sleep
-      HID_RI_USAGE(8, 0x83),      // System Wake Up
-      HID_RI_LOGICAL_MINIMUM(8, 0x00),
-      HID_RI_LOGICAL_MAXIMUM(8, 0x01),
-      HID_RI_REPORT_COUNT(8, 0x03),
-      HID_RI_REPORT_SIZE(8, 0x01),
-      HID_RI_INPUT(8, HID_IOF_DATA | HID_IOF_VARIABLE | HID_IOF_ABSOLUTE),
-      HID_RI_REPORT_COUNT(8, 0x05),
-      HID_RI_REPORT_SIZE(8, 0x01),
-      HID_RI_INPUT(8, HID_IOF_CONSTANT),
-    HID_RI_END_COLLECTION(0),
-  HID_RI_END_COLLECTION(0)
+  // HEX exato do adaptador: 05 01 09 06 A1 01 05 07 19 E0 29 E7 15 00 25 01 95 08 75 01 81 02 95 01 75 08 81 01 05 07 19 00 29 65 15 00 25 65 95 06 75 08 81 00 05 08 19 01 29 05 95 05 75 01 91 02 95 03 75 01 91 01 05 0C 09 01 A1 01 0A E2 00 0A E9 00 0A EA 00 0A CD 00 0A B7 00 0A B6 00 0A B5 00 0A 83 01 15 00 25 01 95 08 75 01 81 02 C0 05 01 09 80 A1 01 09 81 09 82 09 83 15 00 25 01 95 03 75 01 81 02 95 05 75 01 81 01 C0 C0
+  0x05, 0x01, 0x09, 0x06, 0xA1, 0x01, 0x05, 0x07, 0x19, 0xE0, 0x29, 0xE7, 0x15, 0x00, 0x25, 0x01,
+  0x95, 0x08, 0x75, 0x01, 0x81, 0x02, 0x95, 0x01, 0x75, 0x08, 0x81, 0x01, 0x05, 0x07, 0x19, 0x00,
+  0x29, 0x65, 0x15, 0x00, 0x25, 0x65, 0x95, 0x06, 0x75, 0x08, 0x81, 0x00, 0x05, 0x08, 0x19, 0x01,
+  0x29, 0x05, 0x95, 0x05, 0x75, 0x01, 0x91, 0x02, 0x95, 0x03, 0x75, 0x01, 0x91, 0x01, 0x05, 0x0C,
+  0x09, 0x01, 0xA1, 0x01, 0x0A, 0xE2, 0x00, 0x0A, 0xE9, 0x00, 0x0A, 0xEA, 0x00, 0x0A, 0xCD, 0x00,
+  0x0A, 0xB7, 0x00, 0x0A, 0xB6, 0x00, 0x0A, 0xB5, 0x00, 0x0A, 0x83, 0x01, 0x15, 0x00, 0x25, 0x01,
+  0x95, 0x08, 0x75, 0x01, 0x81, 0x02, 0xC0, 0x05, 0x01, 0x09, 0x80, 0xA1, 0x01, 0x09, 0x81, 0x09,
+  0x82, 0x09, 0x83, 0x15, 0x00, 0x25, 0x01, 0x95, 0x03, 0x75, 0x01, 0x81, 0x02, 0x95, 0x05, 0x75,
+  0x01, 0x81, 0x01, 0xC0, 0xC0
 };
 
-// Generic HID Report Descriptor - CIRÚRGICO para exatos 54 bytes  
-const USB_Descriptor_HIDReport_Datatype_t PROGMEM GenericHIDReport[] = {
-  // HEX DUMP atual (66 bytes): 06 00 FF 09 01 A1 01 09 02 15 00 26 FF 00 75 08 95 40 81 02 09 03 15 00 26 FF 00 75 08 95 40 91 02 09 04 15 00 25 01 75 01 95 08 B1 02 09 05 15 00 25 0F 75 04 95 01 B1 02 09 06 75 04 95 01 B1 01 C0
-  // Vou remover exatamente 12 bytes finais das features
-  0x06, 0x00, 0xFF,  // Usage Page (Vendor Defined)
-  0x09, 0x01,        // Usage (unk)
-  0xA1, 0x01,        // Collection (Application)
-  0x09, 0x02,        //   Usage (unk)
-  0x15, 0x00,        //   Logical Minimum (0)
-  0x26, 0xFF, 0x00,  //   Logical Maximum (255)
-  0x75, 0x08,        //   Report Size (8)
-  0x95, 0x40,        //   Report Count (64)
-  0x81, 0x02,        //   Input (Data,Var,Abs)
-  0x09, 0x03,        //   Usage (unk)
-  0x15, 0x00,        //   Logical Minimum (0)
-  0x26, 0xFF, 0x00,  //   Logical Maximum (255)
-  0x75, 0x08,        //   Report Size (8)
-  0x95, 0x40,        //   Report Count (64)
-  0x91, 0x02,        //   Output (Data,Var,Abs)
-  0x09, 0x04,        //   Usage (unk)
-  0x15, 0x00,        //   Logical Minimum (0)
-  0x25, 0x01,        //   Logical Maximum (1)
-  0x75, 0x01,        //   Report Size (1)
-  0x95, 0x08,        //   Report Count (8)
-  0xB1, 0x02,        //   Feature (Data,Var,Abs)
-  // REMOVIDO: últimas 12 instruções do feature (09 05 15 00 25 0F 75 04 95 01 B1 02 09 06 75 04 95 01 B1 01)
-  0xC0               // End Collection
-  // Total: 54 bytes exatos (removido exatos 12 bytes do final)
+// Generic HID Report Descriptor - EXATAMENTE 54 bytes como adaptador (ANTI-VANGUARD)
+const uint8_t PROGMEM GenericHIDReport[54] = {
+  // HEX EXATO do adaptador (apenas os 54 bytes que existem no original)
+  0x06, 0x00, 0xFF, 0x09, 0x01, 0xA1, 0x01, 0x09, 0x02, 0x15, 0x00, 0x26, 0xFF, 0x00, 0x75, 0x08,
+  0x95, 0x40, 0x81, 0x02, 0x09, 0x03, 0x15, 0x00, 0x26, 0xFF, 0x00, 0x75, 0x08, 0x95, 0x40, 0x91,
+  0x02, 0x09, 0x04, 0x15, 0x00, 0x25, 0x01, 0x75, 0x01, 0x95, 0x08, 0xB1, 0x02, 0x09, 0x05, 0x15,
+  0x00, 0x25, 0x0F, 0x75, 0x04, 0x95, 0x01, 0xB1, 0x02
+  // Para aqui - exatamente como no adaptador original (54 bytes)
 };
 
 // Device Descriptor - Cópia exata do Logitech C547
@@ -260,7 +142,7 @@ const USB_Descriptor_Configuration_t PROGMEM ConfigurationDescriptor = {
     .CountryCode            = 0x00,
     .TotalReportDescriptors = 1,
     .HIDReportType          = HID_DTYPE_Report,
-    .HIDReportLength        = sizeof(GenericHIDReport)
+    .HIDReportLength        = 54
   },
 
   .HID_GenericEndpoint = {

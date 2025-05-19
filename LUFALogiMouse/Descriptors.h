@@ -61,7 +61,7 @@ typedef struct {
 // HID Report Descriptors (external declarations)
 extern const USB_Descriptor_HIDReport_Datatype_t PROGMEM MouseHIDReport[];
 extern const USB_Descriptor_HIDReport_Datatype_t PROGMEM KeyboardHIDReport[];
-extern const USB_Descriptor_HIDReport_Datatype_t PROGMEM GenericHIDReport[];
+extern const uint8_t PROGMEM GenericHIDReport[];
 
 // Function Prototypes
 uint16_t CALLBACK_USB_GetDescriptor(const uint16_t wValue,
