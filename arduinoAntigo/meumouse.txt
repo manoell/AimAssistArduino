@@ -1,0 +1,269 @@
+
+    =========================== USB Port3 ===========================
+
+Connection Status        : 0x01 (Device is connected)
+Port Chain               : 1-3
+Properties               : 0x01
+ IsUserConnectable       : yes
+ PortIsDebugCapable      : no
+ PortHasMultiCompanions  : no
+ PortConnectorIsTypeC    : no
+ConnectionIndex          : 0x03 (Port 3)
+CompanionIndex           : 0
+ CompanionHubSymLnk      : USB#ROOT_HUB30#7&30304c2c&0&0#{f18a0e88-c30c-11d0-8815-00a0c906bed8}
+ CompanionPortNumber     : 0x09 (Port 9)
+ -> CompanionPortChain   : 1-9
+
+      ========================== Summary =========================
+Vendor ID                : 0x046D (Logitech Inc.)
+Product ID               : 0xC095
+Manufacturer String      : Logitech
+Product String           : G502 X PLUS
+Serial                   : 4ED7923A
+USB Version              : 2.0 -> but Device is Full-Speed only
+Port maximum Speed       : High-Speed (Companion Port 1-9 is doing the SuperSpeed)
+Device maximum Speed     : Full-Speed
+Device Connection Speed  : Full-Speed
+Self powered             : yes
+Demanded Current         : 500 mA
+Used Endpoints           : 4
+
+      ======================== USB Device ========================
+
+        +++++++++++++++++ Device Information ++++++++++++++++++
+Device Description       : USB Composite Device
+Device Path              : \\?\USB#VID_046D&PID_C095#4ED7923A#{a5dcbf10-6530-11d2-901f-00c04fb951ed} (GUID_DEVINTERFACE_USB_DEVICE)
+Kernel Name              : \Device\USBPDO-11
+Device ID                : USB\VID_046D&PID_C095\4ED7923A
+Hardware IDs             : USB\VID_046D&PID_C095&REV_2700 USB\VID_046D&PID_C095
+Driver KeyName           : {36fc9e60-c465-11cf-8056-444553540000}\0012 (GUID_DEVCLASS_USB)
+Driver                   : \SystemRoot\System32\drivers\usbccgp.sys (Version: 10.0.19041.5794  Date: 2025-05-01  Company: Microsoft Corporation)
+Driver Inf               : C:\Windows\inf\usb.inf
+Legacy BusType           : PNPBus
+Class                    : USB
+Class GUID               : {36fc9e60-c465-11cf-8056-444553540000} (GUID_DEVCLASS_USB)
+Service                  : usbccgp
+Enumerator               : USB
+Location Info            : Port_#0003.Hub_#0001
+Address                  : 3
+Location IDs             : PCIROOT(0)#PCI(0102)#PCI(0000)#PCI(0800)#PCI(0001)#USBROOT(0)#USB(3), ACPI(_SB_)#ACPI(PCI0)#ACPI(BXBR)#ACPI(BYUP)#ACPI(BYD8)#ACPI(XHC1)#ACPI(RHUB)#ACPI(PRT3)
+Container ID             : {91651a16-039b-5ee9-b6ef-45b03ecb16e2}
+Manufacturer Info        : (Standard USB Host Controller)
+Capabilities             : 0x94 (Removable, UniqueID, SurpriseRemovalOK)
+Status                   : 0x0180600A (DN_DRIVER_LOADED, DN_STARTED, DN_DISABLEABLE, DN_REMOVABLE, DN_NT_ENUMERATOR, DN_NT_DRIVER)
+Problem Code             : 0
+Address                  : 3
+EnhancedPowerMgmtEnabled : 0
+Power State              : D0 (supported: D0, D1, D2, D3, wake from D0, wake from D1, wake from D2)
+
+        +++++++++++++++++ Registry USB Flags +++++++++++++++++
+HKEY_LOCAL_MACHINE\SYSTEM\CurrentControlSet\Control\usbflags\046DC0952700
+ osvc                    : REG_BINARY 00 00
+
+        ---------------- Connection Information ---------------
+Connection Index         : 0x03 (Port 3)
+Connection Status        : 0x01 (DeviceConnected)
+Current Config Value     : 0x01 (Configuration 1)
+Device Address           : 0x04 (4)
+Is Hub                   : 0x00 (no)
+Device Bus Speed         : 0x01 (Full-Speed)
+Number of open Pipes     : 0x03 (3 pipes to data endpoints)
+Pipe[0]                  : EndpointID=1  Direction=IN   ScheduleOffset=0  Type=Interrupt  wMaxPacketSize=0x40    bInterval=1   -> 718 Bits/ms = 89750 Bytes/s
+Pipe[1]                  : EndpointID=2  Direction=IN   ScheduleOffset=0  Type=Interrupt  wMaxPacketSize=0x40    bInterval=1   -> 718 Bits/ms = 89750 Bytes/s
+Pipe[2]                  : EndpointID=3  Direction=IN   ScheduleOffset=0  Type=Interrupt  wMaxPacketSize=0x40    bInterval=1   -> 718 Bits/ms = 89750 Bytes/s
+Data (HexDump)           : 03 00 00 00 12 01 00 02 00 00 00 40 6D 04 95 C0   ...........@m...
+                           00 27 01 02 03 01 01 01 00 04 00 03 00 00 00 01   .'..............
+                           00 00 00 07 05 81 03 40 00 01 00 00 00 00 07 05   .......@........
+                           82 03 40 00 01 00 00 00 00 07 05 83 03 40 00 01   ..@..........@..
+                           00 00 00 00                                       ....
+
+        --------------- Connection Information V2 -------------
+Connection Index         : 0x03 (3)
+Length                   : 0x10 (16 bytes)
+SupportedUsbProtocols    : 0x03
+ Usb110                  : 1 (yes, port supports USB 1.1)
+ Usb200                  : 1 (yes, port supports USB 2.0)
+ Usb300                  : 0 (no, port not supports USB 3.0) -> but Companion Port 1-9 does
+ ReservedMBZ             : 0x00
+Flags                    : 0x00
+ DevIsOpAtSsOrHigher     : 0 (Device is not operating at SuperSpeed or higher)
+ DevIsSsCapOrHigher      : 0 (Device is not SuperSpeed capable or higher)
+ DevIsOpAtSsPlusOrHigher : 0 (Device is not operating at SuperSpeedPlus or higher)
+ DevIsSsPlusCapOrHigher  : 0 (Device is not SuperSpeedPlus capable or higher)
+ ReservedMBZ             : 0x00
+Data (HexDump)           : 03 00 00 00 10 00 00 00 03 00 00 00 00 00 00 00   ................
+
+    ---------------------- Device Descriptor ----------------------
+bLength                  : 0x12 (18 bytes)
+bDescriptorType          : 0x01 (Device Descriptor)
+bcdUSB                   : 0x200 (USB Version 2.0) -> but device is Full-Speed only
+bDeviceClass             : 0x00 (defined by the interface descriptors)
+bDeviceSubClass          : 0x00
+bDeviceProtocol          : 0x00
+bMaxPacketSize0          : 0x40 (64 bytes)
+idVendor                 : 0x046D (Logitech Inc.)
+idProduct                : 0xC095
+bcdDevice                : 0x2700
+iManufacturer            : 0x01 (String Descriptor 1)
+ Language 0x0409         : "Logitech"
+iProduct                 : 0x02 (String Descriptor 2)
+ Language 0x0409         : "G502 X PLUS"
+iSerialNumber            : 0x03 (String Descriptor 3)
+ Language 0x0409         : "4ED7923A"
+bNumConfigurations       : 0x01 (1 Configuration)
+Data (HexDump)           : 12 01 00 02 00 00 00 40 6D 04 95 C0 00 27 01 02   .......@m....'..
+                           03 01                                             ..
+
+    ------------------ Configuration Descriptor -------------------
+bLength                  : 0x09 (9 bytes)
+bDescriptorType          : 0x02 (Configuration Descriptor)
+wTotalLength             : 0x0054 (84 bytes)
+bNumInterfaces           : 0x03 (3 Interfaces)
+bConfigurationValue      : 0x01 (Configuration 1)
+iConfiguration           : 0x04 (String Descriptor 4)
+ Language 0x0409         : "MPM27.00_B0016"
+bmAttributes             : 0xE0
+ D7: Reserved, set 1     : 0x01
+ D6: Self Powered        : 0x01 (yes)
+ D5: Remote Wakeup       : 0x01 (yes)
+ D4..0: Reserved, set 0  : 0x00
+MaxPower                 : 0xFA (500 mA)
+Data (HexDump)           : 09 02 54 00 03 01 04 E0 FA 09 04 00 00 01 03 01   ..T.............
+                           02 00 09 21 11 01 00 01 22 53 00 07 05 81 03 40   ...!...."S.....@
+                           00 01 09 04 01 00 01 03 01 01 00 09 21 11 01 00   ............!...
+                           01 22 7D 00 07 05 82 03 40 00 01 09 04 02 00 01   ."}.....@.......
+                           03 00 00 00 09 21 11 01 00 01 22 36 00 07 05 83   .....!...."6....
+                           03 40 00 01                                       .@..
+
+        ---------------- Interface Descriptor -----------------
+bLength                  : 0x09 (9 bytes)
+bDescriptorType          : 0x04 (Interface Descriptor)
+bInterfaceNumber         : 0x00 (Interface 0)
+bAlternateSetting        : 0x00
+bNumEndpoints            : 0x01 (1 Endpoint)
+bInterfaceClass          : 0x03 (HID - Human Interface Device)
+bInterfaceSubClass       : 0x01 (Boot Interface)
+bInterfaceProtocol       : 0x02 (Mouse)
+iInterface               : 0x00 (No String Descriptor)
+Data (HexDump)           : 09 04 00 00 01 03 01 02 00                        .........
+
+        ------------------- HID Descriptor --------------------
+bLength                  : 0x09 (9 bytes)
+bDescriptorType          : 0x21 (HID Descriptor)
+bcdHID                   : 0x0111 (HID Version 1.11)
+bCountryCode             : 0x00 (00 = not localized)
+bNumDescriptors          : 0x01
+Data (HexDump)           : 09 21 11 01 00 01 22 53 00                        .!...."S.
+Descriptor 1:
+bDescriptorType          : 0x22 (Class=Report)
+wDescriptorLength        : 0x0053 (83 bytes)
+Error reading descriptor : ERROR_GEN_FAILURE (due to a obscure limitation of the Win32 USB API, see F1 Help)
+
+        ----------------- Endpoint Descriptor -----------------
+bLength                  : 0x07 (7 bytes)
+bDescriptorType          : 0x05 (Endpoint Descriptor)
+bEndpointAddress         : 0x81 (Direction=IN EndpointID=1)
+bmAttributes             : 0x03 (TransferType=Interrupt)
+wMaxPacketSize           : 0x0040 (64 bytes)
+bInterval                : 0x01 (1 ms)
+Data (HexDump)           : 07 05 81 03 40 00 01                              ....@..
+
+        ---------------- Interface Descriptor -----------------
+bLength                  : 0x09 (9 bytes)
+bDescriptorType          : 0x04 (Interface Descriptor)
+bInterfaceNumber         : 0x01 (Interface 1)
+bAlternateSetting        : 0x00
+bNumEndpoints            : 0x01 (1 Endpoint)
+bInterfaceClass          : 0x03 (HID - Human Interface Device)
+bInterfaceSubClass       : 0x01 (Boot Interface)
+bInterfaceProtocol       : 0x01 (Keyboard)
+iInterface               : 0x00 (No String Descriptor)
+Data (HexDump)           : 09 04 01 00 01 03 01 01 00                        .........
+
+        ------------------- HID Descriptor --------------------
+bLength                  : 0x09 (9 bytes)
+bDescriptorType          : 0x21 (HID Descriptor)
+bcdHID                   : 0x0111 (HID Version 1.11)
+bCountryCode             : 0x00 (00 = not localized)
+bNumDescriptors          : 0x01
+Data (HexDump)           : 09 21 11 01 00 01 22 7D 00                        .!...."}.
+Descriptor 1:
+bDescriptorType          : 0x22 (Class=Report)
+wDescriptorLength        : 0x007D (125 bytes)
+Error reading descriptor : ERROR_GEN_FAILURE (due to a obscure limitation of the Win32 USB API, see F1 Help)
+
+        ----------------- Endpoint Descriptor -----------------
+bLength                  : 0x07 (7 bytes)
+bDescriptorType          : 0x05 (Endpoint Descriptor)
+bEndpointAddress         : 0x82 (Direction=IN EndpointID=2)
+bmAttributes             : 0x03 (TransferType=Interrupt)
+wMaxPacketSize           : 0x0040 (64 bytes)
+bInterval                : 0x01 (1 ms)
+Data (HexDump)           : 07 05 82 03 40 00 01                              ....@..
+
+        ---------------- Interface Descriptor -----------------
+bLength                  : 0x09 (9 bytes)
+bDescriptorType          : 0x04 (Interface Descriptor)
+bInterfaceNumber         : 0x02 (Interface 2)
+bAlternateSetting        : 0x00
+bNumEndpoints            : 0x01 (1 Endpoint)
+bInterfaceClass          : 0x03 (HID - Human Interface Device)
+bInterfaceSubClass       : 0x00 (None)
+bInterfaceProtocol       : 0x00 (None)
+iInterface               : 0x00 (No String Descriptor)
+Data (HexDump)           : 09 04 02 00 01 03 00 00 00                        .........
+
+        ------------------- HID Descriptor --------------------
+bLength                  : 0x09 (9 bytes)
+bDescriptorType          : 0x21 (HID Descriptor)
+bcdHID                   : 0x0111 (HID Version 1.11)
+bCountryCode             : 0x00 (00 = not localized)
+bNumDescriptors          : 0x01
+Data (HexDump)           : 09 21 11 01 00 01 22 36 00                        .!...."6.
+Descriptor 1:
+bDescriptorType          : 0x22 (Class=Report)
+wDescriptorLength        : 0x0036 (54 bytes)
+Error reading descriptor : ERROR_GEN_FAILURE (due to a obscure limitation of the Win32 USB API, see F1 Help)
+
+        ----------------- Endpoint Descriptor -----------------
+bLength                  : 0x07 (7 bytes)
+bDescriptorType          : 0x05 (Endpoint Descriptor)
+bEndpointAddress         : 0x83 (Direction=IN EndpointID=3)
+bmAttributes             : 0x03 (TransferType=Interrupt)
+wMaxPacketSize           : 0x0040 (64 bytes)
+bInterval                : 0x01 (1 ms)
+Data (HexDump)           : 07 05 83 03 40 00 01                              ....@..
+
+    ----------------- Device Qualifier Descriptor -----------------
+Error                    : ERROR_GEN_FAILURE  (because the device is Full-Speed only)
+
+      -------------------- String Descriptors -------------------
+             ------ String Descriptor 0 ------
+bLength                  : 0x04 (4 bytes)
+bDescriptorType          : 0x03 (String Descriptor)
+Language ID[0]           : 0x0409 (English - United States)
+Data (HexDump)           : 04 03 09 04                                       ....
+             ------ String Descriptor 1 ------
+bLength                  : 0x12 (18 bytes)
+bDescriptorType          : 0x03 (String Descriptor)
+Language 0x0409          : "Logitech"
+Data (HexDump)           : 12 03 4C 00 6F 00 67 00 69 00 74 00 65 00 63 00   ..L.o.g.i.t.e.c.
+                           68 00                                             h.
+             ------ String Descriptor 2 ------
+bLength                  : 0x18 (24 bytes)
+bDescriptorType          : 0x03 (String Descriptor)
+Language 0x0409          : "G502 X PLUS"
+Data (HexDump)           : 18 03 47 00 35 00 30 00 32 00 20 00 58 00 20 00   ..G.5.0.2. .X. .
+                           50 00 4C 00 55 00 53 00                           P.L.U.S.
+             ------ String Descriptor 3 ------
+bLength                  : 0x12 (18 bytes)
+bDescriptorType          : 0x03 (String Descriptor)
+Language 0x0409          : "4ED7923A"
+Data (HexDump)           : 12 03 34 00 45 00 44 00 37 00 39 00 32 00 33 00   ..4.E.D.7.9.2.3.
+                           41 00                                             A.
+             ------ String Descriptor 4 ------
+bLength                  : 0x1E (30 bytes)
+bDescriptorType          : 0x03 (String Descriptor)
+Language 0x0409          : "MPM27.00_B0016"
+Data (HexDump)           : 1E 03 4D 00 50 00 4D 00 32 00 37 00 2E 00 30 00   ..M.P.M.2.7...0.
+                           30 00 5F 00 42 00 30 00 30 00 31 00 36 00         0._.B.0.0.1.6.
