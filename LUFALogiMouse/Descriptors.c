@@ -122,14 +122,14 @@ const USB_Descriptor_HIDReport_Datatype_t PROGMEM KeyboardHIDReport[] = {
   HID_RI_END_COLLECTION(0)
 };
 
-// Generic HID Report Descriptor (Simplificado para 66 bytes - com IN e OUT)
+// Generic HID Report Descriptor (66 bytes - APENAS IN, sem OUT endpoint)
 const USB_Descriptor_HIDReport_Datatype_t PROGMEM GenericHIDReport[] = {
-  // Descriptor para comunicação bidirecional
+  // Descriptor simplificado - apenas INPUT (IN endpoint)
   0x06, 0x00, 0xFF,  // Usage Page (Vendor Defined)
   0x09, 0x01,        // Usage (unk)
   0xA1, 0x01,        // Collection (Application)
   
-  // Input Report (para receber dados do PC)
+  // Input Report (apenas para debug/status via IN endpoint)
   0x09, 0x02,        //   Usage (unk)
   0x15, 0x00,        //   Logical Minimum (0)
   0x26, 0xFF, 0x00,  //   Logical Maximum (255)
@@ -137,36 +137,11 @@ const USB_Descriptor_HIDReport_Datatype_t PROGMEM GenericHIDReport[] = {
   0x95, 0x40,        //   Report Count (64)
   0x81, 0x02,        //   Input (Data,Var,Abs)
   
-  // Output Report (para enviar dados ao PC)
-  0x09, 0x03,        //   Usage (unk)
-  0x15, 0x00,        //   Logical Minimum (0)
-  0x26, 0xFF, 0x00,  //   Logical Maximum (255)
-  0x75, 0x08,        //   Report Size (8)
-  0x95, 0x40,        //   Report Count (64)
-  0x91, 0x02,        //   Output (Data,Var,Abs)
-  
-  // Feature básico para completar 66 bytes
-  0x09, 0x04,        //   Usage (unk)
-  0x15, 0x00,        //   Logical Minimum (0)
-  0x25, 0x01,        //   Logical Maximum (1)
-  0x75, 0x01,        //   Report Size (1)
-  0x95, 0x08,        //   Report Count (8)
-  0xB1, 0x02,        //   Feature (Data,Var,Abs)
-  
-  0x09, 0x05,        //   Usage (unk)
-  0x15, 0x00,        //   Logical Minimum (0)
-  0x25, 0x0F,        //   Logical Maximum (15)
-  0x75, 0x04,        //   Report Size (4)
-  0x95, 0x01,        //   Report Count (1)
-  0xB1, 0x02,        //   Feature (Data,Var,Abs)
-  
-  0x09, 0x06,        //   Usage (unk)
-  0x75, 0x04,        //   Report Size (4)
-  0x95, 0x01,        //   Report Count (1)
-  0xB1, 0x01,        //   Feature (Cnst)
+  // IMPORTANTE: NÃO incluir Output Report
+  // LUFA HID recebe dados via control endpoint, não via OUT endpoint
   
   0xC0               // End Collection
-  // Total: 66 bytes exatos
+  // Total: 23 bytes (muito menor que antes)
 };
 
 // Device Descriptor - Cópia exata do Logitech C547
@@ -188,7 +163,7 @@ const USB_Descriptor_Device_t PROGMEM DeviceDescriptor = {
   .NumberOfConfigurations = FIXED_NUM_CONFIGURATIONS
 };
 
-// Configuration Descriptor - 3 interfaces como o original
+// Configuration Descriptor - 3 interfaces, MAS sem OUT endpoint na interface 2
 const USB_Descriptor_Configuration_t PROGMEM ConfigurationDescriptor = {
   .Config = {
     .Header                 = {.Size = sizeof(USB_Descriptor_Configuration_Header_t), .Type = DTYPE_Configuration},
@@ -258,12 +233,12 @@ const USB_Descriptor_Configuration_t PROGMEM ConfigurationDescriptor = {
     .PollingIntervalMS      = 0x01 // 1ms
   },
 
-  // Interface 2 - HID Genérico (para receber comandos) - COM 2 ENDPOINTS
+  // Interface 2 - HID Genérico (APENAS 1 ENDPOINT IN, sem OUT)
   .HID_GenericInterface = {
     .Header                 = {.Size = sizeof(USB_Descriptor_Interface_t), .Type = DTYPE_Interface},
     .InterfaceNumber        = INTERFACE_ID_Generic,
     .AlternateSetting       = 0x00,
-    .TotalEndpoints         = 2,  // 1 IN + 1 OUT endpoint
+    .TotalEndpoints         = 1,  // APENAS 1 endpoint (IN)
     .Class                  = HID_CSCP_HIDClass,
     .SubClass               = HID_CSCP_NonBootSubclass,
     .Protocol               = HID_CSCP_NonBootProtocol,
@@ -279,21 +254,17 @@ const USB_Descriptor_Configuration_t PROGMEM ConfigurationDescriptor = {
     .HIDReportLength        = sizeof(GenericHIDReport)
   },
 
+  // APENAS endpoint IN - sem endpoint OUT
   .HID_GenericEndpointIN = {
     .Header                 = {.Size = sizeof(USB_Descriptor_Endpoint_t), .Type = DTYPE_Endpoint},
     .EndpointAddress        = GENERIC_IN_EPADDR,
     .Attributes             = (EP_TYPE_INTERRUPT | ENDPOINT_ATTR_NO_SYNC | ENDPOINT_USAGE_DATA),
     .EndpointSize           = GENERIC_EPSIZE,
     .PollingIntervalMS      = 0x01 // 1ms
-  },
-
-  .HID_GenericEndpointOUT = {
-    .Header                 = {.Size = sizeof(USB_Descriptor_Endpoint_t), .Type = DTYPE_Endpoint},
-    .EndpointAddress        = GENERIC_OUT_EPADDR,
-    .Attributes             = (EP_TYPE_INTERRUPT | ENDPOINT_ATTR_NO_SYNC | ENDPOINT_USAGE_DATA),
-    .EndpointSize           = GENERIC_EPSIZE,
-    .PollingIntervalMS      = 0x01 // 1ms
   }
+
+  // IMPORTANTE: HID_GenericEndpointOUT removido!
+  // LUFA HID recebe dados via control endpoint
 };
 
 // String Descriptors
