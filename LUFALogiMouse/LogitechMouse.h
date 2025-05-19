@@ -14,10 +14,10 @@
 
 // Type Definitions
 
-// CORREÇÃO CRÍTICA: Usar estrutura compatível com HID Boot Protocol
+// CORREÇÃO DEFINITIVA: HID Boot Protocol usa SEMPRE int8_t para X e Y
 typedef struct {
   uint8_t buttons;    // Button bits: [0]Left [1]Right [2]Middle [3]Back [4]Forward [5-7]Reserved
-  int8_t x;           // X movement (-127 to +127) - BOOT PROTOCOL PADRÃO
+  int8_t x;           // X movement (-127 to +127) - BOOT PROTOCOL PADRÃO 
   int8_t y;           // Y movement (-127 to +127) - BOOT PROTOCOL PADRÃO  
   int8_t wheel;       // Vertical scroll wheel (-127 to +127)
 } __attribute__((packed)) MouseReport_t;
@@ -73,6 +73,17 @@ void EVENT_USB_Device_ControlRequest(void);
 void HID_Task(void);
 void sendMouseReport(MouseReport_t* mouseReport);
 void processGenericHIDData(uint8_t* buffer, uint16_t length);
+
+// Utility Functions
+void setMouseMovement(int8_t x, int8_t y);
+void setMouseButtons(uint8_t buttons);
+void setMouseWheel(int8_t wheel);
+void getMouseState(int8_t* x, int8_t* y, uint8_t* buttons, int8_t* wheel);
+
+// Debug Functions
+uint32_t getCommandsReceived(void);
+uint8_t getLastCommandType(void);
+uint8_t getCommunicationStatus(void);
 
 #ifdef __cplusplus
 }

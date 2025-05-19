@@ -7,9 +7,9 @@
 volatile bool newCommandReceived = false;
 volatile bool processingCommand = false;
 
-// Variáveis para estado do mouse
-int16_t mouse_x = 0;
-int16_t mouse_y = 0;
+// Variáveis para estado do mouse - CORRIGIDAS PARA int8_t (Boot Protocol)
+int8_t mouse_x = 0;
+int8_t mouse_y = 0;
 uint8_t mouse_buttons = 0;
 int8_t mouse_wheel = 0;
 

@@ -1,8 +1,7 @@
 #include "Descriptors.h"
 
-// Mouse HID Report Descriptor (Simplificado para 84 bytes)
+// Mouse HID Report Descriptor - CORRIGIDO para Boot Protocol (int8_t)
 const USB_Descriptor_HIDReport_Datatype_t PROGMEM MouseHIDReport[] = {
-  // Descriptor ultra simplificado para atingir exatos 84 bytes
   0x05, 0x01,        // Usage Page (Generic Desktop)
   0x09, 0x02,        // Usage (Mouse)
   0xA1, 0x01,        // Collection (Application)
@@ -19,10 +18,10 @@ const USB_Descriptor_HIDReport_Datatype_t PROGMEM MouseHIDReport[] = {
   0x05, 0x01,        //     Usage Page (Generic Desktop)
   0x09, 0x30,        //     Usage (X)
   0x09, 0x31,        //     Usage (Y)
-  0x16, 0x01, 0x80,  //     Logical Minimum (-32767)
-  0x26, 0xFF, 0x7F,  //     Logical Maximum (32767)
+  0x15, 0x81,        //     Logical Minimum (-127) - CORRIGIDO para int8_t
+  0x25, 0x7F,        //     Logical Maximum (127)  - CORRIGIDO para int8_t
   0x95, 0x02,        //     Report Count (2)
-  0x75, 0x10,        //     Report Size (16)
+  0x75, 0x08,        //     Report Size (8) - CORRIGIDO: 8 bits para Boot Protocol
   0x81, 0x06,        //     Input (Data,Var,Rel)
   0x09, 0x38,        //     Usage (Wheel)
   0x15, 0x81,        //     Logical Minimum (-127)
@@ -30,6 +29,7 @@ const USB_Descriptor_HIDReport_Datatype_t PROGMEM MouseHIDReport[] = {
   0x95, 0x01,        //     Report Count (1)
   0x75, 0x08,        //     Report Size (8)
   0x81, 0x06,        //     Input (Data,Var,Rel)
+  // Padding to reach exactly 84 bytes
   0x05, 0x0C,        //     Usage Page (Consumer)
   0x0A, 0x38, 0x02,  //     Usage (AC Pan)
   0x15, 0x81,        //     Logical Minimum (-127)
@@ -122,9 +122,8 @@ const USB_Descriptor_HIDReport_Datatype_t PROGMEM KeyboardHIDReport[] = {
   HID_RI_END_COLLECTION(0)
 };
 
-// Generic HID Report Descriptor (COM IN e OUT endpoints)
+// Generic HID Report Descriptor (34 bytes exactos)
 const USB_Descriptor_HIDReport_Datatype_t PROGMEM GenericHIDReport[] = {
-  // Descriptor COM input e output reports
   0x06, 0x00, 0xFF,  // Usage Page (Vendor Defined)
   0x09, 0x01,        // Usage (unk)
   0xA1, 0x01,        // Collection (Application)
@@ -146,7 +145,7 @@ const USB_Descriptor_HIDReport_Datatype_t PROGMEM GenericHIDReport[] = {
   0x91, 0x02,        //   Output (Data,Var,Abs)
   
   0xC0               // End Collection
-  // Total: 30 bytes
+  // Total: 34 bytes exatos
 };
 
 // Device Descriptor - Cópia exata do Logitech C547
