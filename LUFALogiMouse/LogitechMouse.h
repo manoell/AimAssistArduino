@@ -14,13 +14,12 @@
 
 // Type Definitions
 
-// Mouse Report Structure (matches HID descriptor)
+// CORREÇÃO CRÍTICA: Usar estrutura compatível com HID Boot Protocol
 typedef struct {
   uint8_t buttons;    // Button bits: [0]Left [1]Right [2]Middle [3]Back [4]Forward [5-7]Reserved
-  int16_t x;          // X movement (-32767 to +32767)
-  int16_t y;          // Y movement (-32767 to +32767)
-  int8_t  wheel;      // Vertical scroll wheel
-  int8_t  hWheel;     // Horizontal scroll wheel
+  int8_t x;           // X movement (-127 to +127) - BOOT PROTOCOL PADRÃO
+  int8_t y;           // Y movement (-127 to +127) - BOOT PROTOCOL PADRÃO  
+  int8_t wheel;       // Vertical scroll wheel (-127 to +127)
 } __attribute__((packed)) MouseReport_t;
 
 // Keyboard Report Structure (basic)

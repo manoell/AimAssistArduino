@@ -48,7 +48,7 @@ void SetupHardware(void) {
     last_command_type = 0;
     communication_status = 0xFF; // Indica que está pronto
     
-    // Configure LED pin for debug
+    // Configure LED pin for debug (Pin 13 = PC7)
     DDRC |= (1 << 7);   // Pin 13 as output
     PORTC &= ~(1 << 7); // LED off initially
 }
@@ -75,13 +75,22 @@ void EVENT_USB_Device_ConfigurationChanged(void) {
     // Configure Generic HID IN Endpoint
     ConfigSuccess &= Endpoint_ConfigureEndpoint(GENERIC_IN_EPADDR, EP_TYPE_INTERRUPT, GENERIC_EPSIZE, 1);
     
-    // Configure Generic HID OUT Endpoint (ADICIONADO)
+    // Configure Generic HID OUT Endpoint (ENDPOINT 3 OUT)
     ConfigSuccess &= Endpoint_ConfigureEndpoint(GENERIC_OUT_EPADDR, EP_TYPE_INTERRUPT, GENERIC_EPSIZE, 1);
     
     if (ConfigSuccess) {
-        communication_status = 0x02; // Configurado
+        communication_status = 0x02; // Configurado com sucesso
+        // Piscar LED 2 vezes para indicar configuração bem-sucedida
+        for (int i = 0; i < 2; i++) {
+            PORTC |= (1 << 7);
+            _delay_ms(100);
+            PORTC &= ~(1 << 7);
+            _delay_ms(100);
+        }
     } else {
         communication_status = 0xEE; // Erro de configuração
+        // LED permanece ligado em caso de erro
+        PORTC |= (1 << 7);
     }
 }
 
@@ -90,9 +99,6 @@ void processGenericHIDData(uint8_t* buffer, uint16_t length) {
     if (length < 1) {
         return;
     }
-    
-    // Debug LED - indica processamento
-    PORTC |= (1 << 7);
     
     // Extrair comando
     uint8_t command_type = buffer[0];
@@ -112,21 +118,26 @@ void processGenericHIDData(uint8_t* buffer, uint16_t length) {
             {
                 if (length >= 7) {
                     // Formato completo: [cmd][x_low][x_high][y_low][y_high][btn][wheel]
-                    int16_t delta_x = (int16_t)(buffer[1] | (buffer[2] << 8));
-                    int16_t delta_y = (int16_t)(buffer[3] | (buffer[4] << 8));
+                    int16_t delta_x_16 = (int16_t)(buffer[1] | (buffer[2] << 8));
+                    int16_t delta_y_16 = (int16_t)(buffer[3] | (buffer[4] << 8));
                     
-                    // IMPORTANTE: Manter como int16 aqui - conversão será feita no HID_Task()
-                    mouse_x = delta_x;
-                    mouse_y = delta_y;
+                    // CORREÇÃO CRÍTICA: LIMITAR A 8-BIT PARA BOOT PROTOCOL
+                    if (delta_x_16 > 127) mouse_x = 127;
+                    else if (delta_x_16 < -127) mouse_x = -127;
+                    else mouse_x = (int16_t)delta_x_16;
+                    
+                    if (delta_y_16 > 127) mouse_y = 127;
+                    else if (delta_y_16 < -127) mouse_y = -127;
+                    else mouse_y = (int16_t)delta_y_16;
                     
                     if (length > 5) mouse_buttons = buffer[5];
                     if (length > 6) mouse_wheel = (int8_t)buffer[6];
                     
                     newCommandReceived = true;
-                    commands_received++; // CORREÇÃO: Incrementar contador
+                    commands_received++;
                 }
                 else if (length >= 3) {
-                    // Formato simples: [cmd][x][y]
+                    // Formato simples: [cmd][x][y] 
                     int8_t delta_x = (int8_t)buffer[1];
                     int8_t delta_y = (int8_t)buffer[2];
                     
@@ -134,7 +145,7 @@ void processGenericHIDData(uint8_t* buffer, uint16_t length) {
                     mouse_y = (int16_t)delta_y;
                     
                     newCommandReceived = true;
-                    commands_received++; // CORREÇÃO: Incrementar contador
+                    commands_received++;
                 }
             }
             break;
@@ -144,7 +155,7 @@ void processGenericHIDData(uint8_t* buffer, uint16_t length) {
                 if (length >= 2) {
                     mouse_buttons = buffer[1];
                     newCommandReceived = true;
-                    commands_received++; // CORREÇÃO: Incrementar contador
+                    commands_received++;
                 }
             }
             break;
@@ -154,7 +165,7 @@ void processGenericHIDData(uint8_t* buffer, uint16_t length) {
                 if (length >= 2) {
                     mouse_wheel = (int8_t)buffer[1];
                     newCommandReceived = true;
-                    commands_received++; // CORREÇÃO: Incrementar contador
+                    commands_received++;
                 }
             }
             break;
@@ -166,7 +177,7 @@ void processGenericHIDData(uint8_t* buffer, uint16_t length) {
                 mouse_buttons = 0;
                 mouse_wheel = 0;
                 newCommandReceived = true;
-                commands_received++; // CORREÇÃO: Incrementar contador
+                commands_received++;
             }
             break;
             
@@ -176,13 +187,10 @@ void processGenericHIDData(uint8_t* buffer, uint16_t length) {
                 mouse_x = (int16_t)((int8_t)buffer[1]);
                 mouse_y = (int16_t)((int8_t)buffer[2]);
                 newCommandReceived = true;
-                commands_received++; // CORREÇÃO: Incrementar contador
+                commands_received++;
             }
             break;
     }
-    
-    // Apagar LED debug
-    PORTC &= ~(1 << 7);
 }
 
 // Control Request (mantido para compatibilidade)
@@ -259,7 +267,7 @@ void EVENT_USB_Device_ControlRequest(void) {
     }
 }
 
-// HID Task - CORRIGIDO COM ENDPOINT OUT
+// HID Task - VERSÃO COMPLETAMENTE CORRIGIDA
 void HID_Task(void) {
     // Device must be connected and configured
     if (USB_DeviceState != DEVICE_STATE_Configured)
@@ -271,27 +279,14 @@ void HID_Task(void) {
         // Atualizar relatório do mouse
         CurrentMouseReport.buttons = mouse_buttons;
         
-        // CORREÇÃO: Converter int16 para int8 (limite HID Report)
-        if (mouse_x > 127) {
-            CurrentMouseReport.x = 127;
-        } else if (mouse_x < -127) {
-            CurrentMouseReport.x = -127;
-        } else {
-            CurrentMouseReport.x = (int8_t)mouse_x;
-        }
-        
-        if (mouse_y > 127) {
-            CurrentMouseReport.y = 127;
-        } else if (mouse_y < -127) {
-            CurrentMouseReport.y = -127;
-        } else {
-            CurrentMouseReport.y = (int8_t)mouse_y;
-        }
-        
+        // CORREÇÃO CRÍTICA: MANTER VALORES 16-BIT COMPLETOS!
+        // NÃO LIMITAR A 8-BIT COMO NO CÓDIGO ORIGINAL
+        CurrentMouseReport.x = mouse_x;  // int16_t completo!
+        CurrentMouseReport.y = mouse_y;  // int16_t completo!
         CurrentMouseReport.wheel = mouse_wheel;
-        CurrentMouseReport.hWheel = 0;
+        //CurrentMouseReport.hWheel = 0;
         
-        // Enviar relatório
+        // Enviar relatório (6 bytes: buttons(1) + x(2) + y(2) + wheel(1) + hWheel(1))
         Endpoint_Write_Stream_LE(&CurrentMouseReport, sizeof(MouseReport_t), NULL);
         Endpoint_ClearIN();
         
@@ -326,24 +321,45 @@ void HID_Task(void) {
         Endpoint_ClearIN();
     }
     
-    // Handle Generic HID OUT (RECEBER comandos) - ADICIONADO
+    // Handle Generic HID OUT (RECEBER comandos) - VERSÃO COMPLETAMENTE CORRIGIDA
     Endpoint_SelectEndpoint(GENERIC_OUT_EPADDR);
     if (Endpoint_IsOUTReceived()) {
+        // LED ON para indicar recepção de dados
+        PORTC |= (1 << 7);
+        
         // Buffer para receber dados
         uint8_t TempBuffer[64];
         memset(TempBuffer, 0, sizeof(TempBuffer));
         
-        // Ler dados do endpoint OUT
-        uint16_t BytesReceived = Endpoint_Read_Stream_LE(TempBuffer, sizeof(TempBuffer), NULL);
+        // MÉTODO CORRIGIDO: Ler byte por byte
+        uint16_t BytesReceived = 0;
         
-        // Limpar endpoint
+        // Verifica se há dados para ler
+        if (Endpoint_IsReadWriteAllowed()) {
+            // Lê todos os bytes disponíveis
+            while (Endpoint_IsReadWriteAllowed() && BytesReceived < 64) {
+                TempBuffer[BytesReceived] = Endpoint_Read_8();
+                BytesReceived++;
+            }
+        }
+        
+        // SEMPRE limpar endpoint OUT
         Endpoint_ClearOUT();
         
-        // Processar comandos recebidos
+        // Processar dados se recebidos
         if (BytesReceived > 0) {
-            // Processar dados
+            // Piscar LED para indicar processamento
+            for (int i = 0; i < 3; i++) {
+                PORTC ^= (1 << 7);  // Toggle LED
+                _delay_ms(50);
+            }
+            
+            // Processar comandos recebidos
             processGenericHIDData(TempBuffer, BytesReceived);
         }
+        
+        // LED OFF após processamento
+        PORTC &= ~(1 << 7);
     }
 }
 

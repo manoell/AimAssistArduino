@@ -22,11 +22,11 @@ enum StringDescriptors_t {
   STRING_ID_Configuration = 4, // "MPR04.02_B0009"
 };
 
-// Endpoint Addresses - INCLUINDO OUT para Interface 2
+// CORREÇÃO CRÍTICA: Endpoints em ordem sequencial
 #define MOUSE_IN_EPADDR    (ENDPOINT_DIR_IN  | 1)  // Endpoint 1 IN
 #define KEYBOARD_IN_EPADDR (ENDPOINT_DIR_IN  | 2)  // Endpoint 2 IN  
 #define GENERIC_IN_EPADDR  (ENDPOINT_DIR_IN  | 3)  // Endpoint 3 IN
-#define GENERIC_OUT_EPADDR (ENDPOINT_DIR_OUT | 4)  // Endpoint 4 OUT
+#define GENERIC_OUT_EPADDR (ENDPOINT_DIR_OUT | 3)  // Endpoint 3 OUT (MESMO NÚMERO!)
 
 // Endpoint Sizes (64 bytes como o original)
 #define MOUSE_EPSIZE       64
@@ -53,11 +53,11 @@ typedef struct {
   USB_HID_Descriptor_HID_t              HID_KeyboardHID;
   USB_Descriptor_Endpoint_t             HID_KeyboardEndpoint;
 
-  // Generic HID Interface (COM endpoint IN e OUT)
+  // Generic HID Interface (COM endpoint IN e OUT - MESMO NÚMERO!)
   USB_Descriptor_Interface_t            HID_GenericInterface;
   USB_HID_Descriptor_HID_t              HID_GenericHID;
-  USB_Descriptor_Endpoint_t             HID_GenericEndpointIN;   // Endpoint IN
-  USB_Descriptor_Endpoint_t             HID_GenericEndpointOUT;  // Endpoint OUT
+  USB_Descriptor_Endpoint_t             HID_GenericEndpointIN;   // Endpoint 3 IN
+  USB_Descriptor_Endpoint_t             HID_GenericEndpointOUT;  // Endpoint 3 OUT
 } USB_Descriptor_Configuration_t;
 
 // HID Report Descriptors (external declarations)
