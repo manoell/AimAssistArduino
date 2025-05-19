@@ -4,385 +4,267 @@ import struct
 import time
 import sys
 
-def find_and_test_arduino():
-    """
-    Encontra e testa o dispositivo Arduino diretamente
-    """
-    print("🔍 Procurando Arduino (VID: 046D, PID: C547)...")
-    
+def find_arduino():
+    """Encontra o Arduino"""
+    print("🔍 Procurando Arduino...")
     device = usb.core.find(idVendor=0x046D, idProduct=0xC547)
     if device is None:
         print("❌ Arduino não encontrado!")
-        print("💡 Verifique:")
-        print("   - Arduino está conectado")
-        print("   - Firmware LUFA carregado")
-        print("   - Aparece como 'Logitech USB Receiver' no Gerenciador de Dispositivos")
         return None
-    
     print("✅ Arduino encontrado!")
-    print(f"   Produto: {device.manufacturer} {device.product}")
-    print(f"   Configurações: {device.bNumConfigurations}")
-    
     return device
 
-def test_driver_access(device):
-    """
-    Testa se conseguimos acessar a Interface 2 com WinUSB
-    """
-    print("\n🔧 Testando acesso à Interface 2...")
+def setup_raw_hid(device):
+    """Configura Raw HID"""
+    print("🔧 Configurando Raw HID...")
     
-    # Primeiro, vamos verificar se o dispositivo está configurado
     try:
-        # Verificar se há driver kernel ativo na interface 2
-        if device.is_kernel_driver_active(2):
-            print("📌 Driver kernel detectado na Interface 2, tentando desanexar...")
-            try:
+        # Desanexar driver se necessário
+        try:
+            if device.is_kernel_driver_active(2):
                 device.detach_kernel_driver(2)
-                print("✅ Driver kernel desanexado")
-            except Exception as e:
-                print(f"⚠️  Não foi possível desanexar driver kernel: {e}")
-    except NotImplementedError:
-        # Em Windows, is_kernel_driver_active pode não estar implementado
-        print("📌 Checagem de driver kernel não suportada no Windows")
-    except Exception as e:
-        print(f"📌 Verificação de driver: {e}")
-    
-    # Tentar configurar o dispositivo
-    try:
+        except:
+            pass
+        
+        # Configurar
         device.set_configuration()
-        print("✅ Dispositivo configurado com sucesso")
-    except usb.core.USBError as e:
-        if "busy" in str(e).lower() or "access" in str(e).lower():
-            print("❌ ERRO: Driver HID ainda está interceptando!")
-            print("💡 SOLUÇÃO:")
-            print("   1. Desconecte e reconecte o Arduino")
-            print("   2. Execute este script novamente")
-            print("   3. Se persistir, reinstale o driver WinUSB no Zadig")
-            return False
-        else:
-            print(f"❌ Erro de configuração: {e}")
-            return False
-    
-    # Tentar fazer claim da interface 2
-    try:
         usb.util.claim_interface(device, 2)
-        print("✅ Interface 2 claimed com sucesso!")
-        print("🎉 Driver WinUSB está funcionando corretamente!")
-        return True
-    except usb.core.USBError as e:
-        if "busy" in str(e).lower() or "resource" in str(e).lower():
-            print("❌ Interface 2 está sendo usada por outro driver!")
-            print("💡 Execute: reconecte o Arduino e tente novamente")
-            return False
-        else:
-            print(f"❌ Erro ao fazer claim da interface: {e}")
-            return False
-
-def find_endpoints(device):
-    """
-    Encontra endpoints IN e OUT da Interface 2
-    """
-    print("\n🔍 Localizando endpoints...")
-    
-    try:
+        
+        # Encontrar endpoints
         cfg = device.get_active_configuration()
-        interface = cfg[(2, 0)]  # Interface 2, alternate setting 0
+        interface_cfg = cfg[(2, 0)]
         
         ep_out = None
         ep_in = None
         
-        for endpoint in interface:
+        for endpoint in interface_cfg:
             addr = endpoint.bEndpointAddress
-            direction = usb.util.endpoint_direction(addr)
-            
-            if direction == usb.util.ENDPOINT_OUT:
+            if usb.util.endpoint_direction(addr) == usb.util.ENDPOINT_OUT:
                 ep_out = endpoint
-                print(f"✅ Endpoint OUT encontrado: 0x{addr:02X}")
-            elif direction == usb.util.ENDPOINT_IN:
+                print(f"✅ Endpoint OUT: 0x{addr:02X}")
+            elif usb.util.endpoint_direction(addr) == usb.util.ENDPOINT_IN:
                 ep_in = endpoint
-                print(f"✅ Endpoint IN encontrado: 0x{addr:02X}")
-        
-        if ep_out is None:
-            print("❌ Endpoint OUT não encontrado!")
-            print("💡 Verifique o firmware - deve ter Interface 2 com endpoints IN/OUT")
-            return None, None
-        
-        if ep_in is None:
-            print("⚠️  Endpoint IN não encontrado (opcional)")
+                print(f"✅ Endpoint IN: 0x{addr:02X}")
         
         return ep_in, ep_out
-    
+        
     except Exception as e:
-        print(f"❌ Erro ao encontrar endpoints: {e}")
+        print(f"❌ Erro: {e}")
         return None, None
 
-def create_movement_command(x, y):
+def create_movement_command_CORRIGIDO(x, y):
     """
-    Cria comando de movimento no formato correto para o firmware
+    COMANDO CORRIGIDO - Formato exato que o Arduino espera
     
-    Formato: [0x01][x_low][x_high][y_low][y_high][buttons][wheel][...padding...]
-    Total: 64 bytes
+    Baseado no firmware: [cmd][x_low][x_high][y_low][y_high][btn][wheel][padding...]
     """
-    def int16_to_bytes(value):
-        # Converter int16 para dois bytes (little endian)
-        # Garantir que está no range -32768 a 32767
-        if value > 32767:
-            value = 32767
-        elif value < -32768:
-            value = -32768
-        
-        if value < 0:
-            value = 65536 + value  # Complemento de 2 para unsigned
-        
-        return [value & 0xFF, (value >> 8) & 0xFF]
+    # DEBUG: Mostrar o que estamos enviando
+    print(f"🔧 Criando movimento: X={x}, Y={y}")
     
-    x_bytes = int16_to_bytes(x)
-    y_bytes = int16_to_bytes(y)
-    
-    # Criar comando completo de 64 bytes
     command = bytearray(64)
-    command[0] = 0x01           # Tipo: movimento do mouse
-    command[1] = x_bytes[0]     # X low byte
-    command[2] = x_bytes[1]     # X high byte  
-    command[3] = y_bytes[0]     # Y low byte
-    command[4] = y_bytes[1]     # Y high byte
-    command[5] = 0              # Buttons (não usado neste teste)
-    command[6] = 0              # Wheel (não usado neste teste)
-    # bytes 7-63 ficam em zero (padding)
+    
+    # Byte 0: Tipo de comando
+    command[0] = 0x01  # Comando de movimento
+    
+    # Bytes 1-2: X (16-bit little endian)
+    if x < 0:
+        x_unsigned = (1 << 16) + x  # Complemento de 2
+    else:
+        x_unsigned = x
+    command[1] = x_unsigned & 0xFF       # X low byte
+    command[2] = (x_unsigned >> 8) & 0xFF # X high byte
+    
+    # Bytes 3-4: Y (16-bit little endian)  
+    if y < 0:
+        y_unsigned = (1 << 16) + y  # Complemento de 2
+    else:
+        y_unsigned = y
+    command[3] = y_unsigned & 0xFF       # Y low byte
+    command[4] = (y_unsigned >> 8) & 0xFF # Y high byte
+    
+    # Byte 5: Botões (0 = nenhum botão)
+    command[5] = 0
+    
+    # Byte 6: Wheel (0 = sem scroll)
+    command[6] = 0
+    
+    # Bytes 7-63: Padding (zeros)
+    # Já são zero por padrão no bytearray
+    
+    # DEBUG: Mostrar primeiros 8 bytes
+    print(f"📦 Comando: {[hex(b) for b in command[:8]]}")
     
     return bytes(command)
 
-def read_status(ep_in):
+def test_MOVIMENTO_SIMPLES(ep_out):
     """
-    Tenta ler status do endpoint IN
+    Teste focado APENAS no movimento do cursor
     """
-    if ep_in is None:
-        return None
-    
-    try:
-        status_data = ep_in.read(64, timeout=500)
-        if len(status_data) >= 8 and status_data[0] == 0xAA:
-            return {
-                'signature': status_data[0],
-                'comm_status': status_data[1],
-                'last_command': status_data[2],
-                'commands_received': status_data[3] | (status_data[4] << 8),
-                'mouse_x': status_data[5],
-                'mouse_y': status_data[6],
-                'mouse_buttons': status_data[7]
-            }
-    except Exception as e:
-        print(f"⚠️  Não foi possível ler status: {e}")
-    
-    return None
-
-def test_movements(ep_in, ep_out):
-    """
-    Executa bateria de testes de movimento
-    """
-    print("\n🧪 EXECUTANDO TESTES DE MOVIMENTO")
+    print("\n🎯 TESTE FOCADO - MOVIMENTO DO CURSOR")
     print("="*50)
-    print("👀 OBSERVE:")
-    print("   • LED do Arduino deve piscar 3 vezes a cada comando")
-    print("   • Cursor do mouse deve se mover na tela")
-    print("="*50)
+    print("👀 OBSERVE O CURSOR NA TELA!")
     
     movements = [
-        (50, 0, "→ Direita pequena"),
-        (-50, 0, "← Esquerda pequena"),
-        (0, 50, "↓ Baixo pequeno"),
-        (0, -50, "↑ Cima pequeno"),
-        (100, 50, "↘ Diagonal direita-baixo"),
-        (-100, -50, "↖ Diagonal esquerda-cima"),
-        (200, 0, "→ Direita grande"),
-        (0, 200, "↓ Baixo grande"),
+        (50, 0, "→ DIREITA"),
+        (-50, 0, "← ESQUERDA"),
+        (0, 50, "↓ BAIXO"),
+        (0, -50, "↑ CIMA"),
+        (30, 30, "↘ DIAGONAL"),
     ]
     
-    success_count = 0
-    
-    for i, (x, y, description) in enumerate(movements, 1):
-        print(f"\n📤 Teste {i}/{len(movements)}: {description}")
-        print(f"   Comando: X={x:+4d}, Y={y:+4d}")
+    for x, y, desc in movements:
+        print(f"\n📤 {desc}: ({x:+3d}, {y:+3d})")
+        
+        # Criar comando corrigido
+        cmd = create_movement_command_CORRIGIDO(x, y)
         
         try:
-            # Criar e enviar comando
-            command = create_movement_command(x, y)
-            bytes_sent = ep_out.write(command, timeout=2000)
+            # Enviar com timeout baixo
+            bytes_sent = ep_out.write(cmd, timeout=100)
+            print(f"✅ Enviado: {bytes_sent} bytes")
             
-            if bytes_sent == 64:
-                print(f"   ✅ Comando enviado ({bytes_sent} bytes)")
-                success_count += 1
-                
-                # Aguardar processamento
-                time.sleep(0.5)
-                
-                # Tentar ler status se possível
-                status = read_status(ep_in)
-                if status:
-                    print(f"   📊 Status: comandos={status['commands_received']}, last={status['last_command']:02X}")
-                
-                # Pausa entre comandos
-                time.sleep(0.3)
+            # PAUSA MAIOR para ver o movimento
+            print("⏳ Aguardando movimento...")
+            time.sleep(1.0)
+            
+            # Perguntar ao usuário
+            moved = input("❓ O cursor se moveu? (s/n): ").lower().strip()
+            if moved == 's':
+                print("🎉 SUCESSO! Movimento detectado!")
             else:
-                print(f"   ⚠️  Bytes enviados incorretos: {bytes_sent}")
-        
-        except usb.core.USBTimeoutError:
-            print("   ❌ TIMEOUT - comando não foi aceito")
+                print("❌ Movimento não detectado")
+                
         except Exception as e:
-            print(f"   ❌ Erro: {e}")
-    
-    print(f"\n📊 RESULTADO FINAL: {success_count}/{len(movements)} comandos enviados")
-    
-    if success_count == len(movements):
-        print("🎉 TODOS OS COMANDOS FORAM ENVIADOS COM SUCESSO!")
-        print("\n❓ O cursor se moveu na tela?")
-        response = input("   Resposta (s/n): ").lower().strip()
+            print(f"❌ Erro: {e}")
         
-        if response == 's':
-            print("✅ COMUNICAÇÃO FUNCIONANDO PERFEITAMENTE!")
-            return True
+        time.sleep(0.5)
+
+def test_RESET_E_STATUS(ep_in, ep_out):
+    """
+    Testa reset e leitura de status
+    """
+    print("\n🔄 TESTE RESET E STATUS")
+    print("="*30)
+    
+    # Enviar reset
+    reset_cmd = bytearray(64)
+    reset_cmd[0] = 0x04  # Comando de reset
+    
+    try:
+        ep_out.write(reset_cmd, timeout=100)
+        print("✅ Reset enviado")
+        time.sleep(0.2)
+    except Exception as e:
+        print(f"❌ Erro no reset: {e}")
+    
+    # Tentar ler status
+    try:
+        data = ep_in.read(64, timeout=500)
+        if len(data) >= 4:
+            print(f"📊 Status recebido: {data[:8].hex()}")
+            if data[0] == 0xAA:
+                commands = data[3] | (data[4] << 8) if len(data) > 4 else data[3]
+                print(f"📈 Comandos processados: {commands}")
+            else:
+                print("⚠️ Formato de status desconhecido")
         else:
-            print("❌ Comandos enviados mas cursor não se moveu")
-            print("💡 Possível problema no firmware (processamento dos dados)")
-            return False
-    else:
-        print("❌ FALHAS NA COMUNICAÇÃO")
-        return False
+            print("📊 Status vazio")
+    except Exception as e:
+        print(f"⚠️ Não foi possível ler status: {e}")
 
-def interactive_test(ep_in, ep_out):
+def test_MOVIMENTO_CONTINUO(ep_out):
     """
-    Teste interativo para controle manual
+    Movimento contínuo para verificar responsividade
     """
-    print("\n🎮 TESTE INTERATIVO DE MOVIMENTO")
-    print("="*50)
-    print("Controles:")
-    print("  W = Cima    A = Esquerda")
-    print("  S = Baixo   D = Direita")
-    print("  Q = Sair")
-    print("\nPressione uma tecla...")
+    print("\n🌀 TESTE MOVIMENTO CONTÍNUO")
+    print("="*40)
+    print("🔥 Movimento contínuo por 3 segundos...")
+    print("👀 OBSERVE se o cursor se move em círculo!")
+    
+    import math
     
     try:
-        import msvcrt
+        angle = 0
+        start_time = time.time()
+        count = 0
         
-        step = 30  # Pixels por movimento
-        
-        while True:
-            if msvcrt.kbhit():
-                key = msvcrt.getch().decode('utf-8').lower()
-                
-                x, y = 0, 0
-                description = ""
-                
-                if key == 'w':
-                    y = -step
-                    description = "⬆️ Cima"
-                elif key == 's':
-                    y = step
-                    description = "⬇️ Baixo"
-                elif key == 'a':
-                    x = -step
-                    description = "⬅️ Esquerda"
-                elif key == 'd':
-                    x = step
-                    description = "➡️ Direita"
-                elif key == 'q':
-                    print("🏁 Saindo do teste interativo...")
-                    break
-                else:
-                    print(f"❓ Tecla '{key}' não reconhecida")
-                    continue
-                
-                # Enviar comando
-                print(f"{description} (X:{x:+3d}, Y:{y:+3d})", end=" ")
-                try:
-                    command = create_movement_command(x, y)
-                    ep_out.write(command, timeout=1000)
-                    print("✅")
-                except Exception as e:
-                    print(f"❌ {e}")
+        while time.time() - start_time < 3.0:
+            # Movimento circular
+            x = int(20 * math.cos(angle))
+            y = int(20 * math.sin(angle))
             
-            time.sleep(0.01)
-    
-    except ImportError:
-        print("⚠️  Módulo msvcrt não disponível - teste interativo não suportado")
-    except KeyboardInterrupt:
-        print("\n🛑 Teste interativo cancelado")
-
-def cleanup(device):
-    """
-    Limpa recursos USB
-    """
-    try:
-        usb.util.release_interface(device, 2)
-        usb.util.dispose_resources(device)
-        print("🧹 Recursos USB liberados")
-    except:
-        pass
+            cmd = create_movement_command_CORRIGIDO(x, y)
+            ep_out.write(cmd, timeout=50)
+            
+            angle += 0.3
+            count += 1
+            time.sleep(0.02)  # 50 Hz
+        
+        print(f"✅ Enviados {count} comandos")
+        moved = input("❓ O cursor se moveu em círculo? (s/n): ").lower().strip()
+        return moved == 's'
+        
+    except Exception as e:
+        print(f"❌ Erro: {e}")
+        return False
 
 def main():
-    """
-    Função principal
-    """
-    print("🚀 TESTE DEFINITIVO - COMUNICAÇÃO HID")
+    """Teste principal focado no movimento"""
+    print("🚀 TESTE DIRECIONADO - MOVIMENTO DO CURSOR")
     print("="*60)
-    print("Verificando se comunicação está funcionando após instalação do WinUSB...")
     
-    # 1. Encontrar dispositivo
-    device = find_and_test_arduino()
-    if device is None:
-        return False
+    # 1. Conectar
+    device = find_arduino()
+    if not device:
+        return
     
-    # 2. Testar acesso do driver
-    if not test_driver_access(device):
-        cleanup(device)
-        return False
+    # 2. Configurar Raw HID
+    ep_in, ep_out = setup_raw_hid(device)
+    if not ep_out:
+        return
     
-    # 3. Encontrar endpoints
-    ep_in, ep_out = find_endpoints(device)
-    if ep_out is None:
-        cleanup(device)
-        return False
+    print("\n" + "="*60)
     
-    # 4. Testar movimentos
-    success = test_movements(ep_in, ep_out)
-    
-    if success:
-        # 5. Teste interativo (opcional)
-        response = input("\n🎮 Executar teste interativo? (s/n): ").lower().strip()
-        if response == 's':
-            interactive_test(ep_in, ep_out)
-    
-    # 6. Cleanup
-    cleanup(device)
-    
-    if success:
-        print("\n🎉 SUCESSO TOTAL!")
-        print("✅ Comunicação HID funcionando perfeitamente")
-        print("✅ Cursor respondendo aos comandos")
-        print("✅ Pronto para integrar no projeto principal")
-    else:
-        print("\n❌ PROBLEMAS DETECTADOS")
-        print("💡 Verifique:")
-        print("   1. Firmware carregado corretamente")
-        print("   2. LED pisca durante os comandos")
-        print("   3. Interfaces corretas no Gerenciador de Dispositivos")
-    
-    return success
+    try:
+        # 3. Teste de reset/status
+        test_RESET_E_STATUS(ep_in, ep_out)
+        
+        # 4. Teste de movimento simples (PRINCIPAL)
+        test_MOVIMENTO_SIMPLES(ep_out)
+        
+        # 5. Teste contínuo
+        continous_success = test_MOVIMENTO_CONTINUO(ep_out)
+        
+        # Resultado final
+        print("\n" + "="*60)
+        print("🎯 RESULTADO FINAL")
+        print("="*60)
+        
+        if continous_success:
+            print("🏆 SUCESSO! Comunicação Raw HID funcionando!")
+            print("✅ Cursor respondendo aos comandos")
+            print("✅ Pronto para integrar no projeto principal!")
+        else:
+            print("❌ PROBLEMA: Comandos enviados mas cursor não se move")
+            print("💡 Possíveis causes:")
+            print("   1. Firmware não processando comandos corretamente")
+            print("   2. Formato de comando incorreto")
+            print("   3. Arduino não enviando para interface HID")
+        
+    finally:
+        # Cleanup
+        try:
+            usb.util.release_interface(device, 2)
+            usb.util.dispose_resources(device)
+        except:
+            pass
 
 if __name__ == "__main__":
     try:
-        success = main()
-        if success:
-            print("\n🔥 COMUNICAÇÃO CONFIRMADA! 🔥")
-            print("Agora podemos integrar no projeto principal.")
-        else:
-            print("\n🔧 Ainda há problemas a resolver...")
-            
+        main()
     except KeyboardInterrupt:
-        print("\n⚠️ Teste interrompido pelo usuário")
+        print("\n⚠️ Teste cancelado")
     except Exception as e:
-        print(f"\n💥 Erro crítico: {e}")
-        import traceback
-        traceback.print_exc()
+        print(f"\n💥 Erro: {e}")
     
     input("\n📌 Pressione Enter para sair...")

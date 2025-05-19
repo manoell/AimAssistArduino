@@ -176,15 +176,11 @@ void processGenericHIDData(uint8_t* buffer, uint16_t length) {
     
     // Piscar LED para indicar comando recebido
     PORTC |= (1 << 7);
-    _delay_ms(30);
+    _delay_ms(10);
     PORTC &= ~(1 << 7);
-    _delay_ms(30);
+    _delay_ms(10);
     PORTC |= (1 << 7);
-    _delay_ms(30);
-    PORTC &= ~(1 << 7);
-    _delay_ms(30);
-    PORTC |= (1 << 7);
-    _delay_ms(30);
+    _delay_ms(10);
     PORTC &= ~(1 << 7);
     
     // PROCESSAR COMANDOS
@@ -347,79 +343,107 @@ void EVENT_USB_Device_ControlRequest(void) {
     }
 }
 
-// HID Task - VERSÃO FINAL CORRIGIDA COM FORÇAR ENVIO
+// HID Task - VERSÃO ULTRA-OTIMIZADA PARA LATÊNCIA MÍNIMA
 void HID_Task(void) {
     // Device must be connected and configured
     if (USB_DeviceState != DEVICE_STATE_Configured)
         return;
 
-    // 1. PROCESSAR dados do endpoint OUT (COMANDOS)
+    // =============================================================
+    // 1. PRIORIDADE MÁXIMA: Processar Endpoint OUT (comandos)
+    // =============================================================
     Endpoint_SelectEndpoint(GENERIC_OUT_EPADDR);
     if (Endpoint_IsOUTReceived()) {
-        // Buffer para receber dados
-        uint8_t ReceivedData[64];
-        memset(ReceivedData, 0, sizeof(ReceivedData));
-        
-        // Ler dados byte por byte
+        // Buffer de recebimento
+        uint8_t ReceivedData[GENERIC_EPSIZE];
         uint16_t BytesReceived = 0;
-        while (Endpoint_IsReadWriteAllowed() && BytesReceived < 64) {
-            ReceivedData[BytesReceived] = Endpoint_Read_8();
-            BytesReceived++;
+        
+        // Leitura OTIMIZADA - sem loops desnecessários
+        while (Endpoint_IsReadWriteAllowed() && BytesReceived < GENERIC_EPSIZE) {
+            ReceivedData[BytesReceived++] = Endpoint_Read_8();
         }
         
-        // SEMPRE limpar o endpoint
+        // CRÍTICO: Limpar endpoint IMEDIATAMENTE
         Endpoint_ClearOUT();
         
-        // PROCESSAR os dados IMEDIATAMENTE
+        // Processar dados SOMENTE se recebeu algo válido
         if (BytesReceived > 0) {
             processGenericHIDData(ReceivedData, BytesReceived);
         }
     }
 
-    // 2. ENVIAR movimento do mouse - FORÇAR ENVIO COM DELAY
+    // =============================================================
+    // 2. ENVIAR Mouse Report - VERSÃO CORRIGIDA
+    // =============================================================
     Endpoint_SelectEndpoint(MOUSE_IN_EPADDR);
     if (Endpoint_IsINReady()) {
-        // SEMPRE enviar um relatório de mouse, mesmo que seja zero
+        // Montar o report CORRETAMENTE
         CurrentMouseReport.buttons = mouse_buttons;
         CurrentMouseReport.x = mouse_x;
         CurrentMouseReport.y = mouse_y;
         CurrentMouseReport.wheel = mouse_wheel;
         
-        // FORÇAR envio do relatório
+        // CORREÇÃO CRÍTICA: Usar Stream ao invés de bytes individuais
+        // O Windows espera o report completo de uma vez!
         Endpoint_Write_Stream_LE(&CurrentMouseReport, sizeof(MouseReport_t), NULL);
+        
+        // ENVIAR imediatamente
         Endpoint_ClearIN();
         
-        // ESPERAR que o host processe
-        _delay_us(100);
-        
-        // Reset apenas após confirmar envio
+        // Reset APENAS após envio confirmado
         mouse_x = 0;
         mouse_y = 0;
         mouse_wheel = 0;
     }
 
-    // 3. Keyboard endpoint
-    Endpoint_SelectEndpoint(KEYBOARD_IN_EPADDR);
-    if (Endpoint_IsINReady()) {
-        Endpoint_Write_Stream_LE(&CurrentKeyboardReport, sizeof(KeyboardReport_t), NULL);
-        Endpoint_ClearIN();
+    // =============================================================
+    // 3. Endpoints de menor prioridade (executados com menor frequência)
+    // =============================================================
+    
+    // Contador para limitar frequência de endpoints menos críticos
+    static uint8_t priority_counter = 0;
+    priority_counter++;
+    
+    // Keyboard (executado apenas se mouse não estiver ativo)
+    if (priority_counter % 5 == 0 && mouse_x == 0 && mouse_y == 0) {
+        Endpoint_SelectEndpoint(KEYBOARD_IN_EPADDR);
+        if (Endpoint_IsINReady()) {
+            Endpoint_Write_Stream_LE(&CurrentKeyboardReport, sizeof(KeyboardReport_t), NULL);
+            Endpoint_ClearIN();
+        }
     }
 
-    // 4. Generic status endpoint
-    Endpoint_SelectEndpoint(GENERIC_IN_EPADDR);
-    if (Endpoint_IsINReady()) {
-        memset(GenericHIDBuffer, 0, sizeof(GenericHIDBuffer));
-        GenericHIDBuffer[0] = 0xAA;
-        GenericHIDBuffer[1] = communication_status;
-        GenericHIDBuffer[2] = last_command_type;
-        GenericHIDBuffer[3] = commands_received & 0xFF;
-        GenericHIDBuffer[4] = (commands_received >> 8) & 0xFF;
-        GenericHIDBuffer[5] = (int8_t)accumulated_x; // Debug: mostrar acúmulo
-        GenericHIDBuffer[6] = (int8_t)accumulated_y; // Debug: mostrar acúmulo
-        GenericHIDBuffer[7] = mouse_buttons;
-        
-        Endpoint_Write_Stream_LE(GenericHIDBuffer, sizeof(GenericHIDBuffer), NULL);
-        Endpoint_ClearIN();
+    // Status report (executado com menor frequência ainda)
+    if (priority_counter % 20 == 0) {
+        Endpoint_SelectEndpoint(GENERIC_IN_EPADDR);
+        if (Endpoint_IsINReady()) {
+            // Status mínimo otimizado - apenas 8 bytes essenciais
+            GenericHIDBuffer[0] = 0xAA;  // Signature
+            GenericHIDBuffer[1] = communication_status;
+            GenericHIDBuffer[2] = last_command_type;
+            GenericHIDBuffer[3] = commands_received & 0xFF;
+            GenericHIDBuffer[4] = (commands_received >> 8) & 0xFF;
+            GenericHIDBuffer[5] = (int8_t)accumulated_x; // Debug acúmulo
+            GenericHIDBuffer[6] = (int8_t)accumulated_y; // Debug acúmulo
+            GenericHIDBuffer[7] = mouse_buttons;
+            
+            // Envio rápido dos primeiros 8 bytes
+            for (uint8_t i = 0; i < 8; i++) {
+                Endpoint_Write_8(GenericHIDBuffer[i]);
+            }
+            
+            // Preencher o resto com zeros
+            for (uint8_t i = 8; i < GENERIC_EPSIZE; i++) {
+                Endpoint_Write_8(0);
+            }
+            
+            Endpoint_ClearIN();
+        }
+    }
+    
+    // Reset counter para evitar overflow
+    if (priority_counter >= 100) {
+        priority_counter = 0;
     }
 }
 

@@ -28,11 +28,12 @@ void setup() {
 }
 
 void loop() {
-  // Process USB tasks
-  HID_Task();
-  
-  // USB tasks
+  // CRUCIAL: Process USB tasks PRIMEIRO E SEMPRE
   USB_USBTask();
   
-  // SEM DELAYS - processar o máximo de vezes possível para menor latência
+  // CRUCIAL: Process HID tasks LOGO EM SEGUIDA
+  HID_Task();
+  
+  // SEM DELAYS - NUNCA ADICIONAR DELAYS NO LOOP PRINCIPAL
+  // O loop deve executar o mais rápido possível para latência mínima
 }
