@@ -1,4 +1,10 @@
 #include "LUFAConfig.h"
+
+// Redefinir USB_HOST_SERIAL como Serial1 antes de incluir bibliotecas USB Host Shield
+#define USB_HOST_SERIAL Serial1
+// Desabilitar completamente o debugging para maior estabilidade
+#define ENABLE_UHS_DEBUGGING 0
+
 #include <LUFA.h>
 #include "LogitechMouse.h"
 #include <inttypes.h>
@@ -22,6 +28,9 @@ extern "C" void ProcessUSBHost(void);
 
 void setup() {
   // ============ INICIALIZAÇÃO OTIMIZADA ============
+  
+  // Inicializar Serial1 para debug (opcional)
+  Serial1.begin(115200);
   
   // Initialize hardware PRIMEIRO E MAIS IMPORTANTE
   SetupHardware();
@@ -50,6 +59,9 @@ void setup() {
     digitalWrite(13, LOW);
     delay(50);
   }
+  
+  // Debug message (opcional)
+  Serial1.println(F("LUFALogiMouse inicializado"));
 }
 
 void loop() {

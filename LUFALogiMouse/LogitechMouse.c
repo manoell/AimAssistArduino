@@ -31,7 +31,29 @@ void SetupHardware(void) {
     // Disable clock division
     clock_prescale_set(clock_div_1);
     
-    // USB Fix para Leonardo
+    // Configure LED for debug
+    DDRC |= (1 << 7);   // Pin 13 as output
+    PORTC &= ~(1 << 7); // LED off
+    
+    // Blink LED once at startup
+    PORTC |= (1 << 7);
+    _delay_ms(100);
+    PORTC &= ~(1 << 7);
+    _delay_ms(100);
+    
+    // Initialize USB Host Shield
+    uint8_t usbHostErr = initializeUSBHost();
+    if (usbHostErr != 0) {
+        // Error indication - blink rapidly
+        for (int i = 0; i < 10; i++) {
+            PORTC |= (1 << 7);
+            _delay_ms(50);
+            PORTC &= ~(1 << 7);
+            _delay_ms(50);
+        }
+    }
+    
+    // Arduino Leonardo USB Fix
     USB_Disable();
     _delay_ms(100);
     
@@ -66,13 +88,6 @@ void SetupHardware(void) {
     commands_received = 0;
     last_command_type = 0;
     communication_status = 0xFF;
-    
-    // Configure LED debug
-    DDRC |= (1 << 7);   // Pin 13 as output
-    PORTC &= ~(1 << 7); // LED off
-    
-    // Initialize USB Host Shield (através da ponte)
-    initializeUSBHost();
     
     // Blink LED to show setup complete
     for (int i = 0; i < 3; i++) {
@@ -119,7 +134,7 @@ void EVENT_USB_Device_ConfigurationChanged(void) {
     }
 }
 
-// FUNÇÃO DE DEBUG PARA LED
+// DEBUG FUNCTION FOR LED
 void debugBlink(uint8_t times) {
     for (uint8_t i = 0; i < times; i++) {
         PORTC |= (1 << 7);
@@ -131,7 +146,7 @@ void debugBlink(uint8_t times) {
     }
 }
 
-// FUNÇÃO PRINCIPAL: Process commands - CORRIGIDA
+// MAIN FUNCTION: Process commands
 void processGenericHIDData(uint8_t* buffer, uint16_t length) {
     if (length < 1) {
         return;
@@ -310,7 +325,7 @@ void EVENT_USB_Device_ControlRequest(void) {
     }
 }
 
-// HID Task - FOCADO NA COMUNICAÇÃO
+// HID Task - FOCUSED ON COMMUNICATION
 void HID_Task(void) {
     if (USB_DeviceState != DEVICE_STATE_Configured)
         return;
@@ -433,5 +448,12 @@ uint8_t getCommunicationStatus(void) {
 
 // Implementação para chamar processUSBHostTasks
 void ProcessUSBHost(void) {
+    // Desabilitar temporariamente interrupções USB
+    UDIEN = 0;
+    
+    // Executar tarefa USB Host
     processUSBHostTasks();
+    
+    // Reabilitar interrupções USB
+    UDIEN = ((1 << RXSTPE) | (1 << SOFE));
 }

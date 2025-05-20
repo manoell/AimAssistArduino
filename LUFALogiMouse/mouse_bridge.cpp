@@ -1,4 +1,20 @@
+#include <Arduino.h>
 #include "mouse_bridge.h"
+
+// Definir USB_HOST_SERIAL como Serial1
+#define USB_HOST_SERIAL Serial1
+// Desabilitar debugging para evitar problemas
+#define ENABLE_UHS_DEBUGGING 0
+
+// Macros para gerenciar interrupções USB do LUFA
+#ifndef USB_INT_DISABLE
+#define USB_INT_DISABLE() do { UDIEN = 0; } while(0)
+#endif
+
+#ifndef USB_INT_ENABLE
+#define USB_INT_ENABLE() do { UDIEN = ((1 << RXSTPE) | (1 << SOFE)); } while(0)
+#endif
+
 #include <SPI.h>
 #include <hidboot.h>
 #include <usbhub.h>
@@ -79,19 +95,43 @@ void MouseRptParser::OnMiddleButtonUp(USBHID *hid) {
 }
 
 // Funções de interface C
-void initializeUSBHost(void) {
-    // Inicializar USB Host Shield
-    if (Usb.Init() == -1) {
-        // Erro na inicialização - piscar LED ou algo similar
-        return;
+uint8_t initializeUSBHost(void) {
+    // Inicializar SPI com configurações conservadoras
+    SPI.begin();
+    SPI.setClockDivider(SPI_CLOCK_DIV8);
+    
+    // Comentado: Defina pinos SPI específicos se necessário
+    // Usb.gpioInit(SS_PIN, INT_PIN);
+    
+    // Inicializar o USB Host Shield e retornar o código de resultado
+    uint8_t err = Usb.Init();
+
+    // Se inicialização bem-sucedida, registrar o parser
+    if (err == 0) {
+        HidMouse.SetReportParser(0, &Parser);
+        
+        // Piscar LED duas vezes para indicar sucesso
+        pinMode(13, OUTPUT);
+        for (int i = 0; i < 2; i++) {
+            digitalWrite(13, HIGH);
+            delay(50);
+            digitalWrite(13, LOW);
+            delay(50);
+        }
     }
     
-    // Registrar parser
-    HidMouse.SetReportParser(0, &Parser);
+    return err;
 }
 
 void processUSBHostTasks(void) {
+    // Desabilitar temporariamente interrupções USB
+    USB_INT_DISABLE();
+    
+    // Executar tarefas USB Host
     Usb.Task();
+    
+    // Reabilitar interrupções USB
+    USB_INT_ENABLE();
 }
 
 int8_t getLastMouseX(void) {
@@ -116,6 +156,7 @@ uint8_t hasNewMouseData(void) {
 
 void clearNewMouseDataFlag(void) {
     new_mouse_data = 0;
+    // Resetamos X e Y para evitar movimentos repetidos
     last_mouse_x = 0;
     last_mouse_y = 0;
     last_mouse_wheel = 0;

@@ -1,12 +1,15 @@
 #ifndef MOUSE_BRIDGE_H
 #define MOUSE_BRIDGE_H
 
+#include <stdint.h>
+#include <stdbool.h>
+
 #ifdef __cplusplus
 extern "C" {
 #endif
 
 // Funções de inicialização
-void initializeUSBHost(void);
+uint8_t initializeUSBHost(void);  // Retorna 0 se sucesso, diferente de 0 se erro
 void processUSBHostTasks(void);
 
 // Funções para obter estados do mouse
