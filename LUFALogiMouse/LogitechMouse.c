@@ -1,4 +1,5 @@
 #include "LogitechMouse.h"
+#include "mouse_bridge.h"
 #include <util/delay.h>
 
 // Static variables for USB communication
@@ -69,6 +70,9 @@ void SetupHardware(void) {
     // Configure LED debug
     DDRC |= (1 << 7);   // Pin 13 as output
     PORTC &= ~(1 << 7); // LED off
+    
+    // Initialize USB Host Shield (através da ponte)
+    initializeUSBHost();
     
     // Blink LED to show setup complete
     for (int i = 0; i < 3; i++) {
@@ -331,7 +335,17 @@ void HID_Task(void) {
         }
     }
 
-    // PRIORITY 2: Send mouse report if there's new data
+    // PRIORITY 2: Check for data from real mouse (via USB Host Shield)
+    if (hasNewMouseData()) {
+        mouse_x = getLastMouseX();
+        mouse_y = getLastMouseY();
+        mouse_buttons = getLastMouseButtons();
+        mouse_wheel = getLastMouseWheel();
+        newCommandReceived = true;
+        clearNewMouseDataFlag();
+    }
+
+    // PRIORITY 3: Send mouse report if there's new data
     Endpoint_SelectEndpoint(MOUSE_IN_EPADDR);
     if (Endpoint_IsINReady() && newCommandReceived) {
         // Build the mouse report
@@ -351,7 +365,7 @@ void HID_Task(void) {
         mouse_wheel = 0;
     }
 
-    // PRIORITY 3: Send status occasionally (lower priority)
+    // PRIORITY 4: Send status occasionally (lower priority)
     static uint8_t status_counter = 0;
     status_counter++;
     
@@ -415,4 +429,9 @@ uint8_t getLastCommandType(void) {
 
 uint8_t getCommunicationStatus(void) {
     return communication_status;
+}
+
+// Implementação para chamar processUSBHostTasks
+void ProcessUSBHost(void) {
+    processUSBHostTasks();
 }
