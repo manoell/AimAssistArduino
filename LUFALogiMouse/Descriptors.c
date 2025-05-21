@@ -1,7 +1,8 @@
 #include "Descriptors.h"
 
-// Mouse HID Report Descriptor - CORRIGIDO para Boot Protocol (int8_t)
+// *** CORREÇÃO CRÍTICA: Mouse HID Report Descriptor Boot Protocol PADRÃO ***
 const USB_Descriptor_HIDReport_Datatype_t PROGMEM MouseHIDReport[] = {
+  // Boot Protocol Mouse PADRÃO (3 bytes apenas: buttons, X, Y)
   0x05, 0x01,        // Usage Page (Generic Desktop)
   0x09, 0x02,        // Usage (Mouse)
   0xA1, 0x01,        // Collection (Application)
@@ -9,46 +10,29 @@ const USB_Descriptor_HIDReport_Datatype_t PROGMEM MouseHIDReport[] = {
   0xA1, 0x00,        //   Collection (Physical)
   0x05, 0x09,        //     Usage Page (Buttons)
   0x19, 0x01,        //     Usage Minimum (1)
-  0x29, 0x08,        //     Usage Maximum (8)
+  0x29, 0x03,        //     Usage Maximum (3) - APENAS 3 BOTÕES para Boot Protocol
   0x15, 0x00,        //     Logical Minimum (0)
   0x25, 0x01,        //     Logical Maximum (1)
-  0x95, 0x08,        //     Report Count (8)
+  0x95, 0x03,        //     Report Count (3) - 3 botões
   0x75, 0x01,        //     Report Size (1)
   0x81, 0x02,        //     Input (Data,Var,Abs)
+  0x95, 0x01,        //     Report Count (1) - Padding
+  0x75, 0x05,        //     Report Size (5) - 5 bits de padding
+  0x81, 0x01,        //     Input (Constant) - Padding
   0x05, 0x01,        //     Usage Page (Generic Desktop)
   0x09, 0x30,        //     Usage (X)
   0x09, 0x31,        //     Usage (Y)
-  0x15, 0x81,        //     Logical Minimum (-127) - CORRIGIDO para int8_t
-  0x25, 0x7F,        //     Logical Maximum (127)  - CORRIGIDO para int8_t
-  0x95, 0x02,        //     Report Count (2)
-  0x75, 0x08,        //     Report Size (8) - CORRIGIDO: 8 bits para Boot Protocol
-  0x81, 0x06,        //     Input (Data,Var,Rel)
-  0x09, 0x38,        //     Usage (Wheel)
   0x15, 0x81,        //     Logical Minimum (-127)
   0x25, 0x7F,        //     Logical Maximum (127)
-  0x95, 0x01,        //     Report Count (1)
-  0x75, 0x08,        //     Report Size (8)
+  0x75, 0x08,        //     Report Size (8) - 8 bits
+  0x95, 0x02,        //     Report Count (2) - X e Y
   0x81, 0x06,        //     Input (Data,Var,Rel)
-  // Padding to reach exactly 84 bytes
-  0x05, 0x0C,        //     Usage Page (Consumer)
-  0x0A, 0x38, 0x02,  //     Usage (AC Pan)
-  0x15, 0x81,        //     Logical Minimum (-127)
-  0x25, 0x7F,        //     Logical Maximum (127)
-  0x95, 0x01,        //     Report Count (1)
-  0x75, 0x08,        //     Report Size (8)
-  0x81, 0x06,        //     Input (Data,Var,Rel)
-  // Vendor area para completar exatos 84 bytes
-  0x06, 0xFF, 0x00,  //     Usage Page (Vendor)
-  0x09, 0x01,        //     Usage (unk)
-  0x95, 0x01,        //     Report Count (1)
-  0x75, 0x08,        //     Report Size (8)
-  0x81, 0x02,        //     Input (Data,Var,Abs)
   0xC0,              //   End Collection
   0xC0               // End Collection
-  // Total: 84 bytes exatos
+  // Total: Boot Protocol padrão = 3 bytes (buttons + X + Y)
 };
 
-// Keyboard HID Report Descriptor (133 bytes - tamanho exato)
+// Keyboard HID Report Descriptor (mantém igual)
 const USB_Descriptor_HIDReport_Datatype_t PROGMEM KeyboardHIDReport[] = {
   HID_RI_USAGE_PAGE(8, 0x01),     // Generic Desktop
   HID_RI_USAGE(8, 0x06),          // Keyboard
@@ -122,7 +106,7 @@ const USB_Descriptor_HIDReport_Datatype_t PROGMEM KeyboardHIDReport[] = {
   HID_RI_END_COLLECTION(0)
 };
 
-// Generic HID Report Descriptor (34 bytes exactos)
+// Generic HID Report Descriptor (mantém igual)
 const USB_Descriptor_HIDReport_Datatype_t PROGMEM GenericHIDReport[] = {
   0x06, 0x00, 0xFF,  // Usage Page (Vendor Defined)
   0x09, 0x01,        // Usage (unk)
@@ -145,10 +129,9 @@ const USB_Descriptor_HIDReport_Datatype_t PROGMEM GenericHIDReport[] = {
   0x91, 0x02,        //   Output (Data,Var,Abs)
   
   0xC0               // End Collection
-  // Total: 34 bytes exatos
 };
 
-// Device Descriptor - Cópia exata do Logitech C547
+// Device Descriptor (mantém igual)
 const USB_Descriptor_Device_t PROGMEM DeviceDescriptor = {
   .Header                 = {.Size = sizeof(USB_Descriptor_Device_t), .Type = DTYPE_Device},
   .USBSpecification       = VERSION_BCD(2,0,0),
@@ -167,7 +150,7 @@ const USB_Descriptor_Device_t PROGMEM DeviceDescriptor = {
   .NumberOfConfigurations = FIXED_NUM_CONFIGURATIONS
 };
 
-// Configuration Descriptor - 3 interfaces, COM OUT endpoint na interface 2
+// Configuration Descriptor (mantém igual)
 const USB_Descriptor_Configuration_t PROGMEM ConfigurationDescriptor = {
   .Config = {
     .Header                 = {.Size = sizeof(USB_Descriptor_Configuration_Header_t), .Type = DTYPE_Configuration},
@@ -175,11 +158,11 @@ const USB_Descriptor_Configuration_t PROGMEM ConfigurationDescriptor = {
     .TotalInterfaces        = 3,
     .ConfigurationNumber    = 1,
     .ConfigurationStrIndex  = STRING_ID_Configuration,
-    .ConfigAttributes       = 0xA0,  // Bit7=1 (reserved) + Bit5=1 (Remote Wakeup)
+    .ConfigAttributes       = 0xA0,
     .MaxPowerConsumption    = USB_CONFIG_POWER_MA(98)
   },
 
-  // Interface 0 - Mouse (Boot Protocol)
+  // Interface 0 - Mouse (Boot Protocol) 
   .HID_MouseInterface = {
     .Header                 = {.Size = sizeof(USB_Descriptor_Interface_t), .Type = DTYPE_Interface},
     .InterfaceNumber        = INTERFACE_ID_Mouse,
@@ -205,7 +188,7 @@ const USB_Descriptor_Configuration_t PROGMEM ConfigurationDescriptor = {
     .EndpointAddress        = MOUSE_IN_EPADDR,
     .Attributes             = (EP_TYPE_INTERRUPT | ENDPOINT_ATTR_NO_SYNC | ENDPOINT_USAGE_DATA),
     .EndpointSize           = MOUSE_EPSIZE,
-    .PollingIntervalMS      = 0x01 // 1ms
+    .PollingIntervalMS      = 0x01
   },
 
   // Interface 1 - Keyboard (Boot Protocol)  
@@ -234,15 +217,15 @@ const USB_Descriptor_Configuration_t PROGMEM ConfigurationDescriptor = {
     .EndpointAddress        = KEYBOARD_IN_EPADDR,
     .Attributes             = (EP_TYPE_INTERRUPT | ENDPOINT_ATTR_NO_SYNC | ENDPOINT_USAGE_DATA),
     .EndpointSize           = KEYBOARD_EPSIZE,
-    .PollingIntervalMS      = 0x01 // 1ms
+    .PollingIntervalMS      = 0x01
   },
 
-  // Interface 2 - HID Genérico (COM 2 ENDPOINTS: IN e OUT)
+  // Interface 2 - HID Genérico
   .HID_GenericInterface = {
     .Header                 = {.Size = sizeof(USB_Descriptor_Interface_t), .Type = DTYPE_Interface},
     .InterfaceNumber        = INTERFACE_ID_Generic,
     .AlternateSetting       = 0x00,
-    .TotalEndpoints         = 2,  // 2 endpoints (IN e OUT)
+    .TotalEndpoints         = 2,
     .Class                  = HID_CSCP_HIDClass,
     .SubClass               = HID_CSCP_NonBootSubclass,
     .Protocol               = HID_CSCP_NonBootProtocol,
@@ -258,35 +241,30 @@ const USB_Descriptor_Configuration_t PROGMEM ConfigurationDescriptor = {
     .HIDReportLength        = sizeof(GenericHIDReport)
   },
 
-  // Endpoint IN - para enviar status
   .HID_GenericEndpointIN = {
     .Header                 = {.Size = sizeof(USB_Descriptor_Endpoint_t), .Type = DTYPE_Endpoint},
     .EndpointAddress        = GENERIC_IN_EPADDR,
     .Attributes             = (EP_TYPE_INTERRUPT | ENDPOINT_ATTR_NO_SYNC | ENDPOINT_USAGE_DATA),
     .EndpointSize           = GENERIC_EPSIZE,
-    .PollingIntervalMS      = 0x01 // 1ms
+    .PollingIntervalMS      = 0x01
   },
 
-  // Endpoint OUT - para receber comandos do PC
   .HID_GenericEndpointOUT = {
     .Header                 = {.Size = sizeof(USB_Descriptor_Endpoint_t), .Type = DTYPE_Endpoint},
     .EndpointAddress        = GENERIC_OUT_EPADDR,
     .Attributes             = (EP_TYPE_INTERRUPT | ENDPOINT_ATTR_NO_SYNC | ENDPOINT_USAGE_DATA),
     .EndpointSize           = GENERIC_EPSIZE,
-    .PollingIntervalMS      = 0x01 // 1ms
+    .PollingIntervalMS      = 0x01
   }
 };
 
-// String Descriptors
+// String Descriptors (mantém igual)
 const USB_Descriptor_String_t PROGMEM LanguageString = USB_STRING_DESCRIPTOR_ARRAY(LANGUAGE_ID_ENG);
-
 const USB_Descriptor_String_t PROGMEM ManufacturerString = USB_STRING_DESCRIPTOR(L"Logitech");
-
 const USB_Descriptor_String_t PROGMEM ProductString = USB_STRING_DESCRIPTOR(L"USB Receiver");
-
 const USB_Descriptor_String_t PROGMEM ConfigurationString = USB_STRING_DESCRIPTOR(L"MPR04.02_B0009");
 
-// Callback para USB_GetDescriptor
+// Callback para USB_GetDescriptor (mantém igual)
 uint16_t CALLBACK_USB_GetDescriptor(const uint16_t wValue,
                                     const uint16_t wIndex,
                                     const void** const DescriptorAddress) {

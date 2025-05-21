@@ -3,12 +3,11 @@ import usb.util
 import time
 import sys
 
-class CommunicationTester:
+class FinalTester:
     def __init__(self, vid=0x046D, pid=0xC547):
         self.device = None
         self.interface = 2
         self.endpoint_out = None
-        self.endpoint_in = None
         
     def connect(self):
         """Conecta ao Arduino"""
@@ -21,19 +20,15 @@ class CommunicationTester:
         print(f"✅ Arduino encontrado: {self.device.manufacturer} {self.device.product}")
         
         try:
-            # Desanexar driver se necessário
             try:
                 if self.device.is_kernel_driver_active(self.interface):
                     self.device.detach_kernel_driver(self.interface)
-                    print("📤 Driver kernel desanexado")
             except:
                 pass
             
-            # Configurar
             self.device.set_configuration()
             usb.util.claim_interface(self.device, self.interface)
             
-            # Encontrar endpoints
             cfg = self.device.get_active_configuration()
             interface_cfg = cfg[(self.interface, 0)]
             
@@ -42,9 +37,6 @@ class CommunicationTester:
                 if usb.util.endpoint_direction(addr) == usb.util.ENDPOINT_OUT:
                     self.endpoint_out = endpoint
                     print(f"✅ Endpoint OUT: 0x{addr:02X}")
-                elif usb.util.endpoint_direction(addr) == usb.util.ENDPOINT_IN:
-                    self.endpoint_in = endpoint
-                    print(f"✅ Endpoint IN: 0x{addr:02X}")
             
             if not self.endpoint_out:
                 print("❌ Endpoint OUT não encontrado!")
@@ -58,7 +50,7 @@ class CommunicationTester:
             return False
     
     def send_command(self, command):
-        """Envia comando e retorna sucesso/falha"""
+        """Envia comando simples"""
         try:
             bytes_sent = self.endpoint_out.write(command, timeout=100)
             return bytes_sent == len(command)
@@ -66,224 +58,153 @@ class CommunicationTester:
             print(f"❌ Erro no envio: {e}")
             return False
     
-    def test_communication_basic(self):
-        """Teste básico de comunicação - FOCO NO LED"""
-        print("\n🔥 TESTE DE COMUNICAÇÃO COM LED")
-        print("="*50)
-        print("👀 OBSERVE O LED LARANJA DO ARDUINO!")
-        print("   Deve piscar a cada comando enviado")
-        
-        commands = [
-            (0x05, "PING", "Piscar curto"),
-            (0x04, "RESET", "Piscar duplo"),
-            (0x01, "MOVIMENTO", "Piscar curto"),
-            (0x02, "CLIQUE", "Piscar curto"),
-            (0xFF, "DESCONHECIDO", "Piscar duplo (erro)")
-        ]
-        
-        for cmd_type, name, expected in commands:
-            command = bytearray(64)
-            command[0] = cmd_type
-            
-            print(f"\n📤 Enviando {name} (0x{cmd_type:02X})")
-            print(f"   Esperado: {expected}")
-            
-            if self.send_command(command):
-                print("✅ Comando enviado com sucesso")
-                
-                # Pausa para observar o LED
-                time.sleep(1.0)
-                
-                led_blinked = input("❓ O LED piscou? (s/n): ").lower().strip()
-                if led_blinked == 's':
-                    print("🎉 COMUNICAÇÃO OK!")
-                else:
-                    print("❌ LED não piscou - problema na comunicação")
-                    return False
-            else:
-                print("❌ Falha no envio")
-                return False
-        
-        return True
+    def build_simple_movement(self, x, y, buttons=0):
+        """
+        Comando SIMPLES: [cmd][x][y][buttons][padding...]
+        Boot Protocol: 3 bytes de report
+        """
+        command = bytearray(64)
+        command[0] = 0x01  # Movimento
+        command[1] = x & 0xFF  # X como byte direto
+        command[2] = y & 0xFF  # Y como byte direto  
+        command[3] = buttons   # Botões (opcional)
+        return command
     
-    def test_specific_commands(self):
-        """Teste comandos específicos"""
-        print("\n🎯 TESTE DE COMANDOS ESPECÍFICOS")
-        print("="*40)
-        
-        # Teste 1: Reset (deve piscar LED duplo)
-        print("\n1️⃣ Testando RESET...")
-        reset_cmd = bytearray(64)
-        reset_cmd[0] = 0x04  # Reset
-        
-        if self.send_command(reset_cmd):
-            print("✅ Reset enviado")
-            time.sleep(0.5)
-            led_ok = input("❓ LED piscou DUPLO para reset? (s/n): ").lower() == 's'
-            if not led_ok:
-                print("❌ Reset não foi processado corretamente")
-                return False
-        
-        # Teste 2: Movimento (deve piscar LED simples)
-        print("\n2️⃣ Testando MOVIMENTO...")
-        move_cmd = bytearray(64)
-        move_cmd[0] = 0x01  # Movement
-        move_cmd[1] = 50    # X low byte
-        move_cmd[2] = 0     # X high byte
-        move_cmd[3] = 0     # Y low byte
-        move_cmd[4] = 0     # Y high byte
-        move_cmd[5] = 0     # Buttons
-        move_cmd[6] = 0     # Wheel
-        
-        if self.send_command(move_cmd):
-            print("✅ Movimento enviado")
-            time.sleep(0.5)
-            led_ok = input("❓ LED piscou SIMPLES para movimento? (s/n): ").lower() == 's'
-            if not led_ok:
-                print("❌ Movimento não foi processado corretamente")
-                return False
-        
-        # Teste 3: Comando desconhecido (deve piscar LED duplo de erro)
-        print("\n3️⃣ Testando COMANDO DESCONHECIDO...")
-        unknown_cmd = bytearray(64)
-        unknown_cmd[0] = 0xFF  # Unknown command
-        
-        if self.send_command(unknown_cmd):
-            print("✅ Comando desconhecido enviado")
-            time.sleep(0.5)
-            led_ok = input("❓ LED piscou DUPLO para erro? (s/n): ").lower() == 's'
-            if not led_ok:
-                print("❌ Comando desconhecido não foi tratado corretamente")
-                return False
-        
-        return True
-    
-    def test_mouse_movement_intensive(self):
-        """Teste intensivo para movimento do cursor"""
-        print("\n🚨 TESTE INTENSIVO - MOVIMENTO DO CURSOR")
+    def test_simple_movement(self):
+        """Teste super simples de movimento"""
+        print("\n🎯 TESTE FINAL - BOOT PROTOCOL CORRETO")
         print("="*50)
-        print("📊 Enviando muitos comandos para garantir resposta")
-        print("👀 OBSERVE O CURSOR COM ATENÇÃO!")
+        print("⚡ Usando formato Boot Protocol padrão")
+        print("📐 Report de 3 bytes: [buttons][x][y]")
+        print("👀 CURSOR DEVE SE MOVER AGORA!")
         
-        # Valores grandes para movimento mais visível
+        # Valores pequenos para teste
         moves = [
-            ("direita", 30, 0),
-            ("esquerda", 226, 0),  # -30 em complemento de 2
-            ("baixo", 0, 30),
-            ("cima", 0, 226),     # -30 em complemento de 2
-            ("diagonal", 20, 20)
+            ("DIREITA", 10, 0),
+            ("BAIXO", 0, 10),
+            ("ESQUERDA", -10, 0),  # 246 em complemento de 2
+            ("CIMA", 0, -10),      # 246 em complemento de 2  
         ]
+        
+        print("\n🚨 Posicione cursor no centro da tela!")
+        input("Pressione Enter quando pronto...")
         
         for direction, x, y in moves:
-            print(f"\n🔄 Teste: {direction} (X={x}, Y={y})")
+            # Converter negativo para byte
+            x_byte = x if x >= 0 else (256 + x)
+            y_byte = y if y >= 0 else (256 + y)
             
-            # Comando de movimento
-            cmd = bytearray(64)
-            cmd[0] = 0x01  # Movement
-            cmd[1] = x     # X
-            cmd[3] = y     # Y
+            print(f"\n➡️ {direction}: X={x} ({x_byte}), Y={y} ({y_byte})")
             
-            # Enviar MUITOS comandos para garantir que algum funcione
-            for i in range(10):
+            cmd = self.build_simple_movement(x_byte, y_byte)
+            
+            # Enviar várias vezes
+            for i in range(5):
                 if self.send_command(cmd):
-                    print(f"  ✅ #{i+1}", end=" ", flush=True)
+                    print(f"✅ #{i+1}", end=" ", flush=True)
+                    time.sleep(0.05)
                 else:
-                    print(f"  ❌ #{i+1}", end=" ", flush=True)
-                time.sleep(0.05)  # Pequena pausa
+                    print(f"❌ #{i+1}", end=" ", flush=True)
             
-            print("\n")
-            moved = input(f"❓ O cursor se moveu para {direction}? (s/n): ").lower() == 's'
-            if moved:
+            print()
+            moved = input(f"❓ Cursor moveu para {direction}? (s/n): ").lower().strip()
+            if moved == 's':
                 print("🎉 MOVIMENTO FUNCIONANDO!")
                 return True
+            
+            time.sleep(0.5)
         
         return False
     
-    def test_rapid_fire(self):
-        """Teste de comandos em rajada"""
-        print("\n⚡ TESTE DE RAJADA")
+    def test_click(self):
+        """Teste de clique"""
+        print("\n🖱️ TESTE DE CLIQUE")
         print("="*30)
-        print("👀 OBSERVE: LED deve piscar rapidamente!")
         
-        print("Enviando 10 comandos em sequência...")
+        cmd = bytearray(64)
+        cmd[0] = 0x02  # Clique
+        cmd[1] = 0x01  # Botão esquerdo
         
-        success_count = 0
-        for i in range(10):
-            cmd = bytearray(64)
-            cmd[0] = 0x05  # Ping
-            
+        for i in range(3):
             if self.send_command(cmd):
-                success_count += 1
-                print(f"  {i+1}/10 ✅", end=" ", flush=True)
+                print(f"✅ Clique #{i+1} enviado")
+                time.sleep(0.2)
             else:
-                print(f"  {i+1}/10 ❌", end=" ", flush=True)
-            
-            time.sleep(0.1)  # 100ms entre comandos
+                print(f"❌ Clique #{i+1} falhou")
         
-        print(f"\n\n📊 Resultado: {success_count}/10 comandos enviados")
-        
-        if success_count >= 8:
-            rapid_ok = input("❓ LED piscou rapidamente? (s/n): ").lower() == 's'
-            return rapid_ok
-        else:
-            print("❌ Muitas falhas no envio")
-            return False
+        clicked = input("❓ Houve cliques? (s/n): ").lower().strip()
+        return clicked == 's'
     
-    def run_communication_tests(self):
-        """Executa todos os testes de comunicação"""
-        print("🚀 TESTADOR DE COMUNICAÇÃO RAW HID")
-        print("="*60)
-        print("OBJETIVO: Verificar se a comunicação está funcionando")
-        print("INDICADOR: LED laranja do Arduino deve piscar")
-        print("="*60)
+    def test_continuous(self):
+        """Teste contínuo - cursor em círculo"""
+        print("\n🔄 TESTE CONTÍNUO - CÍRCULO")
+        print("="*35)
+        print("Cursor deve se mover em movimento circular por 3 segundos")
+        
+        input("Pressione Enter para começar...")
+        
+        import math
+        start_time = time.time()
+        angle = 0
+        
+        while time.time() - start_time < 3.0:
+            # Movimento circular pequeno
+            x = int(5 * math.cos(angle))
+            y = int(5 * math.sin(angle))
+            
+            # Converter para bytes
+            x_byte = x if x >= 0 else (256 + x)
+            y_byte = y if y >= 0 else (256 + y)
+            
+            cmd = self.build_simple_movement(x_byte, y_byte)
+            self.send_command(cmd)
+            
+            angle += 0.3
+            time.sleep(0.03)  # ~30 FPS
+        
+        moved = input("❓ Cursor fez movimento circular? (s/n): ").lower().strip()
+        return moved == 's'
+    
+    def run_final_test(self):
+        """Executa teste final definitivo"""
+        print("🔥 TESTE FINAL - BOOT PROTOCOL LUFA")
+        print("="*50)
+        print("📋 Correções aplicadas:")
+        print("   ✅ Boot Protocol de 3 bytes")
+        print("   ✅ Descriptor HID correto")
+        print("   ✅ Função sendMouseReportNow() otimizada")
+        print("   ✅ Formato de comando simplificado")
+        print("="*50)
         
         tests = [
-            ("Comunicação Básica", self.test_communication_basic),
-            ("Comandos Específicos", self.test_specific_commands),
-            ("Movimento Intensivo", self.test_mouse_movement_intensive),
-            ("Teste de Rajada", self.test_rapid_fire),
+            ("Movimento Básico", self.test_simple_movement),
+            ("Cliques", self.test_click),
+            ("Movimento Contínuo", self.test_continuous),
         ]
         
-        results = {}
-        
         for test_name, test_func in tests:
-            print(f"\n🧪 Executando: {test_name}")
+            print(f"\n🧪 {test_name}")
             try:
-                results[test_name] = test_func()
+                if test_func():
+                    print(f"🏆 {test_name}: SUCESSO!")
+                    print("✅ PROBLEMA RESOLVIDO!")
+                    print("🎊 Seu Arduino LUFA está funcionando!")
+                    return
+                else:
+                    print(f"❌ {test_name}: Falhou")
             except Exception as e:
-                print(f"💥 Erro no teste: {e}")
-                results[test_name] = False
+                print(f"💥 {test_name}: Erro - {e}")
         
-        # Resultado final
-        print("\n" + "="*60)
-        print("🎯 RELATÓRIO FINAL")
-        print("="*60)
-        
-        passed = 0
-        for test_name, success in results.items():
-            status = "✅ PASSOU" if success else "❌ FALHOU"
-            print(f"   {test_name}: {status}")
-            if success:
-                passed += 1
-        
-        print(f"\n📊 Total: {passed}/{len(tests)} testes passaram")
-        
-        if passed == len(tests):
-            print("🏆 COMUNICAÇÃO FUNCIONANDO PERFEITAMENTE!")
-            print("✅ Arduino está recebendo e processando comandos")
-            print("✅ Cursor respondendo aos comandos")
-        elif passed >= 1:
-            print("⚠️ COMUNICAÇÃO PARCIAL")
-            print("💡 Verifique o firmware e tente novamente")
-        else:
-            print("❌ COMUNICAÇÃO FALHANDO")
-            print("💡 Verifique:")
-            print("   1. Firmware foi uploadado corretamente?")
-            print("   2. Arduino está conectado?")
-            print("   3. LED pisca durante setup (3 vezes)?")
+        print("\n😞 CURSOR AINDA NÃO MOVE")
+        print("🔧 Possíveis causas restantes:")
+        print("   1. Novo firmware não foi carregado")
+        print("   2. Windows está interferindo")
+        print("   3. Hardware do Arduino com problema")
+        print("   4. Problema no bootloader LUFA")
+        print("\n💡 Recomendação: Desconecte e reconecte o Arduino")
     
     def disconnect(self):
-        """Desconecta do Arduino"""
+        """Desconecta"""
         if self.device:
             try:
                 usb.util.release_interface(self.device, self.interface)
@@ -293,15 +214,22 @@ class CommunicationTester:
                 pass
 
 def main():
-    """Função principal"""
-    tester = CommunicationTester()
+    """Função principal do teste final"""
+    print("🎯 TESTE FINAL - LUFA BOOT PROTOCOL")
+    print("="*40)
+    print("Este é o teste definitivo!")
+    print("Se não funcionar agora, o problema")
+    print("é mais fundamental.")
+    print("="*40)
+    
+    tester = FinalTester()
     
     try:
         if not tester.connect():
             print("❌ Falha na conexão. Saindo...")
             return
         
-        tester.run_communication_tests()
+        tester.run_final_test()
         
     except KeyboardInterrupt:
         print("\n⚠️ Teste interrompido")

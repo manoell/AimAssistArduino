@@ -82,7 +82,6 @@ void SetupHardware(void) {
 // USB Event Handlers
 void EVENT_USB_Device_Connect(void) {
     communication_status = 0x01;
-    // Blink once on connect
     PORTC |= (1 << 7);
     _delay_ms(50);
     PORTC &= ~(1 << 7);
@@ -102,7 +101,6 @@ void EVENT_USB_Device_ConfigurationChanged(void) {
     
     if (ConfigSuccess) {
         communication_status = 0x02;
-        // Blink 3 times on successful config
         for (int i = 0; i < 3; i++) {
             PORTC |= (1 << 7);
             _delay_ms(50);
@@ -111,60 +109,63 @@ void EVENT_USB_Device_ConfigurationChanged(void) {
         }
     } else {
         communication_status = 0xEE;
-        PORTC |= (1 << 7); // LED on for error
+        PORTC |= (1 << 7);
     }
 }
 
-// FUNÇÃO DE DEBUG PARA LED
+// DEBUG LED FUNCTION
 void debugBlink(uint8_t times) {
     for (uint8_t i = 0; i < times; i++) {
         PORTC |= (1 << 7);
         _delay_ms(50);
         PORTC &= ~(1 << 7);
         if (i < times - 1) {
-            _delay_ms(50);  // Delay between blinks only if not the last one
+            _delay_ms(50);
         }
     }
 }
 
-// FUNÇÃO CRÍTICA NOVA: Envio direto do relatório de mouse para o host
-void reportMouseMovementToHost(int8_t x, int8_t y, uint8_t buttons, int8_t wheel) {
-    // Não faça nada se o dispositivo não estiver configurado
-    if (USB_DeviceState != DEVICE_STATE_Configured)
+// *** FUNÇÃO CORRIGIDA: Boot Protocol padrão de 3 bytes ***
+void sendMouseReportNow(int8_t x, int8_t y, uint8_t buttons) {
+    // Verificar se USB está configurado
+    if (USB_DeviceState != DEVICE_STATE_Configured) {
         return;
-        
-    // Relatório de mouse para enviar ao host
-    MouseReport_t MouseReport;
+    }
     
-    // Preencher relatório com valores atuais
-    MouseReport.buttons = buttons;
-    MouseReport.x = x;
-    MouseReport.y = y;
-    MouseReport.wheel = wheel;
-    
-    // Selecionar endpoint de mouse (Interface 0, Boot Protocol)
+    // Selecionar endpoint de mouse
     Endpoint_SelectEndpoint(MOUSE_IN_EPADDR);
     
     // Verificar se endpoint está pronto
-    if (Endpoint_IsINReady()) {
-        // Enviar relatório de mouse DIRETAMENTE para endpoint
-        Endpoint_Write_Stream_LE(&MouseReport, sizeof(MouseReport_t), NULL);
-        Endpoint_ClearIN();
-        
-        // Debugar com LED
-        PORTC |= (1 << 7);  // LED ON
-        _delay_ms(20);
-        PORTC &= ~(1 << 7); // LED OFF
+    if (!Endpoint_IsINReady()) {
+        return;
     }
+    
+    // *** BOOT PROTOCOL PADRÃO: apenas 3 bytes ***
+    // Byte 0: buttons
+    // Byte 1: X movement (int8_t)
+    // Byte 2: Y movement (int8_t)
+    // SEM wheel no Boot Protocol padrão!
+    
+    Endpoint_Write_8(buttons);  // Buttons
+    Endpoint_Write_8(x);        // X movement
+    Endpoint_Write_8(y);        // Y movement
+    
+    // Enviar imediatamente
+    Endpoint_ClearIN();
+    
+    // Debug LED: piscar rapidamente
+    PORTC |= (1 << 7);
+    _delay_ms(10);
+    PORTC &= ~(1 << 7);
 }
 
-// FUNÇÃO PRINCIPAL: Process commands - MODIFICADA
+// *** FUNÇÃO PRINCIPAL: Process commands - FINAL ***
 void processGenericHIDData(uint8_t* buffer, uint16_t length) {
     if (length < 1) {
         return;
     }
     
-    // Extract command - remove Report ID if present
+    // Extract command
     uint8_t* data = buffer;
     if (buffer[0] == 0x00 && length > 1) {
         data = buffer + 1;
@@ -172,50 +173,33 @@ void processGenericHIDData(uint8_t* buffer, uint16_t length) {
     }
     
     if (length < 1) {
-        return;  // No actual command data
+        return;
     }
     
     uint8_t command_type = data[0];
     last_command_type = command_type;
     commands_received++;
     
-    // MUDANÇA CRÍTICA: variáveis temporárias
-    int8_t temp_x = 0;
-    int8_t temp_y = 0;
-    uint8_t temp_buttons = 0;
-    int8_t temp_wheel = 0;
-    bool report_needed = false;
-    
-    // Process different command types
     switch (command_type) {
-        case 0x01: // Movement
+        case 0x01: // Movement command
             {
                 debugBlink(1);
                 
-                if (length >= 7) {
-                    // X e Y valores como int8_t
-                    temp_x = (int8_t)data[1];
-                    temp_y = (int8_t)data[3];
-                    temp_buttons = (length > 5) ? data[5] : 0;
-                    temp_wheel = (length > 6) ? (int8_t)data[6] : 0;
-                    report_needed = true;
-                }
-                else if (length >= 3) {
-                    temp_x = (int8_t)data[1];
-                    temp_y = (int8_t)data[2];
-                    report_needed = true;
-                }
-                
-                // Armazene valores para uso posterior
-                mouse_x = temp_x;
-                mouse_y = temp_y;
-                mouse_buttons = temp_buttons;
-                mouse_wheel = temp_wheel;
-                newCommandReceived = true;
-                
-                // MUDANÇA CRÍTICA: envie movimento AGORA
-                if (report_needed) {
-                    reportMouseMovementToHost(temp_x, temp_y, temp_buttons, temp_wheel);
+                if (length >= 3) {
+                    // *** FORMATO SIMPLES: X e Y como int8_t direto ***
+                    int8_t x_movement = (int8_t)data[1];
+                    int8_t y_movement = (int8_t)data[2];
+                    
+                    uint8_t buttons = (length > 3) ? data[3] : 0;
+                    
+                    // *** ENVIAR IMEDIATAMENTE - SÓ 3 BYTES ***
+                    sendMouseReportNow(x_movement, y_movement, buttons);
+                    
+                    // Atualizar variáveis globais
+                    mouse_x = x_movement;
+                    mouse_y = y_movement;
+                    mouse_buttons = buttons;
+                    newCommandReceived = true;
                 }
             }
             break;
@@ -224,26 +208,22 @@ void processGenericHIDData(uint8_t* buffer, uint16_t length) {
             {
                 debugBlink(1);
                 if (length >= 2) {
-                    temp_buttons = data[1];
-                    mouse_buttons = temp_buttons;
+                    uint8_t buttons = data[1];
+                    sendMouseReportNow(0, 0, buttons);
+                    mouse_buttons = buttons;
                     newCommandReceived = true;
-                    
-                    // MUDANÇA CRÍTICA: envie clique AGORA
-                    reportMouseMovementToHost(0, 0, temp_buttons, 0);
                 }
             }
             break;
             
-        case 0x03: // Scroll
+        case 0x03: // Scroll - IGNORADO no Boot Protocol
             {
                 debugBlink(1);
+                // Boot Protocol não suporta wheel
+                // Apenas registrar o comando
                 if (length >= 2) {
-                    temp_wheel = (int8_t)data[1];
-                    mouse_wheel = temp_wheel;
+                    mouse_wheel = (int8_t)data[1];
                     newCommandReceived = true;
-                    
-                    // MUDANÇA CRÍTICA: envie scroll AGORA
-                    reportMouseMovementToHost(0, 0, mouse_buttons, temp_wheel);
                 }
             }
             break;
@@ -255,10 +235,8 @@ void processGenericHIDData(uint8_t* buffer, uint16_t length) {
                 mouse_y = 0;
                 mouse_buttons = 0;
                 mouse_wheel = 0;
+                sendMouseReportNow(0, 0, 0);
                 newCommandReceived = true;
-                
-                // Envie um relatório zerado
-                reportMouseMovementToHost(0, 0, 0, 0);
             }
             break;
             
@@ -275,7 +253,7 @@ void processGenericHIDData(uint8_t* buffer, uint16_t length) {
     }
 }
 
-// Control Request
+// Control Request Handler
 void EVENT_USB_Device_ControlRequest(void) {
     switch (USB_ControlRequest.bRequest) {
         case HID_REQ_GetReport:
@@ -331,7 +309,7 @@ void EVENT_USB_Device_ControlRequest(void) {
         case HID_REQ_GetProtocol:
             if (USB_ControlRequest.bmRequestType == (REQDIR_DEVICETOHOST | REQTYPE_CLASS | REQREC_INTERFACE)) {
                 Endpoint_ClearSETUP();
-                Endpoint_Write_8(0x01);
+                Endpoint_Write_8(0x00); // Boot Protocol (não Report Protocol!)
                 Endpoint_ClearIN();
             }
             break;
@@ -345,42 +323,38 @@ void EVENT_USB_Device_ControlRequest(void) {
     }
 }
 
-// HID Task - SIMPLIFICADA
+// HID Task
 void HID_Task(void) {
     if (USB_DeviceState != DEVICE_STATE_Configured)
         return;
 
-    // PRIORITY 1: Check for incoming commands on OUT endpoint
+    // Processar comandos recebidos
     Endpoint_SelectEndpoint(GENERIC_OUT_EPADDR);
     if (Endpoint_IsOUTReceived()) {
         uint8_t ReceivedData[GENERIC_EPSIZE];
         uint16_t BytesReceived = 0;
         
-        // Read all available data
         while (Endpoint_IsReadWriteAllowed() && BytesReceived < GENERIC_EPSIZE) {
             ReceivedData[BytesReceived++] = Endpoint_Read_8();
         }
         
-        // Clear endpoint immediately
         Endpoint_ClearOUT();
         
-        // Process the command if we received data
         if (BytesReceived > 0) {
             processGenericHIDData(ReceivedData, BytesReceived);
         }
     }
 
-    // PRIORITY 2: Send status ocasionalmente (prioridade menor)
-    static uint8_t status_counter = 0;
+    // Status report ocasional
+    static uint16_t status_counter = 0;
     status_counter++;
     
-    if (status_counter >= 100) { // Every ~100 calls
+    if (status_counter >= 500) {
         status_counter = 0;
         
         Endpoint_SelectEndpoint(GENERIC_IN_EPADDR);
         if (Endpoint_IsINReady()) {
-            // Send status report
-            GenericHIDBuffer[0] = 0xAA;  // Signature
+            GenericHIDBuffer[0] = 0xAA;
             GenericHIDBuffer[1] = communication_status;
             GenericHIDBuffer[2] = last_command_type;
             GenericHIDBuffer[3] = commands_received & 0xFF;
@@ -397,32 +371,26 @@ void HID_Task(void) {
 
 // Utility functions
 void sendMouseReport(MouseReport_t* mouseReport) {
-    CurrentMouseReport = *mouseReport;
+    sendMouseReportNow(mouseReport->x, mouseReport->y, mouseReport->buttons);
 }
 
 void setMouseMovement(int8_t x, int8_t y) {
+    sendMouseReportNow(x, y, mouse_buttons);
     mouse_x = x;
     mouse_y = y;
     newCommandReceived = true;
-    
-    // Envio direto para garantir
-    reportMouseMovementToHost(x, y, mouse_buttons, mouse_wheel);
 }
 
 void setMouseButtons(uint8_t buttons) {
+    sendMouseReportNow(0, 0, buttons);
     mouse_buttons = buttons;
     newCommandReceived = true;
-    
-    // Envio direto para garantir
-    reportMouseMovementToHost(0, 0, buttons, mouse_wheel);
 }
 
 void setMouseWheel(int8_t wheel) {
+    // Boot Protocol não suporta wheel
     mouse_wheel = wheel;
     newCommandReceived = true;
-    
-    // Envio direto para garantir
-    reportMouseMovementToHost(0, 0, mouse_buttons, wheel);
 }
 
 void getMouseState(int8_t* x, int8_t* y, uint8_t* buttons, int8_t* wheel) {
