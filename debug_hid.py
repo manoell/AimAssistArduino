@@ -158,6 +158,47 @@ class CommunicationTester:
         
         return True
     
+    def test_mouse_movement_intensive(self):
+        """Teste intensivo para movimento do cursor"""
+        print("\n🚨 TESTE INTENSIVO - MOVIMENTO DO CURSOR")
+        print("="*50)
+        print("📊 Enviando muitos comandos para garantir resposta")
+        print("👀 OBSERVE O CURSOR COM ATENÇÃO!")
+        
+        # Valores grandes para movimento mais visível
+        moves = [
+            ("direita", 30, 0),
+            ("esquerda", 226, 0),  # -30 em complemento de 2
+            ("baixo", 0, 30),
+            ("cima", 0, 226),     # -30 em complemento de 2
+            ("diagonal", 20, 20)
+        ]
+        
+        for direction, x, y in moves:
+            print(f"\n🔄 Teste: {direction} (X={x}, Y={y})")
+            
+            # Comando de movimento
+            cmd = bytearray(64)
+            cmd[0] = 0x01  # Movement
+            cmd[1] = x     # X
+            cmd[3] = y     # Y
+            
+            # Enviar MUITOS comandos para garantir que algum funcione
+            for i in range(10):
+                if self.send_command(cmd):
+                    print(f"  ✅ #{i+1}", end=" ", flush=True)
+                else:
+                    print(f"  ❌ #{i+1}", end=" ", flush=True)
+                time.sleep(0.05)  # Pequena pausa
+            
+            print("\n")
+            moved = input(f"❓ O cursor se moveu para {direction}? (s/n): ").lower() == 's'
+            if moved:
+                print("🎉 MOVIMENTO FUNCIONANDO!")
+                return True
+        
+        return False
+    
     def test_rapid_fire(self):
         """Teste de comandos em rajada"""
         print("\n⚡ TESTE DE RAJADA")
@@ -199,6 +240,7 @@ class CommunicationTester:
         tests = [
             ("Comunicação Básica", self.test_communication_basic),
             ("Comandos Específicos", self.test_specific_commands),
+            ("Movimento Intensivo", self.test_mouse_movement_intensive),
             ("Teste de Rajada", self.test_rapid_fire),
         ]
         
@@ -229,7 +271,7 @@ class CommunicationTester:
         if passed == len(tests):
             print("🏆 COMUNICAÇÃO FUNCIONANDO PERFEITAMENTE!")
             print("✅ Arduino está recebendo e processando comandos")
-            print("✅ Próximo passo: implementar movimento do cursor")
+            print("✅ Cursor respondendo aos comandos")
         elif passed >= 1:
             print("⚠️ COMUNICAÇÃO PARCIAL")
             print("💡 Verifique o firmware e tente novamente")

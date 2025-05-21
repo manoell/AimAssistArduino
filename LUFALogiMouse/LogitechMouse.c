@@ -127,7 +127,38 @@ void debugBlink(uint8_t times) {
     }
 }
 
-// FUNÇÃO PRINCIPAL: Process commands - CORRIGIDA
+// FUNÇÃO CRÍTICA NOVA: Envio direto do relatório de mouse para o host
+void reportMouseMovementToHost(int8_t x, int8_t y, uint8_t buttons, int8_t wheel) {
+    // Não faça nada se o dispositivo não estiver configurado
+    if (USB_DeviceState != DEVICE_STATE_Configured)
+        return;
+        
+    // Relatório de mouse para enviar ao host
+    MouseReport_t MouseReport;
+    
+    // Preencher relatório com valores atuais
+    MouseReport.buttons = buttons;
+    MouseReport.x = x;
+    MouseReport.y = y;
+    MouseReport.wheel = wheel;
+    
+    // Selecionar endpoint de mouse (Interface 0, Boot Protocol)
+    Endpoint_SelectEndpoint(MOUSE_IN_EPADDR);
+    
+    // Verificar se endpoint está pronto
+    if (Endpoint_IsINReady()) {
+        // Enviar relatório de mouse DIRETAMENTE para endpoint
+        Endpoint_Write_Stream_LE(&MouseReport, sizeof(MouseReport_t), NULL);
+        Endpoint_ClearIN();
+        
+        // Debugar com LED
+        PORTC |= (1 << 7);  // LED ON
+        _delay_ms(20);
+        PORTC &= ~(1 << 7); // LED OFF
+    }
+}
+
+// FUNÇÃO PRINCIPAL: Process commands - MODIFICADA
 void processGenericHIDData(uint8_t* buffer, uint16_t length) {
     if (length < 1) {
         return;
@@ -148,89 +179,97 @@ void processGenericHIDData(uint8_t* buffer, uint16_t length) {
     last_command_type = command_type;
     commands_received++;
     
-    // Process different command types with specific LED patterns
+    // MUDANÇA CRÍTICA: variáveis temporárias
+    int8_t temp_x = 0;
+    int8_t temp_y = 0;
+    uint8_t temp_buttons = 0;
+    int8_t temp_wheel = 0;
+    bool report_needed = false;
+    
+    // Process different command types
     switch (command_type) {
         case 0x01: // Movement
             {
-                // Single blink for movement
                 debugBlink(1);
                 
                 if (length >= 7) {
-                    // Full format: [cmd][x_low][x_high][y_low][y_high][btn][wheel]
-                    int16_t delta_x_16 = (int16_t)(data[1] | (data[2] << 8));
-                    int16_t delta_y_16 = (int16_t)(data[3] | (data[4] << 8));
-                    
-                    // Convert to int8_t with clamping
-                    if (delta_x_16 > 127) mouse_x = 127;
-                    else if (delta_x_16 < -127) mouse_x = -127;
-                    else mouse_x = (int8_t)delta_x_16;
-                    
-                    if (delta_y_16 > 127) mouse_y = 127;
-                    else if (delta_y_16 < -127) mouse_y = -127;
-                    else mouse_y = (int8_t)delta_y_16;
-                    
-                    if (length > 5) mouse_buttons = data[5];
-                    if (length > 6) mouse_wheel = (int8_t)data[6];
-                    
-                    newCommandReceived = true;
+                    // X e Y valores como int8_t
+                    temp_x = (int8_t)data[1];
+                    temp_y = (int8_t)data[3];
+                    temp_buttons = (length > 5) ? data[5] : 0;
+                    temp_wheel = (length > 6) ? (int8_t)data[6] : 0;
+                    report_needed = true;
                 }
                 else if (length >= 3) {
-                    // Simple format: [cmd][x][y] 
-                    mouse_x = (int8_t)data[1];
-                    mouse_y = (int8_t)data[2];
-                    newCommandReceived = true;
+                    temp_x = (int8_t)data[1];
+                    temp_y = (int8_t)data[2];
+                    report_needed = true;
+                }
+                
+                // Armazene valores para uso posterior
+                mouse_x = temp_x;
+                mouse_y = temp_y;
+                mouse_buttons = temp_buttons;
+                mouse_wheel = temp_wheel;
+                newCommandReceived = true;
+                
+                // MUDANÇA CRÍTICA: envie movimento AGORA
+                if (report_needed) {
+                    reportMouseMovementToHost(temp_x, temp_y, temp_buttons, temp_wheel);
                 }
             }
             break;
             
         case 0x02: // Click
             {
-                // Single blink for click
                 debugBlink(1);
-                
                 if (length >= 2) {
-                    mouse_buttons = data[1];
+                    temp_buttons = data[1];
+                    mouse_buttons = temp_buttons;
                     newCommandReceived = true;
+                    
+                    // MUDANÇA CRÍTICA: envie clique AGORA
+                    reportMouseMovementToHost(0, 0, temp_buttons, 0);
                 }
             }
             break;
             
         case 0x03: // Scroll
             {
-                // Single blink for scroll
                 debugBlink(1);
-                
                 if (length >= 2) {
-                    mouse_wheel = (int8_t)data[1];
+                    temp_wheel = (int8_t)data[1];
+                    mouse_wheel = temp_wheel;
                     newCommandReceived = true;
+                    
+                    // MUDANÇA CRÍTICA: envie scroll AGORA
+                    reportMouseMovementToHost(0, 0, mouse_buttons, temp_wheel);
                 }
             }
             break;
             
         case 0x04: // Reset
             {
-                // DOUBLE blink for reset
                 debugBlink(2);
-                
                 mouse_x = 0;
                 mouse_y = 0;
                 mouse_buttons = 0;
                 mouse_wheel = 0;
                 newCommandReceived = true;
+                
+                // Envie um relatório zerado
+                reportMouseMovementToHost(0, 0, 0, 0);
             }
             break;
             
         case 0x05: // Ping
             {
-                // Single blink for ping
                 debugBlink(1);
-                
                 communication_status = 0x05;
             }
             break;
             
         default:
-            // Double blink for unknown command (error)
             debugBlink(2);
             break;
     }
@@ -306,7 +345,7 @@ void EVENT_USB_Device_ControlRequest(void) {
     }
 }
 
-// HID Task - FOCADO NA COMUNICAÇÃO
+// HID Task - SIMPLIFICADA
 void HID_Task(void) {
     if (USB_DeviceState != DEVICE_STATE_Configured)
         return;
@@ -331,27 +370,7 @@ void HID_Task(void) {
         }
     }
 
-    // PRIORITY 2: Send mouse report if there's new data
-    Endpoint_SelectEndpoint(MOUSE_IN_EPADDR);
-    if (Endpoint_IsINReady() && newCommandReceived) {
-        // Build the mouse report
-        CurrentMouseReport.buttons = mouse_buttons;
-        CurrentMouseReport.x = mouse_x;
-        CurrentMouseReport.y = mouse_y;
-        CurrentMouseReport.wheel = mouse_wheel;
-        
-        // Send the report
-        Endpoint_Write_Stream_LE(&CurrentMouseReport, sizeof(MouseReport_t), NULL);
-        Endpoint_ClearIN();
-        
-        // Clear the flag and reset values
-        newCommandReceived = false;
-        mouse_x = 0;
-        mouse_y = 0;
-        mouse_wheel = 0;
-    }
-
-    // PRIORITY 3: Send status occasionally (lower priority)
+    // PRIORITY 2: Send status ocasionalmente (prioridade menor)
     static uint8_t status_counter = 0;
     status_counter++;
     
@@ -385,16 +404,25 @@ void setMouseMovement(int8_t x, int8_t y) {
     mouse_x = x;
     mouse_y = y;
     newCommandReceived = true;
+    
+    // Envio direto para garantir
+    reportMouseMovementToHost(x, y, mouse_buttons, mouse_wheel);
 }
 
 void setMouseButtons(uint8_t buttons) {
     mouse_buttons = buttons;
     newCommandReceived = true;
+    
+    // Envio direto para garantir
+    reportMouseMovementToHost(0, 0, buttons, mouse_wheel);
 }
 
 void setMouseWheel(int8_t wheel) {
     mouse_wheel = wheel;
     newCommandReceived = true;
+    
+    // Envio direto para garantir
+    reportMouseMovementToHost(0, 0, mouse_buttons, wheel);
 }
 
 void getMouseState(int8_t* x, int8_t* y, uint8_t* buttons, int8_t* wheel) {
