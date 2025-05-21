@@ -6,13 +6,16 @@
 // Desabilitar debugging para evitar problemas
 #define ENABLE_UHS_DEBUGGING 0
 
-// Macros para gerenciar interrupções USB do LUFA
+// Armazenar estado original das interrupções USB
+static uint8_t usb_int_saved_state = 0;
+
+// Macros otimizadas para gerenciar interrupções USB do LUFA
 #ifndef USB_INT_DISABLE
-#define USB_INT_DISABLE() do { UDIEN = 0; } while(0)
+#define USB_INT_DISABLE() do { usb_int_saved_state = UDIEN; UDIEN &= ~(1 << SOFE); } while(0)
 #endif
 
 #ifndef USB_INT_ENABLE
-#define USB_INT_ENABLE() do { UDIEN = ((1 << RXSTPE) | (1 << SOFE)); } while(0)
+#define USB_INT_ENABLE() do { UDIEN = usb_int_saved_state; } while(0)
 #endif
 
 #include <SPI.h>
@@ -25,6 +28,7 @@ static int8_t last_mouse_y = 0;
 static uint8_t last_mouse_buttons = 0;
 static int8_t last_mouse_wheel = 0;
 static uint8_t new_mouse_data = 0;
+static bool usb_host_busy = false;
 
 // Instâncias USB
 USB Usb;
@@ -52,11 +56,33 @@ void MouseRptParser::Parse(USBHID *hid, bool is_rpt_id, uint8_t len, uint8_t *bu
 }
 
 void MouseRptParser::OnMouseMove(USBHID *hid, uint8_t buttons, int8_t x, int8_t y, int8_t wheel) {
-    last_mouse_x = x;
-    last_mouse_y = y;
-    last_mouse_buttons = buttons;
-    last_mouse_wheel = wheel;
-    new_mouse_data = 1;
+    // Aplicar sistema de acumulação para movimentos pequenos e suavização
+    if (abs(x) > 10 || abs(y) > 10) {
+        // Movimento rápido - enviar imediatamente
+        last_mouse_x = x;
+        last_mouse_y = y;
+        last_mouse_buttons = buttons;
+        last_mouse_wheel = wheel;
+        new_mouse_data = 1;
+    } else {
+        // Movimento lento - acumular
+        static int8_t acc_x = 0, acc_y = 0;
+        acc_x += x;
+        acc_y += y;
+        
+        // Quando acumulado atingir threshold, enviar
+        if (abs(acc_x) >= 3 || abs(acc_y) >= 3) {
+            last_mouse_x = acc_x;
+            last_mouse_y = acc_y;
+            last_mouse_buttons = buttons;
+            last_mouse_wheel = wheel;
+            new_mouse_data = 1;
+            
+            // Reset acumuladores
+            acc_x = 0;
+            acc_y = 0;
+        }
+    }
 }
 
 void MouseRptParser::OnWheelMove(USBHID *hid, int8_t wheel) {
@@ -96,15 +122,13 @@ void MouseRptParser::OnMiddleButtonUp(USBHID *hid) {
 
 // Funções de interface C
 uint8_t initializeUSBHost(void) {
-    // Inicializar SPI com configurações conservadoras
+    // Inicializar SPI com configurações otimizadas
     SPI.begin();
-    SPI.setClockDivider(SPI_CLOCK_DIV8);
+    SPI.setClockDivider(SPI_CLOCK_DIV4); // Mais rápido que DIV8 
+    SPI.setDataMode(SPI_MODE0);
     
-    // Comentado: Defina pinos SPI específicos se necessário
-    // Usb.gpioInit(SS_PIN, INT_PIN);
-    
-    // Inicializar o USB Host Shield e retornar o código de resultado
-    uint8_t err = Usb.Init();
+    // Inicializar USB Host Shield com timeout curto
+    uint8_t err = Usb.Init(500);
 
     // Se inicialização bem-sucedida, registrar o parser
     if (err == 0) {
@@ -124,14 +148,32 @@ uint8_t initializeUSBHost(void) {
 }
 
 void processUSBHostTasks(void) {
-    // Desabilitar temporariamente interrupções USB
+    // Marcar que o host está ocupado
+    usb_host_busy = true;
+    
+    // Salvar estado atual de interrupções e desabilitar apenas as não-críticas
     USB_INT_DISABLE();
     
-    // Executar tarefas USB Host
+    // Executar tarefas USB Host com timeout curto para não bloquear
     Usb.Task();
     
-    // Reabilitar interrupções USB
+    // Restaurar estado original de interrupções
     USB_INT_ENABLE();
+    
+    // Indicar que o processamento terminou
+    usb_host_busy = false;
+}
+
+void suspendUSBHostTasks(void) {
+    // Não faz nada por enquanto - para uso futuro
+}
+
+void resumeUSBHostTasks(void) {
+    // Não faz nada por enquanto - para uso futuro
+}
+
+bool isUSBHostBusy(void) {
+    return usb_host_busy;
 }
 
 int8_t getLastMouseX(void) {

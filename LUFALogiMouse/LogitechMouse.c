@@ -1,3 +1,4 @@
+#include <Arduino.h>
 #include "LogitechMouse.h"
 #include "mouse_bridge.h"
 #include <util/delay.h>
@@ -22,7 +23,15 @@ static uint32_t commands_received = 0;
 static uint8_t last_command_type = 0;
 static uint8_t communication_status = 0;
 
-// Setup Hardware Function
+// Variáveis para controle de timing
+static uint32_t last_host_process_time = 0;
+static const uint16_t HOST_PROCESS_INTERVAL = 2; // 2ms entre processamentos
+
+// Variáveis para o mecanismo de timeouts
+static uint32_t last_activity_time = 0;
+static const uint32_t ACTIVITY_TIMEOUT = 500; // 500ms timeout
+
+// Setup Hardware Function - Inicialização otimizada
 void SetupHardware(void) {
     // Disable watchdog
     MCUSR &= ~(1 << WDRF);
@@ -40,18 +49,6 @@ void SetupHardware(void) {
     _delay_ms(100);
     PORTC &= ~(1 << 7);
     _delay_ms(100);
-    
-    // Initialize USB Host Shield
-    uint8_t usbHostErr = initializeUSBHost();
-    if (usbHostErr != 0) {
-        // Error indication - blink rapidly
-        for (int i = 0; i < 10; i++) {
-            PORTC |= (1 << 7);
-            _delay_ms(50);
-            PORTC &= ~(1 << 7);
-            _delay_ms(50);
-        }
-    }
     
     // Arduino Leonardo USB Fix
     USB_Disable();
@@ -75,7 +72,7 @@ void SetupHardware(void) {
     // Initialize LUFA
     USB_Init();
     
-    // Initialize reports
+    // Reset reports
     memset(&CurrentMouseReport, 0, sizeof(MouseReport_t));
     memset(&CurrentKeyboardReport, 0, sizeof(KeyboardReport_t));
     memset(GenericHIDBuffer, 0, sizeof(GenericHIDBuffer));
@@ -89,6 +86,18 @@ void SetupHardware(void) {
     last_command_type = 0;
     communication_status = 0xFF;
     
+    // Initialize USB Host Shield
+    uint8_t usbHostErr = initializeUSBHost();
+    if (usbHostErr != 0) {
+        // Error indication - blink rapidly
+        for (int i = 0; i < 10; i++) {
+            PORTC |= (1 << 7);
+            _delay_ms(50);
+            PORTC &= ~(1 << 7);
+            _delay_ms(50);
+        }
+    }
+    
     // Blink LED to show setup complete
     for (int i = 0; i < 3; i++) {
         PORTC |= (1 << 7);
@@ -96,11 +105,18 @@ void SetupHardware(void) {
         PORTC &= ~(1 << 7);
         _delay_ms(100);
     }
+    
+    // Reset timing variables
+    last_host_process_time = 0;
+    last_activity_time = 0;
 }
 
 // USB Event Handlers
 void EVENT_USB_Device_Connect(void) {
     communication_status = 0x01;
+    // Update activity time
+    last_activity_time = millis();
+    
     // Blink once on connect
     PORTC |= (1 << 7);
     _delay_ms(50);
@@ -121,6 +137,9 @@ void EVENT_USB_Device_ConfigurationChanged(void) {
     
     if (ConfigSuccess) {
         communication_status = 0x02;
+        // Update activity time
+        last_activity_time = millis();
+        
         // Blink 3 times on successful config
         for (int i = 0; i < 3; i++) {
             PORTC |= (1 << 7);
@@ -151,6 +170,9 @@ void processGenericHIDData(uint8_t* buffer, uint16_t length) {
     if (length < 1) {
         return;
     }
+    
+    // Update activity time
+    last_activity_time = millis();
     
     // Extract command - remove Report ID if present
     uint8_t* data = buffer;
@@ -282,6 +304,9 @@ void EVENT_USB_Device_ControlRequest(void) {
                     Endpoint_ClearSETUP();
                     Endpoint_Write_Control_Stream_LE(ReportData, ReportSize);
                     Endpoint_ClearOUT();
+                    
+                    // Update activity time
+                    last_activity_time = millis();
                 }
             }
             break;
@@ -305,6 +330,9 @@ void EVENT_USB_Device_ControlRequest(void) {
                 if (BytesReceived > 0) {
                     processGenericHIDData(TempBuffer, BytesReceived);
                 }
+                
+                // Update activity time
+                last_activity_time = millis();
             }
             break;
 
@@ -313,6 +341,9 @@ void EVENT_USB_Device_ControlRequest(void) {
                 Endpoint_ClearSETUP();
                 Endpoint_Write_8(0x01);
                 Endpoint_ClearIN();
+                
+                // Update activity time
+                last_activity_time = millis();
             }
             break;
 
@@ -320,6 +351,9 @@ void EVENT_USB_Device_ControlRequest(void) {
             if (USB_ControlRequest.bmRequestType == (REQDIR_HOSTTODEVICE | REQTYPE_CLASS | REQREC_INTERFACE)) {
                 Endpoint_ClearSETUP();
                 Endpoint_ClearStatusStage();
+                
+                // Update activity time
+                last_activity_time = millis();
             }
             break;
     }
@@ -330,26 +364,15 @@ void HID_Task(void) {
     if (USB_DeviceState != DEVICE_STATE_Configured)
         return;
 
-    // PRIORITY 1: Check for incoming commands on OUT endpoint
-    Endpoint_SelectEndpoint(GENERIC_OUT_EPADDR);
-    if (Endpoint_IsOUTReceived()) {
-        uint8_t ReceivedData[GENERIC_EPSIZE];
-        uint16_t BytesReceived = 0;
-        
-        // Read all available data
-        while (Endpoint_IsReadWriteAllowed() && BytesReceived < GENERIC_EPSIZE) {
-            ReceivedData[BytesReceived++] = Endpoint_Read_8();
-        }
-        
-        // Clear endpoint immediately
-        Endpoint_ClearOUT();
-        
-        // Process the command if we received data
-        if (BytesReceived > 0) {
-            processGenericHIDData(ReceivedData, BytesReceived);
-        }
+    // Processar o USB Host Shield baseado no intervalo configurado
+    uint32_t current_time = millis();
+    
+    // PRIORITY 1: Processar USB Host a cada HOST_PROCESS_INTERVAL
+    if ((current_time - last_host_process_time) >= HOST_PROCESS_INTERVAL && !isUSBHostBusy()) {
+        processUSBHostTasks();
+        last_host_process_time = current_time;
     }
-
+    
     // PRIORITY 2: Check for data from real mouse (via USB Host Shield)
     if (hasNewMouseData()) {
         mouse_x = getLastMouseX();
@@ -358,6 +381,9 @@ void HID_Task(void) {
         mouse_wheel = getLastMouseWheel();
         newCommandReceived = true;
         clearNewMouseDataFlag();
+        
+        // Update activity time
+        last_activity_time = current_time;
     }
 
     // PRIORITY 3: Send mouse report if there's new data
@@ -378,9 +404,25 @@ void HID_Task(void) {
         mouse_x = 0;
         mouse_y = 0;
         mouse_wheel = 0;
+        
+        // Update activity time
+        last_activity_time = current_time;
     }
 
-    // PRIORITY 4: Send status occasionally (lower priority)
+    // PRIORITY 4: Check for timeout and reset se necessário
+    if ((current_time - last_activity_time) > ACTIVITY_TIMEOUT) {
+        // Reset mouse state if timed out
+        mouse_x = 0;
+        mouse_y = 0;
+        mouse_buttons = 0;
+        mouse_wheel = 0;
+        newCommandReceived = false;
+        
+        // Reset last_activity_time para evitar resets consecutivos
+        last_activity_time = current_time;
+    }
+
+    // PRIORITY 5: Send status occasionally (lower priority)
     static uint8_t status_counter = 0;
     status_counter++;
     
@@ -414,16 +456,25 @@ void setMouseMovement(int8_t x, int8_t y) {
     mouse_x = x;
     mouse_y = y;
     newCommandReceived = true;
+    
+    // Update activity time
+    last_activity_time = millis();
 }
 
 void setMouseButtons(uint8_t buttons) {
     mouse_buttons = buttons;
     newCommandReceived = true;
+    
+    // Update activity time
+    last_activity_time = millis();
 }
 
 void setMouseWheel(int8_t wheel) {
     mouse_wheel = wheel;
     newCommandReceived = true;
+    
+    // Update activity time
+    last_activity_time = millis();
 }
 
 void getMouseState(int8_t* x, int8_t* y, uint8_t* buttons, int8_t* wheel) {
@@ -444,16 +495,4 @@ uint8_t getLastCommandType(void) {
 
 uint8_t getCommunicationStatus(void) {
     return communication_status;
-}
-
-// Implementação para chamar processUSBHostTasks
-void ProcessUSBHost(void) {
-    // Desabilitar temporariamente interrupções USB
-    UDIEN = 0;
-    
-    // Executar tarefa USB Host
-    processUSBHostTasks();
-    
-    // Reabilitar interrupções USB
-    UDIEN = ((1 << RXSTPE) | (1 << SOFE));
 }

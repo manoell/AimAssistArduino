@@ -22,6 +22,11 @@ int8_t getLastMouseWheel(void);
 uint8_t hasNewMouseData(void);
 void clearNewMouseDataFlag(void);
 
+// Funções avançadas para gestão de interrupções
+void suspendUSBHostTasks(void);
+void resumeUSBHostTasks(void);
+bool isUSBHostBusy(void);
+
 #ifdef __cplusplus
 }
 #endif
