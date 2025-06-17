@@ -1,14 +1,18 @@
 
-    =========================== USB Port2 ===========================
+    =========================== USB Port3 ===========================
 
 Connection Status        : 0x01 (Device is connected)
-Port Chain               : 3-4-2
-Properties               : 0x00
- IsUserConnectable       : no
+Port Chain               : 3-3
+Properties               : 0x01
+ IsUserConnectable       : yes
  PortIsDebugCapable      : no
  PortHasMultiCompanions  : no
  PortConnectorIsTypeC    : no
-ConnectionIndex          : 0x02 (Port 2)
+ConnectionIndex          : 0x03 (Port 3)
+CompanionIndex           : 0
+ CompanionHubSymLnk      : USB#ROOT_HUB30#5&2c35141&0&0#{f18a0e88-c30c-11d0-8815-00a0c906bed8}
+ CompanionPortNumber     : 0x07 (Port 7)
+ -> CompanionPortChain   : 3-7
 
       ========================== Summary =========================
 Vendor ID                : 0x046D (Logitech Inc.)
@@ -17,7 +21,7 @@ Manufacturer String      : Logitech
 Product String           : USB Receiver
 Serial                   : ---
 USB Version              : 2.0 -> but Device is Full-Speed only
-Port maximum Speed       : High-Speed
+Port maximum Speed       : High-Speed (Companion Port 3-7 is doing the SuperSpeed)
 Device maximum Speed     : Full-Speed
 Device Connection Speed  : Full-Speed
 Self powered             : no
@@ -28,11 +32,11 @@ Used Endpoints           : 5
 
         +++++++++++++++++ Device Information ++++++++++++++++++
 Device Description       : USB Composite Device
-Device Path              : \\?\USB#VID_046D&PID_C547#7&2b511563&0&2#{a5dcbf10-6530-11d2-901f-00c04fb951ed} (GUID_DEVINTERFACE_USB_DEVICE)
-Kernel Name              : \Device\USBPDO-15
-Device ID                : USB\VID_046D&PID_C547\7&2B511563&0&2
+Device Path              : \\?\USB#VID_046D&PID_C547#6&c1a2e2f&0&3#{a5dcbf10-6530-11d2-901f-00c04fb951ed} (GUID_DEVINTERFACE_USB_DEVICE)
+Kernel Name              : \Device\USBPDO-11
+Device ID                : USB\VID_046D&PID_C547\6&C1A2E2F&0&3
 Hardware IDs             : USB\VID_046D&PID_C547&REV_0402 USB\VID_046D&PID_C547
-Driver KeyName           : {36fc9e60-c465-11cf-8056-444553540000}\0019 (GUID_DEVCLASS_USB)
+Driver KeyName           : {36fc9e60-c465-11cf-8056-444553540000}\0011 (GUID_DEVCLASS_USB)
 Driver                   : \SystemRoot\System32\drivers\usbccgp.sys (Version: 10.0.19041.5794  Date: 2025-05-01  Company: Microsoft Corporation)
 Driver Inf               : C:\Windows\inf\usb.inf
 Legacy BusType           : PNPBus
@@ -40,15 +44,15 @@ Class                    : USB
 Class GUID               : {36fc9e60-c465-11cf-8056-444553540000} (GUID_DEVCLASS_USB)
 Service                  : usbccgp
 Enumerator               : USB
-Location Info            : Port_#0002.Hub_#0006
-Address                  : 2
-Location IDs             : PCIROOT(0)#PCI(0801)#PCI(0003)#USBROOT(0)#USB(4)#USB(2), ACPI(_SB_)#ACPI(PCI0)#ACPI(GP13)#ACPI(XHC0)#ACPI(RHUB)#ACPI(PRT4)#USB(2)
-Container ID             : {f056a0c3-3417-11f0-888c-a85e451e3cda}
+Location Info            : Port_#0003.Hub_#0003
+Address                  : 3
+Location IDs             : PCIROOT(0)#PCI(0801)#PCI(0003)#USBROOT(0)#USB(3), ACPI(_SB_)#ACPI(PCI0)#ACPI(GP13)#ACPI(XHC0)#ACPI(RHUB)#ACPI(PRT3)
+Container ID             : {f056a043-3417-11f0-888c-a85e451e3cda}
 Manufacturer Info        : (Standard USB Host Controller)
 Capabilities             : 0x84 (Removable, SurpriseRemovalOK)
 Status                   : 0x0180600A (DN_DRIVER_LOADED, DN_STARTED, DN_DISABLEABLE, DN_REMOVABLE, DN_NT_ENUMERATOR, DN_NT_DRIVER)
 Problem Code             : 0
-Address                  : 2
+Address                  : 3
 EnhancedPowerMgmtEnabled : 0
 Power State              : D0 (supported: D0, D1, D2, D3, wake from D0, wake from D1, wake from D2)
 
@@ -58,7 +62,7 @@ HKEY_LOCAL_MACHINE\SYSTEM\CurrentControlSet\Control\usbflags\046DC5470402
  NewInterfaceUsage       : REG_DWORD 00000000 (0)
 
         ---------------- Connection Information ---------------
-Connection Index         : 0x02 (Port 2)
+Connection Index         : 0x03 (Port 3)
 Connection Status        : 0x01 (DeviceConnected)
 Current Config Value     : 0x01 (Configuration 1)
 Device Address           : 0x04 (4)
@@ -68,20 +72,20 @@ Number of open Pipes     : 0x04 (4 pipes to data endpoints)
 Pipe[0]                  : EndpointID=1  Direction=IN   ScheduleOffset=0  Type=Interrupt  wMaxPacketSize=0x40    bInterval=1   -> 718 Bits/ms = 89750 Bytes/s
 Pipe[1]                  : EndpointID=2  Direction=IN   ScheduleOffset=0  Type=Interrupt  wMaxPacketSize=0x40    bInterval=1   -> 718 Bits/ms = 89750 Bytes/s
 Pipe[2]                  : EndpointID=3  Direction=IN   ScheduleOffset=0  Type=Interrupt  wMaxPacketSize=0x40    bInterval=1   -> 718 Bits/ms = 89750 Bytes/s
-Pipe[3]                  : EndpointID=3  Direction=OUT  ScheduleOffset=0  Type=Interrupt  wMaxPacketSize=0x40    bInterval=1   -> 718 Bits/ms = 89750 Bytes/s
-Data (HexDump)           : 02 00 00 00 12 01 00 02 00 00 00 40 6D 04 47 C5   ...........@m.G.
+Pipe[3]                  : EndpointID=4  Direction=OUT  ScheduleOffset=0  Type=Interrupt  wMaxPacketSize=0x40    bInterval=1   -> 718 Bits/ms = 89750 Bytes/s
+Data (HexDump)           : 03 00 00 00 12 01 00 02 00 00 00 40 6D 04 47 C5   ...........@m.G.
                            02 04 01 02 00 01 01 01 00 04 00 04 00 00 00 01   ................
                            00 00 00 07 05 81 03 40 00 01 00 00 00 00 07 05   .......@........
                            82 03 40 00 01 00 00 00 00 07 05 83 03 40 00 01   ..@..........@..
-                           00 00 00 00 07 05 03 03 40 00 01 00 00 00 00      ........@......
+                           00 00 00 00 07 05 04 03 40 00 01 00 00 00 00      ........@......
 
         --------------- Connection Information V2 -------------
-Connection Index         : 0x02 (2)
+Connection Index         : 0x03 (3)
 Length                   : 0x10 (16 bytes)
 SupportedUsbProtocols    : 0x03
  Usb110                  : 1 (yes, port supports USB 1.1)
  Usb200                  : 1 (yes, port supports USB 2.0)
- Usb300                  : 0 (no, port not supports USB 3.0)
+ Usb300                  : 0 (no, port not supports USB 3.0) -> but Companion Port 3-7 does
  ReservedMBZ             : 0x00
 Flags                    : 0x00
  DevIsOpAtSsOrHigher     : 0 (Device is not operating at SuperSpeed or higher)
@@ -89,7 +93,7 @@ Flags                    : 0x00
  DevIsOpAtSsPlusOrHigher : 0 (Device is not operating at SuperSpeedPlus or higher)
  DevIsSsPlusCapOrHigher  : 0 (Device is not SuperSpeedPlus capable or higher)
  ReservedMBZ             : 0x00
-Data (HexDump)           : 02 00 00 00 10 00 00 00 03 00 00 00 00 00 00 00   ................
+Data (HexDump)           : 03 00 00 00 10 00 00 00 03 00 00 00 00 00 00 00   ................
 
     ---------------------- Device Descriptor ----------------------
 bLength                  : 0x12 (18 bytes)
@@ -126,11 +130,11 @@ bmAttributes             : 0xA0
  D4..0: Reserved, set 0  : 0x00
 MaxPower                 : 0x31 (98 mA)
 Data (HexDump)           : 09 02 5B 00 03 01 04 A0 31 09 04 00 00 01 03 01   ..[.....1.......
-                           02 00 09 21 11 01 00 01 22 52 00 07 05 81 03 40   ...!...."R.....@
+                           02 00 09 21 11 01 00 01 22 32 00 07 05 81 03 40   ...!...."2.....@
                            00 01 09 04 01 00 01 03 01 01 00 09 21 11 01 00   ............!...
                            01 22 85 00 07 05 82 03 40 00 01 09 04 02 00 02   ."......@.......
                            03 00 00 00 09 21 11 01 00 01 22 22 00 07 05 83   .....!....""....
-                           03 40 00 01 07 05 03 03 40 00 01                  .@......@..
+                           03 40 00 01 07 05 04 03 40 00 01                  .@......@..
 
         ---------------- Interface Descriptor -----------------
 bLength                  : 0x09 (9 bytes)
@@ -150,10 +154,10 @@ bDescriptorType          : 0x21 (HID Descriptor)
 bcdHID                   : 0x0111 (HID Version 1.11)
 bCountryCode             : 0x00 (00 = not localized)
 bNumDescriptors          : 0x01
-Data (HexDump)           : 09 21 11 01 00 01 22 52 00                        .!...."R.
+Data (HexDump)           : 09 21 11 01 00 01 22 32 00                        .!...."2.
 Descriptor 1:
 bDescriptorType          : 0x22 (Class=Report)
-wDescriptorLength        : 0x0052 (82 bytes)
+wDescriptorLength        : 0x0032 (50 bytes)
   05 01             Usage Page (Generic Desktop Controls)
   09 02             Usage (Mouse)
   A1 01             Collection (Application)
@@ -161,45 +165,28 @@ wDescriptorLength        : 0x0052 (82 bytes)
   A1 00               Collection (Physical)
   05 09                 Usage Page (Buttons)
   19 01                 Usage Minimum (1)
-  29 08                 Usage Maximum (8)
+  29 03                 Usage Maximum (3)
   15 00                 Logical Minimum (0)
   25 01                 Logical Maximum (1)
-  95 08                 Report Count (8)
+  95 03                 Report Count (3)
   75 01                 Report Size (1)
   81 02                 Input (Var)
+  95 01                 Report Count (1)
+  75 05                 Report Size (5)
+  81 01                 Input (Const)
   05 01                 Usage Page (Generic Desktop Controls)
   09 30                 Usage (Direction-X)
   09 31                 Usage (Direction-Y)
   15 81                 Logical Minimum (-127)
   25 7F                 Logical Maximum (127)
+  75 08                 Report Size (8)
   95 02                 Report Count (2)
-  75 08                 Report Size (8)
   81 06                 Input (Var, Rel)
-  09 38                 Usage (Wheel)
-  15 81                 Logical Minimum (-127)
-  25 7F                 Logical Maximum (127)
-  95 01                 Report Count (1)
-  75 08                 Report Size (8)
-  81 06                 Input (Var, Rel)
-  05 0C                 Usage Page (Consumer)
-  0A 38 02              Usage (AC Pan)
-  15 81                 Logical Minimum (-127)
-  25 7F                 Logical Maximum (127)
-  95 01                 Report Count (1)
-  75 08                 Report Size (8)
-  81 06                 Input (Var, Rel)
-  06 FF 00              Usage Page (Vendor Specific)
-  09 01                 Usage (unk)
-  95 01                 Report Count (1)
-  75 08                 Report Size (8)
-  81 02                 Input (Var)
   C0                  End Collection
   C0                End Collection
-Data (HexDump)           : 05 01 09 02 A1 01 09 01 A1 00 05 09 19 01 29 08   ..............).
-                           15 00 25 01 95 08 75 01 81 02 05 01 09 30 09 31   ..%...u......0.1
-                           15 81 25 7F 95 02 75 08 81 06 09 38 15 81 25 7F   ..%...u....8..%.
-                           95 01 75 08 81 06 05 0C 0A 38 02 15 81 25 7F 95   ..u......8...%..
-                           01 75 08 81 06 06 FF 00 09 01 95 01 75 08 81 02   .u..........u...
+Data (HexDump)           : 05 01 09 02 A1 01 09 01 A1 00 05 09 19 01 29 03   ..............).
+                           15 00 25 01 95 03 75 01 81 02 95 01 75 05 81 01   ..%...u.....u...
+                           05 01 09 30 09 31 15 81 25 7F 75 08 95 02 81 06   ...0.1..%.u.....
                            C0 C0                                             ..
 
         ----------------- Endpoint Descriptor -----------------
@@ -370,11 +357,11 @@ Data (HexDump)           : 07 05 83 03 40 00 01                              ...
         ----------------- Endpoint Descriptor -----------------
 bLength                  : 0x07 (7 bytes)
 bDescriptorType          : 0x05 (Endpoint Descriptor)
-bEndpointAddress         : 0x03 (Direction=OUT EndpointID=3)
+bEndpointAddress         : 0x04 (Direction=OUT EndpointID=4)
 bmAttributes             : 0x03 (TransferType=Interrupt)
 wMaxPacketSize           : 0x0040 (64 bytes)
 bInterval                : 0x01 (1 ms)
-Data (HexDump)           : 07 05 03 03 40 00 01                              ....@..
+Data (HexDump)           : 07 05 04 03 40 00 01                              ....@..
 
     ----------------- Device Qualifier Descriptor -----------------
 Error                    : ERROR_GEN_FAILURE  (because the device is Full-Speed only)

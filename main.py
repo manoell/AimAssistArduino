@@ -1,6 +1,7 @@
 import os
 import time
 import sys
+import random
 import keyboard
 import win32api
 import threading
@@ -15,6 +16,7 @@ from utils import print_banner, clear_console
 class EnhancedAimAssist:
     """
     Classe principal que integra todos os componentes do sistema de aim assist.
+    Atualizada para usar Raw HID ultra-otimizado.
     """
     
     def __init__(self):
@@ -28,6 +30,11 @@ class EnhancedAimAssist:
         # Inicializar componentes
         self.config = ConfigManager('settings.ini')
         self.load_settings()
+        
+        # Humanização
+        self.last_detection_time = 0
+        self.base_reaction_time = 0.150  # 150ms tempo de reação humano base
+        self.humanization_enabled = True  # Pode ser configurável
         
         print("Carregando configurações...")
         
@@ -52,15 +59,25 @@ class EnhancedAimAssist:
             self.target_offset
         )
         
-        print(f"Conectando ao Arduino na porta {self.com_port}...")
+        print(f"Conectando ao Arduino via Raw HID...")
         
-        # Inicializar controlador do mouse
+        # Inicializar controlador do mouse (agora Raw HID)
         try:
-            self.mouse = MouseController(self.com_port)
-            print("Arduino conectado com sucesso!")
+            # NOTA: com_port é ignorado agora, mas mantido para compatibilidade
+            self.mouse = MouseController(com_port=self.com_port)
+            print("✅ Arduino conectado via Raw HID com sucesso!")
+            
+            # Mostrar estatísticas de conexão
+            stats = self.mouse.get_performance_stats()
+            print(f"   Modo de operação: {stats['current_timeout']}")
+            print(f"   Latência mínima: {stats['min_latency_ms']:.1f}ms")
+            
         except Exception as e:
-            print(f"Erro ao conectar ao Arduino: {e}")
-            print("Verifique se o Arduino está conectado e a porta COM está correta.")
+            print(f"❌ Erro ao conectar ao Arduino: {e}")
+            print("Verifique se:")
+            print("  1. Arduino está conectado via USB")
+            print("  2. Firmware LUFA está carregado")
+            print("  3. Dispositivo aparece como 'Logitech USB Receiver'")
             print("Saindo em 5 segundos...")
             time.sleep(5)
             sys.exit(1)
@@ -74,14 +91,17 @@ class EnhancedAimAssist:
         self.y_history = [0] * self.history_length
         
         # Configurar hotkeys
-
         self.setup_hotkeys()
         
-        print("\nSistema inicializado com sucesso!\n")
-        print(f"Pressione '{self.aim_toggle_key}' para ativar/desativar")
-        print(f"Segure '{self.aim_key_name}' para utilizar quando ativado")
-        print(f"Pressione '{self.reload_key}' para recarregar as configurações")
-        print(f"Pressione '{self.exit_key}' para sair do programa\n")
+        print("\n✅ Sistema inicializado com sucesso!\n")
+        print(f"🎯 Pressione '{self.aim_toggle_key}' para ativar/desativar")
+        print(f"🎮 Segure '{self.aim_key_name}' para utilizar quando ativado")
+        print(f"🔄 Pressione '{self.reload_key}' para recarregar as configurações")
+        print(f"🚪 Pressione '{self.exit_key}' para sair do programa")
+        print(f"📊 Use 'Ctrl+I' para ver estatísticas de performance\n")
+        
+        # Mostrar informações de performance
+        self.show_performance_info()
     
     def load_settings(self):
         """
@@ -102,7 +122,7 @@ class EnhancedAimAssist:
         self.lower_color = self.config.get_color('Color', 'lower_color')
         self.upper_color = self.config.get_color('Color', 'upper_color')
         
-        # Configurações de conexão
+        # Configurações de conexão (mantido para compatibilidade)
         self.com_port = self.config.get('Connection', 'com_port')
         
         # Configurações de teclas
@@ -111,6 +131,21 @@ class EnhancedAimAssist:
         self.aim_toggle_key = self.config.get('Hotkeys', 'aim_toggle')
         self.reload_key = self.config.get('Hotkeys', 'reload')
         self.exit_key = self.config.get('Hotkeys', 'exit')
+        
+        # Humanização
+        self.humanization_config = self.config.get_humanization_config()
+        
+        # Aplicar configurações de humanização às variáveis da classe
+        self.humanization_enabled = self.humanization_config['enabled']
+        self.base_reaction_time = self.humanization_config['base_reaction_time']
+        self.reaction_time_variance = self.humanization_config['reaction_time_variance']
+        
+        # Log das configurações de humanização (opcional)
+        if self.humanization_enabled:
+            print(f"🤖 Humanização ativada:")
+            print(f"   Tempo de reação: {self.base_reaction_time*1000:.0f}ms (±{self.reaction_time_variance*1000:.0f}ms)")
+            print(f"   Jitter natural: {'✅' if self.humanization_config['jitter_enabled'] else '❌'}")
+            print(f"   Variação de timing: {'✅' if self.humanization_config['timing_variance_enabled'] else '❌'}")
     
     def setup_hotkeys(self):
         """
@@ -122,6 +157,9 @@ class EnhancedAimAssist:
         # Teclas de sistema
         keyboard.add_hotkey(self.reload_key, self.reload_config)
         keyboard.add_hotkey(self.exit_key, self.exit_program)
+        
+        # Tecla para mostrar estatísticas (nova)
+        keyboard.add_hotkey('ctrl+i', self.show_performance_info)
     
     def toggle_aim(self):
         """
@@ -129,8 +167,8 @@ class EnhancedAimAssist:
         """
         self.aim_toggle = not self.aim_toggle
         self.play_sound(1000 if self.aim_toggle else 800, 100)
-        status = "✅" if self.aim_toggle else "🛑"
-        print(f"\rStatus: {status}", end="")
+        status = "✅ ATIVO" if self.aim_toggle else "🛑 INATIVO"
+        print(f"\r🎯 Aim Assist: {status}", end="", flush=True)
     
     def reload_config(self):
         """
@@ -139,19 +177,46 @@ class EnhancedAimAssist:
         self.config.reload()
         self.load_settings()
         self.play_sound(1500, 200)
-        print("\nConfigurações recarregadas! 🔄")
+        print("\n🔄 Configurações recarregadas!")
+        self.show_performance_info()
     
     def exit_program(self):
         """
         Finaliza o programa
         """
-        print("\nFinalizando programa... ⚠️")
+        print("\n🚪 Finalizando programa...")
         self.running = False
-        self.mouse.close()
+        
+        # Mostrar estatísticas finais
+        if hasattr(self, 'mouse') and self.mouse:
+            stats = self.mouse.get_performance_stats()
+            print(f"📊 Estatísticas finais:")
+            print(f"   Comandos enviados: {stats['commands_sent']}")
+            print(f"   Taxa de sucesso: {stats['success_rate']*100:.1f}%")
+            print(f"   Comandos de aimbot: {stats['aimbot_commands']}")
+            print(f"   Latência média: {stats['avg_latency_ms']:.1f}ms")
+            
+            self.mouse.close()
+        
         time.sleep(0.5)
         os._exit(0)
     
-    # Função toggle_console removida por não ser necessária
+    def show_performance_info(self):
+        """
+        Mostra informações de performance do sistema
+        """
+        if hasattr(self, 'mouse') and self.mouse:
+            stats = self.mouse.get_performance_stats()
+            print(f"\n📊 PERFORMANCE INFO:")
+            print(f"   🎯 Modo: {stats['current_timeout'].upper()}")
+            print(f"   ⚡ Comandos enviados: {stats['commands_sent']}")
+            print(f"   📈 Taxa de sucesso: {stats['success_rate']*100:.1f}%")
+            print(f"   🎮 Comandos aimbot: {stats['aimbot_commands']}")
+            print(f"   ⏱️ Latência: {stats['avg_latency_ms']:.1f}ms (min: {stats['min_latency_ms']:.1f}ms)")
+            print(f"   📋 Filas: Normal({stats['queue_sizes']['normal']}) Priority({stats['queue_sizes']['priority']})")
+            print(f"   🔗 Conectado: {'✅' if self.mouse.is_connected() else '❌'}")
+        else:
+            print("❌ MouseController não inicializado")
     
     def play_sound(self, frequency, duration):
         """
@@ -209,11 +274,17 @@ class EnhancedAimAssist:
     
     def run(self):
         """
-        Loop principal do programa
+        Loop principal do programa com humanização anti-detecção
         """
         try:
+            loop_count = 0
+            last_performance_check = time.time()
+            
             while self.running:
                 if self.aim_toggle and win32api.GetAsyncKeyState(self.aim_key) < 0:
+                    # Marcar tempo de início da detecção
+                    detection_start = time.time()
+                    
                     # Capturar tela
                     screen = self.screen_capturer.get_screen()
                     
@@ -225,23 +296,74 @@ class EnhancedAimAssist:
                         
                         # Verificar se está dentro da distância máxima
                         if distance < self.max_distance:
-                            # Calcular movimento baseado nos fatores de velocidade
-                            move_x = int(target_x * self.x_speed)
-                            move_y = int(target_y * self.y_speed)
+                            # *** HUMANIZAÇÃO 3: Tempo de Reação Realista ***
+                            detection_time = time.time() - detection_start
+                            if self.humanization_enabled and detection_time < self.base_reaction_time:
+                                # Adicionar delay para simular tempo de reação humano
+                                human_delay = self.base_reaction_time - detection_time
+                                # Adicionar variação aleatória no delay
+                                human_delay += random.uniform(-0.02, 0.05)  # ±20ms a +50ms
+                                if human_delay > 0:
+                                    time.sleep(human_delay)
                             
-                            # Aplicar suavização
+                            # Calcular movimento baseado nos fatores de velocidade
+                            move_x_base = target_x * self.x_speed
+                            move_y_base = target_y * self.y_speed
+                            
+                            # *** HUMANIZAÇÃO 2: Jitter Natural ***
+                            if self.humanization_enabled:
+                                # Simular tremor humano (mais sutil para aimbot)
+                                jitter_x = random.uniform(-0.5, 0.5)  # Ajustado para aimbot
+                                jitter_y = random.uniform(-0.5, 0.5)
+                                move_x_base += jitter_x
+                                move_y_base += jitter_y
+                            
+                            # Converter para inteiros
+                            move_x = int(move_x_base)
+                            move_y = int(move_y_base)
+                            
+                            # Aplicar suavização (já existente)
                             smooth_x, smooth_y = self.apply_smoothing(move_x, move_y)
                             
-                            # Enviar comando para o mouse
-                            self.mouse.move(smooth_x, smooth_y)
+                            # *** HUMANIZAÇÃO 1: Timing Variável ***
+                            if self.humanization_enabled:
+                                # Adicionar variação no timing de envio
+                                send_delay = random.uniform(-0.001, 0.003)  # -1ms a +3ms
+                                if send_delay > 0:
+                                    time.sleep(send_delay)
+                            
+                            # Enviar comando para o mouse com ALTA PRIORIDADE (aimbot)
+                            self.mouse.move(smooth_x, smooth_y, priority=True)
+                            
+                            # Atualizar tempo da última detecção
+                            self.last_detection_time = time.time()
                 
-                # Pequena pausa para reduzir o uso de CPU
-                time.sleep(0.005)
+                # Contador de performance
+                loop_count += 1
+                
+                # Mostrar info de performance ocasionalmente
+                current_time = time.time()
+                if current_time - last_performance_check >= 30.0:  # A cada 30 segundos
+                    if self.aim_toggle:
+                        print(f"\n🔄 Sistema rodando... (loops: {loop_count})")
+                        self.show_performance_info()
+                    last_performance_check = current_time
+                    loop_count = 0
+                
+                # *** HUMANIZAÇÃO 1: Delay Variável no Loop ***
+                if self.humanization_enabled:
+                    # Pequena pausa com variação para reduzir o uso de CPU
+                    base_delay = 0.005
+                    variable_delay = base_delay + random.uniform(-0.001, 0.002)  # ±1ms a +2ms
+                    time.sleep(max(0.001, variable_delay))  # Mínimo 1ms
+                else:
+                    # Delay fixo original
+                    time.sleep(0.005)
                 
         except KeyboardInterrupt:
             self.exit_program()
         except Exception as e:
-            print(f"\nErro: {e}")
+            print(f"\n❌ Erro: {e}")
             self.exit_program()
 
 

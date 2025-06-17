@@ -1,0 +1,241 @@
+
+    =========================== USB Port3 ===========================
+
+Connection Status        : 0x01 (Device is connected)
+Port Chain               : 1-3
+Properties               : 0x01
+ IsUserConnectable       : yes
+ PortIsDebugCapable      : no
+ PortHasMultiCompanions  : no
+ PortConnectorIsTypeC    : no
+ConnectionIndex          : 0x03 (Port 3)
+CompanionIndex           : 0
+ CompanionHubSymLnk      : USB#ROOT_HUB30#7&30304c2c&0&0#{f18a0e88-c30c-11d0-8815-00a0c906bed8}
+ CompanionPortNumber     : 0x09 (Port 9)
+ -> CompanionPortChain   : 1-9
+
+      ========================== Summary =========================
+Vendor ID                : 0x0781 (Western Digital, Sandisk)
+Product ID               : 0x5567
+Manufacturer String      : SanDisk
+Product String           : Cruzer Blade
+Serial                   : 4C532006410227116004
+USB Version              : 2.0
+Port maximum Speed       : High-Speed (Companion Port 1-9 is doing the SuperSpeed)
+Device maximum Speed     : High-Speed
+Device Connection Speed  : High-Speed
+Self powered             : no
+Demanded Current         : 200 mA
+Used Endpoints           : 3
+
+      ======================== USB Device ========================
+
+        +++++++++++++++++ Device Information ++++++++++++++++++
+Device Description       : USB Mass Storage Device
+Device Path              : \\?\USB#VID_0781&PID_5567#4C532006410227116004#{a5dcbf10-6530-11d2-901f-00c04fb951ed} (GUID_DEVINTERFACE_USB_DEVICE)
+Kernel Name              : \Device\USBPDO-12
+Device ID                : USB\VID_0781&PID_5567\4C532006410227116004
+Hardware IDs             : USB\VID_0781&PID_5567&REV_0103 USB\VID_0781&PID_5567
+Driver KeyName           : {36fc9e60-c465-11cf-8056-444553540000}\0037 (GUID_DEVCLASS_USB)
+Driver                   : \SystemRoot\System32\drivers\USBSTOR.SYS (Version: 10.0.19041.4355  Date: 2025-05-01  Company: Microsoft Corporation)
+Driver Inf               : C:\Windows\inf\usbstor.inf
+Legacy BusType           : PNPBus
+Class                    : USB
+Class GUID               : {36fc9e60-c465-11cf-8056-444553540000} (GUID_DEVCLASS_USB)
+Service                  : USBSTOR
+Enumerator               : USB
+Location Info            : Port_#0003.Hub_#0001
+Address                  : 3
+Location IDs             : PCIROOT(0)#PCI(0102)#PCI(0000)#PCI(0800)#PCI(0001)#USBROOT(0)#USB(3), ACPI(_SB_)#ACPI(PCI0)#ACPI(BXBR)#ACPI(BYUP)#ACPI(BYD8)#ACPI(XHC1)#ACPI(RHUB)#ACPI(PRT3)
+Container ID             : {76f894f3-c76e-5eba-8a0b-ae5b68f471b3}
+Manufacturer Info        : Compatible USB storage device
+Capabilities             : 0x94 (Removable, UniqueID, SurpriseRemovalOK)
+Status                   : 0x0180600A (DN_DRIVER_LOADED, DN_STARTED, DN_DISABLEABLE, DN_REMOVABLE, DN_NT_ENUMERATOR, DN_NT_DRIVER)
+Problem Code             : 0
+Address                  : 3
+EnhancedPowerMgmtEnabled : 0
+Power State              : D0 (supported: D0, D3, wake from D0)
+
+        +++++++++++++++++ Registry USB Flags +++++++++++++++++
+HKEY_LOCAL_MACHINE\SYSTEM\CurrentControlSet\Control\usbflags\078155670103
+ osvc                    : REG_BINARY 00 00
+
+        ---------------- Connection Information ---------------
+Connection Index         : 0x03 (Port 3)
+Connection Status        : 0x01 (DeviceConnected)
+Current Config Value     : 0x01 (Configuration 1)
+Device Address           : 0x04 (4)
+Is Hub                   : 0x00 (no)
+Device Bus Speed         : 0x02 (High-Speed)
+Number of open Pipes     : 0x02 (2 pipes to data endpoints)
+Pipe[0]                  : EndpointID=1  Direction=IN   ScheduleOffset=0  Type=Bulk  wMaxPacketSize=0x200   bInterval=0  
+Pipe[1]                  : EndpointID=2  Direction=OUT  ScheduleOffset=0  Type=Bulk  wMaxPacketSize=0x200   bInterval=1  
+Data (HexDump)           : 03 00 00 00 12 01 00 02 00 00 00 40 81 07 67 55   ...........@..gU
+                           03 01 01 02 03 01 01 02 00 04 00 02 00 00 00 01   ................
+                           00 00 00 07 05 81 02 00 02 00 00 00 00 00 07 05   ................
+                           02 02 00 02 01 00 00 00 00                        .........
+
+        --------------- Connection Information V2 -------------
+Connection Index         : 0x03 (3)
+Length                   : 0x10 (16 bytes)
+SupportedUsbProtocols    : 0x03
+ Usb110                  : 1 (yes, port supports USB 1.1)
+ Usb200                  : 1 (yes, port supports USB 2.0)
+ Usb300                  : 0 (no, port not supports USB 3.0) -> but Companion Port 1-9 does
+ ReservedMBZ             : 0x00
+Flags                    : 0x00
+ DevIsOpAtSsOrHigher     : 0 (Device is not operating at SuperSpeed or higher)
+ DevIsSsCapOrHigher      : 0 (Device is not SuperSpeed capable or higher)
+ DevIsOpAtSsPlusOrHigher : 0 (Device is not operating at SuperSpeedPlus or higher)
+ DevIsSsPlusCapOrHigher  : 0 (Device is not SuperSpeedPlus capable or higher)
+ ReservedMBZ             : 0x00
+Data (HexDump)           : 03 00 00 00 10 00 00 00 03 00 00 00 00 00 00 00   ................
+
+    ---------------------- Device Descriptor ----------------------
+bLength                  : 0x12 (18 bytes)
+bDescriptorType          : 0x01 (Device Descriptor)
+bcdUSB                   : 0x200 (USB Version 2.0)
+bDeviceClass             : 0x00 (defined by the interface descriptors)
+bDeviceSubClass          : 0x00
+bDeviceProtocol          : 0x00
+bMaxPacketSize0          : 0x40 (64 bytes)
+idVendor                 : 0x0781 (Western Digital, Sandisk)
+idProduct                : 0x5567
+bcdDevice                : 0x0103
+iManufacturer            : 0x01 (String Descriptor 1)
+ Language 0x0409         : "SanDisk"
+iProduct                 : 0x02 (String Descriptor 2)
+ Language 0x0409         : "Cruzer Blade"
+iSerialNumber            : 0x03 (String Descriptor 3)
+ Language 0x0409         : "4C532006410227116004"
+bNumConfigurations       : 0x01 (1 Configuration)
+Data (HexDump)           : 12 01 00 02 00 00 00 40 81 07 67 55 03 01 01 02   .......@..gU....
+                           03 01                                             ..
+
+    ------------------ Configuration Descriptor -------------------
+bLength                  : 0x09 (9 bytes)
+bDescriptorType          : 0x02 (Configuration Descriptor)
+wTotalLength             : 0x0020 (32 bytes)
+bNumInterfaces           : 0x01 (1 Interface)
+bConfigurationValue      : 0x01 (Configuration 1)
+iConfiguration           : 0x00 (No String Descriptor)
+bmAttributes             : 0x80
+ D7: Reserved, set 1     : 0x01
+ D6: Self Powered        : 0x00 (no)
+ D5: Remote Wakeup       : 0x00 (no)
+ D4..0: Reserved, set 0  : 0x00
+MaxPower                 : 0x64 (200 mA)
+Data (HexDump)           : 09 02 20 00 01 01 00 80 64 09 04 00 00 02 08 06   .. .....d.......
+                           50 00 07 05 81 02 00 02 00 07 05 02 02 00 02 01   P...............
+
+        ---------------- Interface Descriptor -----------------
+bLength                  : 0x09 (9 bytes)
+bDescriptorType          : 0x04 (Interface Descriptor)
+bInterfaceNumber         : 0x00 (Interface 0)
+bAlternateSetting        : 0x00
+bNumEndpoints            : 0x02 (2 Endpoints)
+bInterfaceClass          : 0x08 (Mass Storage)
+bInterfaceSubClass       : 0x06 (SCSI transparent command set)
+bInterfaceProtocol       : 0x50 (Bulk-Only Transport)
+iInterface               : 0x00 (No String Descriptor)
+Data (HexDump)           : 09 04 00 00 02 08 06 50 00                        .......P.
+
+        ----------------- Endpoint Descriptor -----------------
+bLength                  : 0x07 (7 bytes)
+bDescriptorType          : 0x05 (Endpoint Descriptor)
+bEndpointAddress         : 0x81 (Direction=IN EndpointID=1)
+bmAttributes             : 0x02 (TransferType=Bulk)
+wMaxPacketSize           : 0x0200 (max 512 bytes)
+bInterval                : 0x00 (never NAKs)
+Data (HexDump)           : 07 05 81 02 00 02 00                              .......
+
+        ----------------- Endpoint Descriptor -----------------
+bLength                  : 0x07 (7 bytes)
+bDescriptorType          : 0x05 (Endpoint Descriptor)
+bEndpointAddress         : 0x02 (Direction=OUT EndpointID=2)
+bmAttributes             : 0x02 (TransferType=Bulk)
+wMaxPacketSize           : 0x0200 (max 512 bytes)
+bInterval                : 0x01 (at most 1 NAK each 1 microframe -> 0.125 ms)
+Data (HexDump)           : 07 05 02 02 00 02 01                              .......
+
+    --------- Device Qualifier Descriptor (for Full-Speed) --------
+bLength                  : 0x0A (10 bytes)
+bDescriptorType          : 0x06 (Device_qualifier Descriptor)
+bcdUSB                   : 0x200 (USB Version 2.0)bDeviceClass             : 0x00 (defined by the interface descriptors)
+bDeviceSubClass          : 0x00
+bDeviceProtocol          : 0x00
+bMaxPacketSize0          : 0x40 (64 Bytes)
+bNumConfigurations       : 0x01 (1 other-speed configuration)
+bReserved                : 0x00
+Data (HexDump)           : 0A 06 00 02 00 00 00 40 01 00                     .......@..
+
+    ------------ Other Speed Configuration Descriptor -------------
+bLength                  : 0x09 (9 bytes)
+bDescriptorType          : 0x07 (Other_speed_configuration Descriptor)
+wTotalLength             : 0x0020 (32 bytes)
+bNumInterfaces           : 0x01 (1 Interface)
+bConfigurationValue      : 0x01 (Configuration 1)
+iConfiguration           : 0x00 (No String Descriptor)
+bmAttributes             : 0x80
+ D7: Reserved, set 1     : 0x01
+ D6: Self Powered        : 0x00 (no)
+ D5: Remote Wakeup       : 0x00 (no)
+ D4..0: Reserved, set 0  : 0x00
+MaxPower                 : 0x64 (200 mA)
+Data (HexDump)           : 09 07 20 00 01 01 00 80 64 09 04 00 00 02 08 06   .. .....d.......
+                           50 00 07 05 81 02 40 00 00 07 05 02 02 40 00 00   P.....@......@..
+
+        ---------------- Interface Descriptor -----------------
+bLength                  : 0x09 (9 bytes)
+bDescriptorType          : 0x04 (Interface Descriptor)
+bInterfaceNumber         : 0x00 (Interface 0)
+bAlternateSetting        : 0x00
+bNumEndpoints            : 0x02 (2 Endpoints)
+bInterfaceClass          : 0x08 (Mass Storage)
+bInterfaceSubClass       : 0x06 (SCSI transparent command set)
+bInterfaceProtocol       : 0x50 (Bulk-Only Transport)
+iInterface               : 0x00 (No String Descriptor)
+Data (HexDump)           : 09 04 00 00 02 08 06 50 00                        .......P.
+
+        ----------------- Endpoint Descriptor -----------------
+bLength                  : 0x07 (7 bytes)
+bDescriptorType          : 0x05 (Endpoint Descriptor)
+bEndpointAddress         : 0x81 (Direction=IN EndpointID=1)
+bmAttributes             : 0x02 (TransferType=Bulk)
+wMaxPacketSize           : 0x0040 (64 bytes)
+bInterval                : 0x00 (ignored)
+Data (HexDump)           : 07 05 81 02 40 00 00                              ....@..
+
+        ----------------- Endpoint Descriptor -----------------
+bLength                  : 0x07 (7 bytes)
+bDescriptorType          : 0x05 (Endpoint Descriptor)
+bEndpointAddress         : 0x02 (Direction=OUT EndpointID=2)
+bmAttributes             : 0x02 (TransferType=Bulk)
+wMaxPacketSize           : 0x0040 (64 bytes)
+bInterval                : 0x00 (ignored)
+Data (HexDump)           : 07 05 02 02 40 00 00                              ....@..
+
+      -------------------- String Descriptors -------------------
+             ------ String Descriptor 0 ------
+bLength                  : 0x04 (4 bytes)
+bDescriptorType          : 0x03 (String Descriptor)
+Language ID[0]           : 0x0409 (English - United States)
+Data (HexDump)           : 04 03 09 04                                       ....
+             ------ String Descriptor 1 ------
+bLength                  : 0x10 (16 bytes)
+bDescriptorType          : 0x03 (String Descriptor)
+Language 0x0409          : "SanDisk"
+Data (HexDump)           : 10 03 53 00 61 00 6E 00 44 00 69 00 73 00 6B 00   ..S.a.n.D.i.s.k.
+             ------ String Descriptor 2 ------
+bLength                  : 0x1A (26 bytes)
+bDescriptorType          : 0x03 (String Descriptor)
+Language 0x0409          : "Cruzer Blade"
+Data (HexDump)           : 1A 03 43 00 72 00 75 00 7A 00 65 00 72 00 20 00   ..C.r.u.z.e.r. .
+                           42 00 6C 00 61 00 64 00 65 00                     B.l.a.d.e.
+             ------ String Descriptor 3 ------
+bLength                  : 0x2A (42 bytes)
+bDescriptorType          : 0x03 (String Descriptor)
+Language 0x0409          : "4C532006410227116004"
+Data (HexDump)           : 2A 03 34 00 43 00 35 00 33 00 32 00 30 00 30 00   *.4.C.5.3.2.0.0.
+                           36 00 34 00 31 00 30 00 32 00 32 00 37 00 31 00   6.4.1.0.2.2.7.1.
+                           31 00 36 00 30 00 30 00 34 00                     1.6.0.0.4.

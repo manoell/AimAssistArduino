@@ -23,20 +23,25 @@ static uint8_t communication_status = 0;
 
 // Setup Hardware Function
 void SetupHardware(void) {
-    // Disable watchdog
+    // ============ SETUP ULTRA-OTIMIZADO PARA MÁXIMA PERFORMANCE ============
+    
+    // Desabilitar watchdog imediatamente
     MCUSR &= ~(1 << WDRF);
     wdt_disable();
 
-    // Disable clock division
+    // Clock máximo sem divisão - CRÍTICO
     clock_prescale_set(clock_div_1);
     
-    // USB Fix para Leonardo
-    USB_Disable();
-    _delay_ms(100);
+    // ============ CONFIGURAÇÃO USB ULTRA-AGRESSIVA ============
     
+    // Reset USB mais rápido
+    USB_Disable();
+    _delay_ms(25);  // Delay reduzido de 100ms para 25ms
+    
+    // Configuração direta dos registradores USB
     USBCON &= ~(1 << USBE);
     USBCON &= ~(1 << OTGPADE);
-    _delay_ms(50);
+    _delay_ms(10);  // Delay reduzido
     
     UDCON = 0;
     UDIEN = 0;
@@ -44,39 +49,88 @@ void SetupHardware(void) {
     
     USBCON |= (1 << OTGPADE);
     USBCON |= (1 << VBUSTE);
-    _delay_ms(100);
+    _delay_ms(25);  // Delay reduzido
     
     USBCON |= (1 << USBE);
-    _delay_ms(50);
+    _delay_ms(10);  // Delay reduzido
     
-    // Initialize LUFA
+    // Inicializar LUFA com prioridade máxima
     USB_Init();
     
-    // Initialize reports
-    memset(&CurrentMouseReport, 0, sizeof(MouseReport_t));
-    memset(&CurrentKeyboardReport, 0, sizeof(KeyboardReport_t));
-    memset(GenericHIDBuffer, 0, sizeof(GenericHIDBuffer));
+    // ============ CONFIGURAÇÕES DE PERFORMANCE CRÍTICA ============
     
-    // Reset states
+    // Configurar timers para máxima precisão
+    // Timer0 para timing preciso (se necessário)
+    TCCR0B = (1 << CS01);  // Prescaler 8 para timing rápido
+    
+    // Configurar interrupções USB com prioridade máxima
+    // (LUFA já faz isso, mas garantir)
+    
+    // ============ INICIALIZAÇÃO DE VARIÁVEIS OTIMIZADA ============
+    
+    // Inicializar variáveis com valores otimizados
+    commands_received = 0;
+    last_command_type = 0;
+    communication_status = 0x01;  // Inicializando
+    
+    // Estado do mouse zerado
     mouse_x = 0;
     mouse_y = 0;
     mouse_buttons = 0;
     mouse_wheel = 0;
-    commands_received = 0;
-    last_command_type = 0;
-    communication_status = 0xFF;
     
-    // Configure LED debug
-    DDRC |= (1 << 7);   // Pin 13 as output
+    // ============ CONFIGURAÇÃO DE DEBUG OTIMIZADA ============
+    
+    // LED de debug (mínimo necessário)
+    DDRC |= (1 << 7);   // Pin 13 como output
     PORTC &= ~(1 << 7); // LED off
     
-    // Blink LED to show setup complete
-    for (int i = 0; i < 3; i++) {
-        PORTC |= (1 << 7);
-        _delay_ms(100);
-        PORTC &= ~(1 << 7);
-        _delay_ms(100);
-    }
+    // Piscar LED uma vez apenas para indicar setup completo
+    PORTC |= (1 << 7);
+    _delay_ms(50);
+    PORTC &= ~(1 << 7);
+    
+    // ============ FINALIZAÇÃO OTIMIZADA ============
+    
+    // Definir status como pronto
+    communication_status = 0xFF;  // Totalmente operacional
+    
+    // Habilitar interrupções globais (LUFA precisa)
+    sei();
+    
+    // ============ CONFIGURAÇÕES EXPERIMENTAIS ============
+    
+    // Configurar CPU para máxima performance (se suportado)
+    // Alguns registradores específicos do ATmega32U4 podem ser otimizados
+    
+    // Desabilitar recursos não utilizados para economizar ciclos
+    PRR0 |= (1 << PRTIM1);  // Desabilitar Timer1 se não usado
+    PRR0 |= (1 << PRSPI);   // Desabilitar SPI se não usado
+    PRR1 |= (1 << PRUSART1); // Desabilitar USART1 se não usado
+    
+    // Configurar SRAM para acesso mais rápido (específico do ATmega32U4)
+    MCUCR |= (1 << JTD);    // Desabilitar JTAG para liberar pinos
+    MCUCR |= (1 << JTD);    // Escrever duas vezes conforme datasheet
+    
+    // ============ OTIMIZAÇÕES ESPECÍFICAS DO LEONARDO ============
+    
+    #if defined(__AVR_ATmega32U4__)
+    // Configurações específicas para ATmega32U4
+    
+    // Configurar oscilador para máxima estabilidade
+    // (Valores específicos do Leonardo/Pro Micro)
+    
+    // Otimizar configuração de energia
+    PLLCSR |= (1 << PLLE);  // Habilitar PLL para USB
+    while (!(PLLCSR & (1 << PLOCK))); // Aguardar PLL lock
+    
+    // Configurar registradores de controle para máximo desempenho
+    CLKPR = (1 << CLKPCE);  // Enable clock prescaler change
+    CLKPR = 0;              // No prescaling (16MHz full speed)
+    #endif
+    
+    // Marcar setup como completo
+    communication_status = 0xFF;
 }
 
 // USB Event Handlers
@@ -328,45 +382,97 @@ void HID_Task(void) {
     if (USB_DeviceState != DEVICE_STATE_Configured)
         return;
 
-    // Processar comandos recebidos
+    // ============ PROCESSAMENTO ULTRA-AGRESSIVO PARA AIMBOT ============
+
+    // PRIORIDADE 1: Processar MÚLTIPLOS comandos por ciclo
     Endpoint_SelectEndpoint(GENERIC_OUT_EPADDR);
-    if (Endpoint_IsOUTReceived()) {
-        uint8_t ReceivedData[GENERIC_EPSIZE];
-        uint16_t BytesReceived = 0;
+    
+    // LOOP AGRESSIVO: Processar até 8 comandos por ciclo
+    for (uint8_t cmd_count = 0; cmd_count < 8; cmd_count++) {
+        if (!Endpoint_IsOUTReceived()) {
+            break; // Não há mais comandos
+        }
         
-        while (Endpoint_IsReadWriteAllowed() && BytesReceived < GENERIC_EPSIZE) {
-            ReceivedData[BytesReceived++] = Endpoint_Read_8();
+        uint8_t ReceivedData[8];  // Buffer fixo
+        uint8_t bytes_received = 0;
+        
+        // Leitura ultra-rápida
+        while (Endpoint_IsReadWriteAllowed() && bytes_received < 8) {
+            ReceivedData[bytes_received++] = Endpoint_Read_8();
         }
         
         Endpoint_ClearOUT();
         
-        if (BytesReceived > 0) {
-            processGenericHIDData(ReceivedData, BytesReceived);
+        // PROCESSAMENTO INLINE ULTRA-RÁPIDO (sem função separada)
+        if (bytes_received >= 3) {
+            uint8_t cmd_type = ReceivedData[0];
+            int8_t x = (int8_t)ReceivedData[1];
+            int8_t y = (int8_t)ReceivedData[2];
+            uint8_t buttons = (bytes_received > 3) ? ReceivedData[3] : 0;
+            
+            // ENVIO IMEDIATO - SEM ACUMULAÇÃO
+            if (cmd_type == 0x01) { // Movement command
+                // Enviar IMEDIATAMENTE sem delay
+                Endpoint_SelectEndpoint(MOUSE_IN_EPADDR);
+                if (Endpoint_IsINReady()) {
+                    Endpoint_Write_8(buttons);  // Buttons
+                    Endpoint_Write_8(x);        // X
+                    Endpoint_Write_8(y);        // Y
+                    Endpoint_ClearIN();         // Envio instantâneo
+                }
+                commands_received++;
+            }
+            else if (cmd_type == 0x02) { // Click
+                Endpoint_SelectEndpoint(MOUSE_IN_EPADDR);
+                if (Endpoint_IsINReady()) {
+                    Endpoint_Write_8(buttons);
+                    Endpoint_Write_8(0);
+                    Endpoint_Write_8(0);
+                    Endpoint_ClearIN();
+                }
+                commands_received++;
+            }
+            else if (cmd_type == 0x04) { // Reset
+                Endpoint_SelectEndpoint(MOUSE_IN_EPADDR);
+                if (Endpoint_IsINReady()) {
+                    Endpoint_Write_8(0);
+                    Endpoint_Write_8(0);
+                    Endpoint_Write_8(0);
+                    Endpoint_ClearIN();
+                }
+                commands_received++;
+            }
         }
     }
 
-    // Status report ocasional
-    static uint16_t status_counter = 0;
-    status_counter++;
+    // ============ STATUS REPORT ULTRA-REDUZIDO ============
     
-    if (status_counter >= 500) {
+    // Status apenas a cada 10000 ciclos (muito menos frequente)
+    static uint16_t status_counter = 0;
+    if (++status_counter >= 10000) {
         status_counter = 0;
         
         Endpoint_SelectEndpoint(GENERIC_IN_EPADDR);
         if (Endpoint_IsINReady()) {
-            GenericHIDBuffer[0] = 0xAA;
-            GenericHIDBuffer[1] = communication_status;
-            GenericHIDBuffer[2] = last_command_type;
-            GenericHIDBuffer[3] = commands_received & 0xFF;
-            GenericHIDBuffer[4] = (commands_received >> 8) & 0xFF;
-            GenericHIDBuffer[5] = mouse_x;
-            GenericHIDBuffer[6] = mouse_y;
-            GenericHIDBuffer[7] = mouse_buttons;
+            uint8_t status[8];
+            status[0] = 0xAA;  // Signature
+            status[1] = 0xFF;  // Always ready
+            status[2] = 0x01;  // Command type
+            status[3] = commands_received & 0xFF;
+            status[4] = (commands_received >> 8) & 0xFF;
+            status[5] = 0x00;  // X (not needed)
+            status[6] = 0x00;  // Y (not needed)  
+            status[7] = 0x00;  // Buttons (not needed)
             
-            Endpoint_Write_Stream_LE(GenericHIDBuffer, GENERIC_EPSIZE, NULL);
+            for (uint8_t i = 0; i < 8; i++) {
+                Endpoint_Write_8(status[i]);
+            }
             Endpoint_ClearIN();
         }
     }
+    
+    // ============ NADA MAIS! ============
+    // Manter a função o mais enxuta possível
 }
 
 // Utility functions

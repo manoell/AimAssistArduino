@@ -1,0 +1,1186 @@
+
+    =========================== USB Port3 ===========================
+
+Connection Status        : 0x01 (Device is connected)
+Port Chain               : 1-3
+Properties               : 0x01
+ IsUserConnectable       : yes
+ PortIsDebugCapable      : no
+ PortHasMultiCompanions  : no
+ PortConnectorIsTypeC    : no
+ConnectionIndex          : 0x03 (Port 3)
+CompanionIndex           : 0
+ CompanionHubSymLnk      : USB#ROOT_HUB30#7&30304c2c&0&0#{f18a0e88-c30c-11d0-8815-00a0c906bed8}
+ CompanionPortNumber     : 0x09 (Port 9)
+ -> CompanionPortChain   : 1-9
+
+      ========================== Summary =========================
+Vendor ID                : 0x054C (Sony Group Corporation)
+Product ID               : 0x0CE6
+Manufacturer String      : Sony Interactive Entertainment
+Product String           : DualSense Wireless Controller
+Serial                   : ---
+USB Version              : 2.0
+Port maximum Speed       : High-Speed (Companion Port 1-9 is doing the SuperSpeed)
+Device maximum Speed     : High-Speed
+Device Connection Speed  : High-Speed
+Self powered             : yes
+Demanded Current         : 500 mA
+Used Endpoints           : 3
+
+      ======================== USB Device ========================
+
+        +++++++++++++++++ Device Information ++++++++++++++++++
+Device Description       : USB Composite Device
+Device Path              : \\?\USB#VID_054C&PID_0CE6#8&384b90af&0&3#{a5dcbf10-6530-11d2-901f-00c04fb951ed} (GUID_DEVINTERFACE_USB_DEVICE)
+Kernel Name              : \Device\USBPDO-12
+Device ID                : USB\VID_054C&PID_0CE6\8&384B90AF&0&3
+Hardware IDs             : USB\VID_054C&PID_0CE6&REV_0100 USB\VID_054C&PID_0CE6
+Driver KeyName           : {36fc9e60-c465-11cf-8056-444553540000}\0036 (GUID_DEVCLASS_USB)
+Driver                   : \SystemRoot\System32\drivers\usbccgp.sys (Version: 10.0.19041.5794  Date: 2025-05-01  Company: Microsoft Corporation)
+Driver Inf               : C:\Windows\inf\usb.inf
+Legacy BusType           : PNPBus
+Class                    : USB
+Class GUID               : {36fc9e60-c465-11cf-8056-444553540000} (GUID_DEVCLASS_USB)
+Service                  : usbccgp
+Enumerator               : USB
+Location Info            : Port_#0003.Hub_#0001
+Address                  : 3
+Location IDs             : PCIROOT(0)#PCI(0102)#PCI(0000)#PCI(0800)#PCI(0001)#USBROOT(0)#USB(3), ACPI(_SB_)#ACPI(PCI0)#ACPI(BXBR)#ACPI(BYUP)#ACPI(BYD8)#ACPI(XHC1)#ACPI(RHUB)#ACPI(PRT3)
+Container ID             : {93a85856-369f-11f0-888e-a85e451e3cda}
+Manufacturer Info        : (Standard USB Host Controller)
+Capabilities             : 0x84 (Removable, SurpriseRemovalOK)
+Status                   : 0x0180600A (DN_DRIVER_LOADED, DN_STARTED, DN_DISABLEABLE, DN_REMOVABLE, DN_NT_ENUMERATOR, DN_NT_DRIVER)
+Problem Code             : 0
+Address                  : 3
+EnhancedPowerMgmtEnabled : 0
+Power State              : D0 (supported: D0, D3, wake from D0)
+
+        +++++++++++++++++ Registry USB Flags +++++++++++++++++
+HKEY_LOCAL_MACHINE\SYSTEM\CurrentControlSet\Control\usbflags\054C0CE60100
+ osvc                    : REG_BINARY 00 00
+
+        ---------------- Connection Information ---------------
+Connection Index         : 0x03 (Port 3)
+Connection Status        : 0x01 (DeviceConnected)
+Current Config Value     : 0x01 (Configuration 1)
+Device Address           : 0x04 (4)
+Is Hub                   : 0x00 (no)
+Device Bus Speed         : 0x02 (High-Speed)
+Number of open Pipes     : 0x02 (2 pipes to data endpoints)
+Pipe[0]                  : EndpointID=4  Direction=IN   ScheduleOffset=0  Type=Interrupt  wMaxPacketSize=0x40    bInterval=6   -> 718 Bits/ms = 89750 Bytes/s
+Pipe[1]                  : EndpointID=3  Direction=OUT  ScheduleOffset=0  Type=Interrupt  wMaxPacketSize=0x40    bInterval=6   -> 718 Bits/ms = 89750 Bytes/s
+Data (HexDump)           : 03 00 00 00 12 01 00 02 00 00 00 40 4C 05 E6 0C   ...........@L...
+                           00 01 01 02 00 01 01 02 00 04 00 02 00 00 00 01   ................
+                           00 00 00 07 05 84 03 40 00 06 00 00 00 00 07 05   .......@........
+                           03 03 40 00 06 00 00 00 00                        ..@......
+
+        --------------- Connection Information V2 -------------
+Connection Index         : 0x03 (3)
+Length                   : 0x10 (16 bytes)
+SupportedUsbProtocols    : 0x03
+ Usb110                  : 1 (yes, port supports USB 1.1)
+ Usb200                  : 1 (yes, port supports USB 2.0)
+ Usb300                  : 0 (no, port not supports USB 3.0) -> but Companion Port 1-9 does
+ ReservedMBZ             : 0x00
+Flags                    : 0x00
+ DevIsOpAtSsOrHigher     : 0 (Device is not operating at SuperSpeed or higher)
+ DevIsSsCapOrHigher      : 0 (Device is not SuperSpeed capable or higher)
+ DevIsOpAtSsPlusOrHigher : 0 (Device is not operating at SuperSpeedPlus or higher)
+ DevIsSsPlusCapOrHigher  : 0 (Device is not SuperSpeedPlus capable or higher)
+ ReservedMBZ             : 0x00
+Data (HexDump)           : 03 00 00 00 10 00 00 00 03 00 00 00 00 00 00 00   ................
+
+    ---------------------- Device Descriptor ----------------------
+bLength                  : 0x12 (18 bytes)
+bDescriptorType          : 0x01 (Device Descriptor)
+bcdUSB                   : 0x200 (USB Version 2.0)
+bDeviceClass             : 0x00 (defined by the interface descriptors)
+bDeviceSubClass          : 0x00
+bDeviceProtocol          : 0x00
+bMaxPacketSize0          : 0x40 (64 bytes)
+idVendor                 : 0x054C (Sony Group Corporation)
+idProduct                : 0x0CE6
+bcdDevice                : 0x0100
+iManufacturer            : 0x01 (String Descriptor 1)
+ Language 0x0409         : "Sony Interactive Entertainment"
+iProduct                 : 0x02 (String Descriptor 2)
+ Language 0x0409         : "DualSense Wireless Controller"
+iSerialNumber            : 0x00 (No String Descriptor)
+bNumConfigurations       : 0x01 (1 Configuration)
+Data (HexDump)           : 12 01 00 02 00 00 00 40 4C 05 E6 0C 00 01 01 02   .......@L.......
+                           00 01                                             ..
+
+    ------------------ Configuration Descriptor -------------------
+bLength                  : 0x09 (9 bytes)
+bDescriptorType          : 0x02 (Configuration Descriptor)
+wTotalLength             : 0x00E3 (227 bytes)
+bNumInterfaces           : 0x04 (4 Interfaces)
+bConfigurationValue      : 0x01 (Configuration 1)
+iConfiguration           : 0x00 (No String Descriptor)
+bmAttributes             : 0xC0
+ D7: Reserved, set 1     : 0x01
+ D6: Self Powered        : 0x01 (yes)
+ D5: Remote Wakeup       : 0x00 (no)
+ D4..0: Reserved, set 0  : 0x00
+MaxPower                 : 0xFA (500 mA)
+Data (HexDump)           : 09 02 E3 00 04 01 00 C0 FA 09 04 00 00 00 01 01   ................
+                           00 00 0A 24 01 00 01 49 00 02 01 02 0C 24 02 01   ...$...I.....$..
+                           01 01 06 04 33 00 00 00 0C 24 06 02 01 01 03 00   ....3....$......
+                           00 00 00 00 09 24 03 03 01 03 04 02 00 0C 24 02   .....$........$.
+                           04 02 04 03 02 03 00 00 00 09 24 06 05 04 01 03   ..........$.....
+                           00 00 09 24 03 06 01 01 01 05 00 09 04 01 00 00   ...$............
+                           01 02 00 00 09 04 01 01 01 01 02 00 00 07 24 01   ..............$.
+                           01 01 01 00 0B 24 02 01 04 02 10 01 80 BB 00 09   .....$..........
+                           05 01 09 88 01 04 00 00 07 25 01 00 00 00 00 09   .........%......
+                           04 02 00 00 01 02 00 00 09 04 02 01 01 01 02 00   ................
+                           00 07 24 01 06 01 01 00 0B 24 02 01 02 02 10 01   ..$......$......
+                           80 BB 00 09 05 82 05 C4 00 04 00 00 07 25 01 00   .............%..
+                           00 00 00 09 04 03 00 02 03 00 00 00 09 21 11 01   .............!..
+                           00 01 22 11 01 07 05 84 03 40 00 06 07 05 03 03   .."......@......
+                           40 00 06                                          @..
+
+        ---------------- Interface Descriptor -----------------
+bLength                  : 0x09 (9 bytes)
+bDescriptorType          : 0x04 (Interface Descriptor)
+bInterfaceNumber         : 0x00 (Interface 0)
+bAlternateSetting        : 0x00
+bNumEndpoints            : 0x00 (Default Control Pipe only)
+bInterfaceClass          : 0x01 (Audio)
+bInterfaceSubClass       : 0x01 (Audio Control)
+bInterfaceProtocol       : 0x00
+iInterface               : 0x00 (No String Descriptor)
+Data (HexDump)           : 09 04 00 00 00 01 01 00 00                        .........
+
+        ------ Audio Control Interface Header Descriptor ------
+bLength                  : 0x0A (10 bytes)
+bDescriptorType          : 0x24 (Audio Interface Descriptor)
+bDescriptorSubtype       : 0x01 (Header)
+bcdADC                   : 0x0100
+wTotalLength             : 0x0049 (73 bytes)
+bInCollection            : 0x02
+baInterfaceNr[1]         : 0x01
+baInterfaceNr[2]         : 0x02
+Data (HexDump)           : 0A 24 01 00 01 49 00 02 01 02                     .$...I....
+
+        ------- Audio Control Input Terminal Descriptor -------
+bLength                  : 0x0C (12 bytes)
+bDescriptorType          : 0x24 (Audio Interface Descriptor)
+bDescriptorSubtype       : 0x02 (Input Terminal)
+bTerminalID              : 0x01
+wTerminalType            : 0x0101 (USB Streaming)
+bAssocTerminal           : 0x06
+bNrChannels              : 0x04 (4 channels)
+wChannelConfig           : 0x0033 (L, R, LS, RS)
+iChannelNames            : 0x00 (No String Descriptor)
+iTerminal                : 0x00 (No String Descriptor)
+Data (HexDump)           : 0C 24 02 01 01 01 06 04 33 00 00 00               .$......3...
+
+        -------- Audio Control Feature Unit Descriptor --------
+bLength                  : 0x0C (12 bytes)
+bDescriptorType          : 0x24 (Audio Interface Descriptor)
+bDescriptorSubtype       : 0x06 (Feature Unit)
+bUnitID                  : 0x02 (2)
+bSourceID                : 0x01 (1)
+bControlSize             : 0x01 (1 byte per control)
+bmaControls[0]           : 0x03
+ D0: Mute                : 1
+ D1: Volume              : 1
+ D2: Bass                : 0
+ D3: Mid                 : 0
+ D4: Treble              : 0
+ D5: Graphic Equalizer   : 0
+ D6: Automatic Gain      : 0
+ D7: Delay               : 0
+bmaControls[1]           : 0x00
+ D0: Mute                : 0
+ D1: Volume              : 0
+ D2: Bass                : 0
+ D3: Mid                 : 0
+ D4: Treble              : 0
+ D5: Graphic Equalizer   : 0
+ D6: Automatic Gain      : 0
+ D7: Delay               : 0
+bmaControls[2]           : 0x00
+ D0: Mute                : 0
+ D1: Volume              : 0
+ D2: Bass                : 0
+ D3: Mid                 : 0
+ D4: Treble              : 0
+ D5: Graphic Equalizer   : 0
+ D6: Automatic Gain      : 0
+ D7: Delay               : 0
+bmaControls[3]           : 0x00
+ D0: Mute                : 0
+ D1: Volume              : 0
+ D2: Bass                : 0
+ D3: Mid                 : 0
+ D4: Treble              : 0
+ D5: Graphic Equalizer   : 0
+ D6: Automatic Gain      : 0
+ D7: Delay               : 0
+bmaControls[4]           : 0x00
+ D0: Mute                : 0
+ D1: Volume              : 0
+ D2: Bass                : 0
+ D3: Mid                 : 0
+ D4: Treble              : 0
+ D5: Graphic Equalizer   : 0
+ D6: Automatic Gain      : 0
+ D7: Delay               : 0
+iFeature                 : 0x00 (No String Descriptor)
+Data (HexDump)           : 0C 24 06 02 01 01 03 00 00 00 00 00               .$..........
+
+        ------- Audio Control Output Terminal Descriptor ------
+bLength                  : 0x09 (9 bytes)
+bDescriptorType          : 0x24 (Audio Interface Descriptor)
+bDescriptorSubtype       : 0x03 (Output Terminal)
+bTerminalID              : 0x03
+wTerminalType            : 0x0301 (Speaker)
+bAssocTerminal           : 0x04 (4)
+bSourceID                : 0x02 (2)
+iTerminal                : 0x00 (No String Descriptor)
+Data (HexDump)           : 09 24 03 03 01 03 04 02 00                        .$.......
+
+        ------- Audio Control Input Terminal Descriptor -------
+bLength                  : 0x0C (12 bytes)
+bDescriptorType          : 0x24 (Audio Interface Descriptor)
+bDescriptorSubtype       : 0x02 (Input Terminal)
+bTerminalID              : 0x04
+wTerminalType            : 0x0402 (Headset)
+bAssocTerminal           : 0x03
+bNrChannels              : 0x02 (2 channels)
+wChannelConfig           : 0x0003 (L, R)
+iChannelNames            : 0x00 (No String Descriptor)
+iTerminal                : 0x00 (No String Descriptor)
+Data (HexDump)           : 0C 24 02 04 02 04 03 02 03 00 00 00               .$..........
+
+        -------- Audio Control Feature Unit Descriptor --------
+bLength                  : 0x09 (9 bytes)
+bDescriptorType          : 0x24 (Audio Interface Descriptor)
+bDescriptorSubtype       : 0x06 (Feature Unit)
+bUnitID                  : 0x05 (5)
+bSourceID                : 0x04 (4)
+bControlSize             : 0x01 (1 byte per control)
+bmaControls[0]           : 0x03
+ D0: Mute                : 1
+ D1: Volume              : 1
+ D2: Bass                : 0
+ D3: Mid                 : 0
+ D4: Treble              : 0
+ D5: Graphic Equalizer   : 0
+ D6: Automatic Gain      : 0
+ D7: Delay               : 0
+bmaControls[1]           : 0x00
+ D0: Mute                : 0
+ D1: Volume              : 0
+ D2: Bass                : 0
+ D3: Mid                 : 0
+ D4: Treble              : 0
+ D5: Graphic Equalizer   : 0
+ D6: Automatic Gain      : 0
+ D7: Delay               : 0
+iFeature                 : 0x00 (No String Descriptor)
+Data (HexDump)           : 09 24 06 05 04 01 03 00 00                        .$.......
+
+        ------- Audio Control Output Terminal Descriptor ------
+bLength                  : 0x09 (9 bytes)
+bDescriptorType          : 0x24 (Audio Interface Descriptor)
+bDescriptorSubtype       : 0x03 (Output Terminal)
+bTerminalID              : 0x06
+wTerminalType            : 0x0101 (USB Streaming)
+bAssocTerminal           : 0x01 (1)
+bSourceID                : 0x05 (5)
+iTerminal                : 0x00 (No String Descriptor)
+Data (HexDump)           : 09 24 03 06 01 01 01 05 00                        .$.......
+
+        ---------------- Interface Descriptor -----------------
+bLength                  : 0x09 (9 bytes)
+bDescriptorType          : 0x04 (Interface Descriptor)
+bInterfaceNumber         : 0x01 (Interface 1)
+bAlternateSetting        : 0x00
+bNumEndpoints            : 0x00 (Default Control Pipe only)
+bInterfaceClass          : 0x01 (Audio)
+bInterfaceSubClass       : 0x02 (Audio Streaming)
+bInterfaceProtocol       : 0x00
+iInterface               : 0x00 (No String Descriptor)
+Data (HexDump)           : 09 04 01 00 00 01 02 00 00                        .........
+
+        ---------------- Interface Descriptor -----------------
+bLength                  : 0x09 (9 bytes)
+bDescriptorType          : 0x04 (Interface Descriptor)
+bInterfaceNumber         : 0x01 (Interface 1)
+bAlternateSetting        : 0x01
+bNumEndpoints            : 0x01 (1 Endpoint)
+bInterfaceClass          : 0x01 (Audio)
+bInterfaceSubClass       : 0x02 (Audio Streaming)
+bInterfaceProtocol       : 0x00
+iInterface               : 0x00 (No String Descriptor)
+Data (HexDump)           : 09 04 01 01 01 01 02 00 00                        .........
+
+        -------- Audio Streaming Interface Descriptor ---------
+bLength                  : 0x07 (7 bytes)
+bDescriptorType          : 0x24 (Audio Interface Descriptor)
+bDescriptorSubtype       : 0x01 (AS_GENERAL)
+bTerminalLink            : 0x01 (Terminal ID 1)
+bDelay                   : 0x01 (1 frame)
+wFormatTag               : 0x0001 (PCM)
+Data (HexDump)           : 07 24 01 01 01 01 00                              .$.....
+
+        ------- Audio Streaming Format Type Descriptor --------
+bLength                  : 0x0B (11 bytes)
+bDescriptorType          : 0x24 (Audio Interface Descriptor)
+bDescriptorSubtype       : 0x02 (Format Type)
+bFormatType              : 0x01 (FORMAT_TYPE_I)
+bNrChannels              : 0x04 (4 channels)
+bSubframeSize            : 0x02 (2 bytes per subframe)
+bBitResolution           : 0x10 (16 bits per sample)
+bSamFreqType             : 0x01 (supports 1 sample frequence)
+tSamFreq[1]              : 0x0BB80 (48000 Hz)
+Data (HexDump)           : 0B 24 02 01 04 02 10 01 80 BB 00                  .$.........
+
+        ----------------- Endpoint Descriptor -----------------
+bLength                  : 0x09 (9 bytes)
+bDescriptorType          : 0x05 (Endpoint Descriptor)
+bEndpointAddress         : 0x01 (Direction=OUT EndpointID=1)
+bmAttributes             : 0x09 (TransferType=Isochronous  SyncType=Adaptive  EndpointType=Data)
+wMaxPacketSize           : 0x0188
+ Bits 15..13             : 0x00 (reserved, must be zero)
+ Bits 12..11             : 0x00 (0 additional transactions per microframe -> allows 1..1024 bytes per packet)
+ Bits 10..0              : 0x188 (392 bytes per packet)
+bInterval                : 0x04 (4 ms)
+bRefresh                 : 0x00
+bSynchAddress            : 0x00
+Data (HexDump)           : 09 05 01 09 88 01 04 00 00                        .........
+
+        ----------- Audio Data Endpoint Descriptor ------------
+bLength                  : 0x07 (7 bytes)
+bDescriptorType          : 0x25 (Audio Endpoint Descriptor)
+bDescriptorSubtype       : 0x01 (General)
+bmAttributes             : 0x00
+ D0   : Sampling Freq    : 0x00 (not supported)
+ D1   : Pitch            : 0x00 (not supported)
+ D6..2: Reserved         : 0x00
+ D7   : MaxPacketsOnly   : 0x00 (no)
+bLockDelayUnits          : 0x00 (Undefined)
+wLockDelay               : 0x0000
+Data (HexDump)           : 07 25 01 00 00 00 00                              .%.....
+
+        ---------------- Interface Descriptor -----------------
+bLength                  : 0x09 (9 bytes)
+bDescriptorType          : 0x04 (Interface Descriptor)
+bInterfaceNumber         : 0x02 (Interface 2)
+bAlternateSetting        : 0x00
+bNumEndpoints            : 0x00 (Default Control Pipe only)
+bInterfaceClass          : 0x01 (Audio)
+bInterfaceSubClass       : 0x02 (Audio Streaming)
+bInterfaceProtocol       : 0x00
+iInterface               : 0x00 (No String Descriptor)
+Data (HexDump)           : 09 04 02 00 00 01 02 00 00                        .........
+
+        ---------------- Interface Descriptor -----------------
+bLength                  : 0x09 (9 bytes)
+bDescriptorType          : 0x04 (Interface Descriptor)
+bInterfaceNumber         : 0x02 (Interface 2)
+bAlternateSetting        : 0x01
+bNumEndpoints            : 0x01 (1 Endpoint)
+bInterfaceClass          : 0x01 (Audio)
+bInterfaceSubClass       : 0x02 (Audio Streaming)
+bInterfaceProtocol       : 0x00
+iInterface               : 0x00 (No String Descriptor)
+Data (HexDump)           : 09 04 02 01 01 01 02 00 00                        .........
+
+        -------- Audio Streaming Interface Descriptor ---------
+bLength                  : 0x07 (7 bytes)
+bDescriptorType          : 0x24 (Audio Interface Descriptor)
+bDescriptorSubtype       : 0x01 (AS_GENERAL)
+bTerminalLink            : 0x06 (Terminal ID 6)
+bDelay                   : 0x01 (1 frame)
+wFormatTag               : 0x0001 (PCM)
+Data (HexDump)           : 07 24 01 06 01 01 00                              .$.....
+
+        ------- Audio Streaming Format Type Descriptor --------
+bLength                  : 0x0B (11 bytes)
+bDescriptorType          : 0x24 (Audio Interface Descriptor)
+bDescriptorSubtype       : 0x02 (Format Type)
+bFormatType              : 0x01 (FORMAT_TYPE_I)
+bNrChannels              : 0x02 (2 channels)
+bSubframeSize            : 0x02 (2 bytes per subframe)
+bBitResolution           : 0x10 (16 bits per sample)
+bSamFreqType             : 0x01 (supports 1 sample frequence)
+tSamFreq[1]              : 0x0BB80 (48000 Hz)
+Data (HexDump)           : 0B 24 02 01 02 02 10 01 80 BB 00                  .$.........
+
+        ----------------- Endpoint Descriptor -----------------
+bLength                  : 0x09 (9 bytes)
+bDescriptorType          : 0x05 (Endpoint Descriptor)
+bEndpointAddress         : 0x82 (Direction=IN EndpointID=2)
+bmAttributes             : 0x05 (TransferType=Isochronous  SyncType=Asynchronous  EndpointType=Data)
+wMaxPacketSize           : 0x00C4
+ Bits 15..13             : 0x00 (reserved, must be zero)
+ Bits 12..11             : 0x00 (0 additional transactions per microframe -> allows 1..1024 bytes per packet)
+ Bits 10..0              : 0xC4 (196 bytes per packet)
+bInterval                : 0x04 (4 ms)
+bRefresh                 : 0x00
+bSynchAddress            : 0x00
+Data (HexDump)           : 09 05 82 05 C4 00 04 00 00                        .........
+
+        ----------- Audio Data Endpoint Descriptor ------------
+bLength                  : 0x07 (7 bytes)
+bDescriptorType          : 0x25 (Audio Endpoint Descriptor)
+bDescriptorSubtype       : 0x01 (General)
+bmAttributes             : 0x00
+ D0   : Sampling Freq    : 0x00 (not supported)
+ D1   : Pitch            : 0x00 (not supported)
+ D6..2: Reserved         : 0x00
+ D7   : MaxPacketsOnly   : 0x00 (no)
+bLockDelayUnits          : 0x00 (Undefined)
+wLockDelay               : 0x0000
+Data (HexDump)           : 07 25 01 00 00 00 00                              .%.....
+
+        ---------------- Interface Descriptor -----------------
+bLength                  : 0x09 (9 bytes)
+bDescriptorType          : 0x04 (Interface Descriptor)
+bInterfaceNumber         : 0x03 (Interface 3)
+bAlternateSetting        : 0x00
+bNumEndpoints            : 0x02 (2 Endpoints)
+bInterfaceClass          : 0x03 (HID - Human Interface Device)
+bInterfaceSubClass       : 0x00 (None)
+bInterfaceProtocol       : 0x00 (None)
+iInterface               : 0x00 (No String Descriptor)
+Data (HexDump)           : 09 04 03 00 02 03 00 00 00                        .........
+
+        ------------------- HID Descriptor --------------------
+bLength                  : 0x09 (9 bytes)
+bDescriptorType          : 0x21 (HID Descriptor)
+bcdHID                   : 0x0111 (HID Version 1.11)
+bCountryCode             : 0x00 (00 = not localized)
+bNumDescriptors          : 0x01
+Data (HexDump)           : 09 21 11 01 00 01 22 11 01                        .!...."..
+Descriptor 1:
+bDescriptorType          : 0x22 (Class=Report)
+wDescriptorLength        : 0x0111 (273 bytes)
+  05 01             Usage Page (Generic Desktop Controls)
+  09 05             Usage (Gamepad)
+  A1 01             Collection (Application)
+  85 01               Report ID (0x01)
+  09 30               Usage (Direction-X)
+  09 31               Usage (Direction-Y)
+  09 32               Usage (Direction-Z)
+  09 35               Usage (Rotate-Z)
+  09 33               Usage (Rotate-X)
+  09 34               Usage (Rotate-Y)
+  15 00               Logical Minimum (0)
+  26 FF 00            Logical Maximum (255)
+  75 08               Report Size (8)
+  95 06               Report Count (6)
+  81 02               Input (Var)
+  06 00 FF            Usage Page (Vendor Defined)
+  09 20               Usage (unk)
+  95 01               Report Count (1)
+  81 02               Input (Var)
+  05 01               Usage Page (Generic Desktop Controls)
+  09 39               Usage (Hat Switch)
+  15 00               Logical Minimum (0)
+  25 07               Logical Maximum (7)
+  35 00               Physical Minimum (0)
+  46 3B 01            Physical Maximum (315)
+  65 14               Unit (0x14)
+  75 04               Report Size (4)
+  95 01               Report Count (1)
+  81 42               Input (Var, NullState)
+  65 00               Unit (0x00)
+  05 09               Usage Page (Buttons)
+  19 01               Usage Minimum (1)
+  29 0F               Usage Maximum (15)
+  15 00               Logical Minimum (0)
+  25 01               Logical Maximum (1)
+  75 01               Report Size (1)
+  95 0F               Report Count (15)
+  81 02               Input (Var)
+  06 00 FF            Usage Page (Vendor Defined)
+  09 21               Usage (unk)
+  95 0D               Report Count (13)
+  81 02               Input (Var)
+  06 00 FF            Usage Page (Vendor Defined)
+  09 22               Usage (unk)
+  15 00               Logical Minimum (0)
+  26 FF 00            Logical Maximum (255)
+  75 08               Report Size (8)
+  95 34               Report Count (52)
+  81 02               Input (Var)
+  85 02               Report ID (0x02)
+  09 23               Usage (unk)
+  95 2F               Report Count (47)
+  91 02               Output (Var)
+  85 05               Report ID (0x05)
+  09 33               Usage (unk)
+  95 28               Report Count (40)
+  B1 02               Feature (Var)
+  85 08               Report ID (0x08)
+  09 34               Usage (unk)
+  95 2F               Report Count (47)
+  B1 02               Feature (Var)
+  85 09               Report ID (0x09)
+  09 24               Usage (unk)
+  95 13               Report Count (19)
+  B1 02               Feature (Var)
+  85 0A               Report ID (0x0A)
+  09 25               Usage (unk)
+  95 1A               Report Count (26)
+  B1 02               Feature (Var)
+  85 20               Report ID (0x20)
+  09 26               Usage (unk)
+  95 3F               Report Count (63)
+  B1 02               Feature (Var)
+  85 21               Report ID (0x21)
+  09 27               Usage (unk)
+  95 04               Report Count (4)
+  B1 02               Feature (Var)
+  85 22               Report ID (0x22)
+  09 40               Usage (unk)
+  95 3F               Report Count (63)
+  B1 02               Feature (Var)
+  85 80               Report ID (0x80)
+  09 28               Usage (unk)
+  95 3F               Report Count (63)
+  B1 02               Feature (Var)
+  85 81               Report ID (0x81)
+  09 29               Usage (unk)
+  95 3F               Report Count (63)
+  B1 02               Feature (Var)
+  85 82               Report ID (0x82)
+  09 2A               Usage (unk)
+  95 09               Report Count (9)
+  B1 02               Feature (Var)
+  85 83               Report ID (0x83)
+  09 2B               Usage (unk)
+  95 3F               Report Count (63)
+  B1 02               Feature (Var)
+  85 84               Report ID (0x84)
+  09 2C               Usage (unk)
+  95 3F               Report Count (63)
+  B1 02               Feature (Var)
+  85 85               Report ID (0x85)
+  09 2D               Usage (unk)
+  95 02               Report Count (2)
+  B1 02               Feature (Var)
+  85 A0               Report ID (0xA0)
+  09 2E               Usage (unk)
+  95 01               Report Count (1)
+  B1 02               Feature (Var)
+  85 E0               Report ID (0xE0)
+  09 2F               Usage (unk)
+  95 3F               Report Count (63)
+  B1 02               Feature (Var)
+  85 F0               Report ID (0xF0)
+  09 30               Usage (unk)
+  95 3F               Report Count (63)
+  B1 02               Feature (Var)
+  85 F1               Report ID (0xF1)
+  09 31               Usage (unk)
+  95 3F               Report Count (63)
+  B1 02               Feature (Var)
+  85 F2               Report ID (0xF2)
+  09 32               Usage (unk)
+  95 0F               Report Count (15)
+  B1 02               Feature (Var)
+  85 F4               Report ID (0xF4)
+  09 35               Usage (unk)
+  95 3F               Report Count (63)
+  B1 02               Feature (Var)
+  85 F5               Report ID (0xF5)
+  09 36               Usage (unk)
+  95 03               Report Count (3)
+  B1 02               Feature (Var)
+  C0                End Collection
+Data (HexDump)           : 05 01 09 05 A1 01 85 01 09 30 09 31 09 32 09 35   .........0.1.2.5
+                           09 33 09 34 15 00 26 FF 00 75 08 95 06 81 02 06   .3.4..&..u......
+                           00 FF 09 20 95 01 81 02 05 01 09 39 15 00 25 07   ... .......9..%.
+                           35 00 46 3B 01 65 14 75 04 95 01 81 42 65 00 05   5.F;.e.u....Be..
+                           09 19 01 29 0F 15 00 25 01 75 01 95 0F 81 02 06   ...)...%.u......
+                           00 FF 09 21 95 0D 81 02 06 00 FF 09 22 15 00 26   ...!........"..&
+                           FF 00 75 08 95 34 81 02 85 02 09 23 95 2F 91 02   ..u..4.....#./..
+                           85 05 09 33 95 28 B1 02 85 08 09 34 95 2F B1 02   ...3.(.....4./..
+                           85 09 09 24 95 13 B1 02 85 0A 09 25 95 1A B1 02   ...$.......%....
+                           85 20 09 26 95 3F B1 02 85 21 09 27 95 04 B1 02   . .&.?...!.'....
+                           85 22 09 40 95 3F B1 02 85 80 09 28 95 3F B1 02   .".@.?.....(.?..
+                           85 81 09 29 95 3F B1 02 85 82 09 2A 95 09 B1 02   ...).?.....*....
+                           85 83 09 2B 95 3F B1 02 85 84 09 2C 95 3F B1 02   ...+.?.....,.?..
+                           85 85 09 2D 95 02 B1 02 85 A0 09 2E 95 01 B1 02   ...-............
+                           85 E0 09 2F 95 3F B1 02 85 F0 09 30 95 3F B1 02   .../.?.....0.?..
+                           85 F1 09 31 95 3F B1 02 85 F2 09 32 95 0F B1 02   ...1.?.....2....
+                           85 F4 09 35 95 3F B1 02 85 F5 09 36 95 03 B1 02   ...5.?.....6....
+                           C0                                                .
+
+        ----------------- Endpoint Descriptor -----------------
+bLength                  : 0x07 (7 bytes)
+bDescriptorType          : 0x05 (Endpoint Descriptor)
+bEndpointAddress         : 0x84 (Direction=IN EndpointID=4)
+bmAttributes             : 0x03 (TransferType=Interrupt)
+wMaxPacketSize           : 0x0040
+ Bits 15..13             : 0x00 (reserved, must be zero)
+ Bits 12..11             : 0x00 (0 additional transactions per microframe -> allows 1..1024 bytes per packet)
+ Bits 10..0              : 0x40 (64 bytes per packet)
+bInterval                : 0x06 (32 microframes -> 4 ms)
+Data (HexDump)           : 07 05 84 03 40 00 06                              ....@..
+
+        ----------------- Endpoint Descriptor -----------------
+bLength                  : 0x07 (7 bytes)
+bDescriptorType          : 0x05 (Endpoint Descriptor)
+bEndpointAddress         : 0x03 (Direction=OUT EndpointID=3)
+bmAttributes             : 0x03 (TransferType=Interrupt)
+wMaxPacketSize           : 0x0040
+ Bits 15..13             : 0x00 (reserved, must be zero)
+ Bits 12..11             : 0x00 (0 additional transactions per microframe -> allows 1..1024 bytes per packet)
+ Bits 10..0              : 0x40 (64 bytes per packet)
+bInterval                : 0x06 (32 microframes -> 4 ms)
+Data (HexDump)           : 07 05 03 03 40 00 06                              ....@..
+
+    --------- Device Qualifier Descriptor (for Full-Speed) --------
+bLength                  : 0x0A (10 bytes)
+bDescriptorType          : 0x06 (Device_qualifier Descriptor)
+bcdUSB                   : 0x200 (USB Version 2.0)bDeviceClass             : 0x00 (defined by the interface descriptors)
+bDeviceSubClass          : 0x00
+bDeviceProtocol          : 0x00
+bMaxPacketSize0          : 0x40 (64 Bytes)
+bNumConfigurations       : 0x01 (1 other-speed configuration)
+bReserved                : 0x00
+Data (HexDump)           : 0A 06 00 02 00 00 00 40 01 00                     .......@..
+
+    ------------ Other Speed Configuration Descriptor -------------
+bLength                  : 0x09 (9 bytes)
+bDescriptorType          : 0x07 (Other_speed_configuration Descriptor)
+wTotalLength             : 0x00E3 (227 bytes)
+bNumInterfaces           : 0x04 (4 Interfaces)
+bConfigurationValue      : 0x01 (Configuration 1)
+iConfiguration           : 0x00 (No String Descriptor)
+bmAttributes             : 0xC0
+ D7: Reserved, set 1     : 0x01
+ D6: Self Powered        : 0x01 (yes)
+ D5: Remote Wakeup       : 0x00 (no)
+ D4..0: Reserved, set 0  : 0x00
+MaxPower                 : 0xFA (500 mA)
+Data (HexDump)           : 09 07 E3 00 04 01 00 C0 FA 09 04 00 00 00 01 01   ................
+                           00 00 0A 24 01 00 01 49 00 02 01 02 0C 24 02 01   ...$...I.....$..
+                           01 01 06 04 33 00 00 00 0C 24 06 02 01 01 03 00   ....3....$......
+                           00 00 00 00 09 24 03 03 01 03 04 02 00 0C 24 02   .....$........$.
+                           04 02 04 03 01 00 00 00 00 09 24 06 05 04 01 03   ..........$.....
+                           00 00 09 24 03 06 01 01 01 05 00 09 04 01 00 00   ...$............
+                           01 02 00 00 09 04 01 01 01 01 02 00 00 07 24 01   ..............$.
+                           01 01 01 00 0B 24 02 01 04 02 10 01 80 BB 00 09   .....$..........
+                           05 01 09 88 01 01 00 00 07 25 01 01 00 00 00 09   .........%......
+                           04 02 00 00 01 02 00 00 09 04 02 01 01 01 02 00   ................
+                           00 07 24 01 06 01 01 00 0B 24 02 01 02 02 10 01   ..$......$......
+                           80 BB 00 09 05 82 05 C4 00 01 00 00 07 25 01 00   .............%..
+                           00 00 00 09 04 03 00 02 03 00 00 00 09 21 11 01   .............!..
+                           00 01 22 11 01 07 05 84 03 40 00 06 07 05 03 03   .."......@......
+                           40 00 06                                          @..
+
+        ---------------- Interface Descriptor -----------------
+bLength                  : 0x09 (9 bytes)
+bDescriptorType          : 0x04 (Interface Descriptor)
+bInterfaceNumber         : 0x00 (Interface 0)
+bAlternateSetting        : 0x00
+bNumEndpoints            : 0x00 (Default Control Pipe only)
+bInterfaceClass          : 0x01 (Audio)
+bInterfaceSubClass       : 0x01 (Audio Control)
+bInterfaceProtocol       : 0x00
+iInterface               : 0x00 (No String Descriptor)
+Data (HexDump)           : 09 04 00 00 00 01 01 00 00                        .........
+
+        ------ Audio Control Interface Header Descriptor ------
+bLength                  : 0x0A (10 bytes)
+bDescriptorType          : 0x24 (Audio Interface Descriptor)
+bDescriptorSubtype       : 0x01 (Header)
+bcdADC                   : 0x0100
+wTotalLength             : 0x0049 (73 bytes)
+bInCollection            : 0x02
+baInterfaceNr[1]         : 0x01
+baInterfaceNr[2]         : 0x02
+Data (HexDump)           : 0A 24 01 00 01 49 00 02 01 02                     .$...I....
+
+        ------- Audio Control Input Terminal Descriptor -------
+bLength                  : 0x0C (12 bytes)
+bDescriptorType          : 0x24 (Audio Interface Descriptor)
+bDescriptorSubtype       : 0x02 (Input Terminal)
+bTerminalID              : 0x01
+wTerminalType            : 0x0101 (USB Streaming)
+bAssocTerminal           : 0x06
+bNrChannels              : 0x04 (4 channels)
+wChannelConfig           : 0x0033 (L, R, LS, RS)
+iChannelNames            : 0x00 (No String Descriptor)
+iTerminal                : 0x00 (No String Descriptor)
+Data (HexDump)           : 0C 24 02 01 01 01 06 04 33 00 00 00               .$......3...
+
+        -------- Audio Control Feature Unit Descriptor --------
+bLength                  : 0x0C (12 bytes)
+bDescriptorType          : 0x24 (Audio Interface Descriptor)
+bDescriptorSubtype       : 0x06 (Feature Unit)
+bUnitID                  : 0x02 (2)
+bSourceID                : 0x01 (1)
+bControlSize             : 0x01 (1 byte per control)
+bmaControls[0]           : 0x03
+ D0: Mute                : 1
+ D1: Volume              : 1
+ D2: Bass                : 0
+ D3: Mid                 : 0
+ D4: Treble              : 0
+ D5: Graphic Equalizer   : 0
+ D6: Automatic Gain      : 0
+ D7: Delay               : 0
+bmaControls[1]           : 0x00
+ D0: Mute                : 0
+ D1: Volume              : 0
+ D2: Bass                : 0
+ D3: Mid                 : 0
+ D4: Treble              : 0
+ D5: Graphic Equalizer   : 0
+ D6: Automatic Gain      : 0
+ D7: Delay               : 0
+bmaControls[2]           : 0x00
+ D0: Mute                : 0
+ D1: Volume              : 0
+ D2: Bass                : 0
+ D3: Mid                 : 0
+ D4: Treble              : 0
+ D5: Graphic Equalizer   : 0
+ D6: Automatic Gain      : 0
+ D7: Delay               : 0
+bmaControls[3]           : 0x00
+ D0: Mute                : 0
+ D1: Volume              : 0
+ D2: Bass                : 0
+ D3: Mid                 : 0
+ D4: Treble              : 0
+ D5: Graphic Equalizer   : 0
+ D6: Automatic Gain      : 0
+ D7: Delay               : 0
+bmaControls[4]           : 0x00
+ D0: Mute                : 0
+ D1: Volume              : 0
+ D2: Bass                : 0
+ D3: Mid                 : 0
+ D4: Treble              : 0
+ D5: Graphic Equalizer   : 0
+ D6: Automatic Gain      : 0
+ D7: Delay               : 0
+iFeature                 : 0x00 (No String Descriptor)
+Data (HexDump)           : 0C 24 06 02 01 01 03 00 00 00 00 00               .$..........
+
+        ------- Audio Control Output Terminal Descriptor ------
+bLength                  : 0x09 (9 bytes)
+bDescriptorType          : 0x24 (Audio Interface Descriptor)
+bDescriptorSubtype       : 0x03 (Output Terminal)
+bTerminalID              : 0x03
+wTerminalType            : 0x0301 (Speaker)
+bAssocTerminal           : 0x04 (4)
+bSourceID                : 0x02 (2)
+iTerminal                : 0x00 (No String Descriptor)
+Data (HexDump)           : 09 24 03 03 01 03 04 02 00                        .$.......
+
+        ------- Audio Control Input Terminal Descriptor -------
+bLength                  : 0x0C (12 bytes)
+bDescriptorType          : 0x24 (Audio Interface Descriptor)
+bDescriptorSubtype       : 0x02 (Input Terminal)
+bTerminalID              : 0x04
+wTerminalType            : 0x0402 (Headset)
+bAssocTerminal           : 0x03
+bNrChannels              : 0x01 (1 channel)
+wChannelConfig           : 0x0000 (-)
+iChannelNames            : 0x00 (No String Descriptor)
+iTerminal                : 0x00 (No String Descriptor)
+Data (HexDump)           : 0C 24 02 04 02 04 03 01 00 00 00 00               .$..........
+
+        -------- Audio Control Feature Unit Descriptor --------
+bLength                  : 0x09 (9 bytes)
+bDescriptorType          : 0x24 (Audio Interface Descriptor)
+bDescriptorSubtype       : 0x06 (Feature Unit)
+bUnitID                  : 0x05 (5)
+bSourceID                : 0x04 (4)
+bControlSize             : 0x01 (1 byte per control)
+bmaControls[0]           : 0x03
+ D0: Mute                : 1
+ D1: Volume              : 1
+ D2: Bass                : 0
+ D3: Mid                 : 0
+ D4: Treble              : 0
+ D5: Graphic Equalizer   : 0
+ D6: Automatic Gain      : 0
+ D7: Delay               : 0
+bmaControls[1]           : 0x00
+ D0: Mute                : 0
+ D1: Volume              : 0
+ D2: Bass                : 0
+ D3: Mid                 : 0
+ D4: Treble              : 0
+ D5: Graphic Equalizer   : 0
+ D6: Automatic Gain      : 0
+ D7: Delay               : 0
+iFeature                 : 0x00 (No String Descriptor)
+Data (HexDump)           : 09 24 06 05 04 01 03 00 00                        .$.......
+
+        ------- Audio Control Output Terminal Descriptor ------
+bLength                  : 0x09 (9 bytes)
+bDescriptorType          : 0x24 (Audio Interface Descriptor)
+bDescriptorSubtype       : 0x03 (Output Terminal)
+bTerminalID              : 0x06
+wTerminalType            : 0x0101 (USB Streaming)
+bAssocTerminal           : 0x01 (1)
+bSourceID                : 0x05 (5)
+iTerminal                : 0x00 (No String Descriptor)
+Data (HexDump)           : 09 24 03 06 01 01 01 05 00                        .$.......
+
+        ---------------- Interface Descriptor -----------------
+bLength                  : 0x09 (9 bytes)
+bDescriptorType          : 0x04 (Interface Descriptor)
+bInterfaceNumber         : 0x01 (Interface 1)
+bAlternateSetting        : 0x00
+bNumEndpoints            : 0x00 (Default Control Pipe only)
+bInterfaceClass          : 0x01 (Audio)
+bInterfaceSubClass       : 0x02 (Audio Streaming)
+bInterfaceProtocol       : 0x00
+iInterface               : 0x00 (No String Descriptor)
+Data (HexDump)           : 09 04 01 00 00 01 02 00 00                        .........
+
+        ---------------- Interface Descriptor -----------------
+bLength                  : 0x09 (9 bytes)
+bDescriptorType          : 0x04 (Interface Descriptor)
+bInterfaceNumber         : 0x01 (Interface 1)
+bAlternateSetting        : 0x01
+bNumEndpoints            : 0x01 (1 Endpoint)
+bInterfaceClass          : 0x01 (Audio)
+bInterfaceSubClass       : 0x02 (Audio Streaming)
+bInterfaceProtocol       : 0x00
+iInterface               : 0x00 (No String Descriptor)
+Data (HexDump)           : 09 04 01 01 01 01 02 00 00                        .........
+
+        -------- Audio Streaming Interface Descriptor ---------
+bLength                  : 0x07 (7 bytes)
+bDescriptorType          : 0x24 (Audio Interface Descriptor)
+bDescriptorSubtype       : 0x01 (AS_GENERAL)
+bTerminalLink            : 0x01 (Terminal ID 1)
+bDelay                   : 0x01 (1 frame)
+wFormatTag               : 0x0001 (PCM)
+Data (HexDump)           : 07 24 01 01 01 01 00                              .$.....
+
+        ------- Audio Streaming Format Type Descriptor --------
+bLength                  : 0x0B (11 bytes)
+bDescriptorType          : 0x24 (Audio Interface Descriptor)
+bDescriptorSubtype       : 0x02 (Format Type)
+bFormatType              : 0x01 (FORMAT_TYPE_I)
+bNrChannels              : 0x04 (4 channels)
+bSubframeSize            : 0x02 (2 bytes per subframe)
+bBitResolution           : 0x10 (16 bits per sample)
+bSamFreqType             : 0x01 (supports 1 sample frequence)
+tSamFreq[1]              : 0x0BB80 (48000 Hz)
+Data (HexDump)           : 0B 24 02 01 04 02 10 01 80 BB 00                  .$.........
+
+        ----------------- Endpoint Descriptor -----------------
+bLength                  : 0x09 (9 bytes)
+bDescriptorType          : 0x05 (Endpoint Descriptor)
+bEndpointAddress         : 0x01 (Direction=OUT EndpointID=1)
+bmAttributes             : 0x09 (TransferType=Isochronous  SyncType=Adaptive  EndpointType=Data)
+wMaxPacketSize           : 0x0188 (392 bytes)
+bInterval                : 0x01 (1 ms)
+bRefresh                 : 0x00
+bSynchAddress            : 0x00
+Data (HexDump)           : 09 05 01 09 88 01 01 00 00                        .........
+
+        ----------- Audio Data Endpoint Descriptor ------------
+bLength                  : 0x07 (7 bytes)
+bDescriptorType          : 0x25 (Audio Endpoint Descriptor)
+bDescriptorSubtype       : 0x01 (General)
+bmAttributes             : 0x01
+ D0   : Sampling Freq    : 0x01 (supported)
+ D1   : Pitch            : 0x00 (not supported)
+ D6..2: Reserved         : 0x00
+ D7   : MaxPacketsOnly   : 0x00 (no)
+bLockDelayUnits          : 0x00 (Undefined)
+wLockDelay               : 0x0000
+Data (HexDump)           : 07 25 01 01 00 00 00                              .%.....
+
+        ---------------- Interface Descriptor -----------------
+bLength                  : 0x09 (9 bytes)
+bDescriptorType          : 0x04 (Interface Descriptor)
+bInterfaceNumber         : 0x02 (Interface 2)
+bAlternateSetting        : 0x00
+bNumEndpoints            : 0x00 (Default Control Pipe only)
+bInterfaceClass          : 0x01 (Audio)
+bInterfaceSubClass       : 0x02 (Audio Streaming)
+bInterfaceProtocol       : 0x00
+iInterface               : 0x00 (No String Descriptor)
+Data (HexDump)           : 09 04 02 00 00 01 02 00 00                        .........
+
+        ---------------- Interface Descriptor -----------------
+bLength                  : 0x09 (9 bytes)
+bDescriptorType          : 0x04 (Interface Descriptor)
+bInterfaceNumber         : 0x02 (Interface 2)
+bAlternateSetting        : 0x01
+bNumEndpoints            : 0x01 (1 Endpoint)
+bInterfaceClass          : 0x01 (Audio)
+bInterfaceSubClass       : 0x02 (Audio Streaming)
+bInterfaceProtocol       : 0x00
+iInterface               : 0x00 (No String Descriptor)
+Data (HexDump)           : 09 04 02 01 01 01 02 00 00                        .........
+
+        -------- Audio Streaming Interface Descriptor ---------
+bLength                  : 0x07 (7 bytes)
+bDescriptorType          : 0x24 (Audio Interface Descriptor)
+bDescriptorSubtype       : 0x01 (AS_GENERAL)
+bTerminalLink            : 0x06 (Terminal ID 6)
+bDelay                   : 0x01 (1 frame)
+wFormatTag               : 0x0001 (PCM)
+Data (HexDump)           : 07 24 01 06 01 01 00                              .$.....
+
+        ------- Audio Streaming Format Type Descriptor --------
+bLength                  : 0x0B (11 bytes)
+bDescriptorType          : 0x24 (Audio Interface Descriptor)
+bDescriptorSubtype       : 0x02 (Format Type)
+bFormatType              : 0x01 (FORMAT_TYPE_I)
+bNrChannels              : 0x02 (2 channels)
+bSubframeSize            : 0x02 (2 bytes per subframe)
+bBitResolution           : 0x10 (16 bits per sample)
+bSamFreqType             : 0x01 (supports 1 sample frequence)
+tSamFreq[1]              : 0x0BB80 (48000 Hz)
+Data (HexDump)           : 0B 24 02 01 02 02 10 01 80 BB 00                  .$.........
+
+        ----------------- Endpoint Descriptor -----------------
+bLength                  : 0x09 (9 bytes)
+bDescriptorType          : 0x05 (Endpoint Descriptor)
+bEndpointAddress         : 0x82 (Direction=IN EndpointID=2)
+bmAttributes             : 0x05 (TransferType=Isochronous  SyncType=Asynchronous  EndpointType=Data)
+wMaxPacketSize           : 0x00C4 (196 bytes)
+bInterval                : 0x01 (1 ms)
+bRefresh                 : 0x00
+bSynchAddress            : 0x00
+Data (HexDump)           : 09 05 82 05 C4 00 01 00 00                        .........
+
+        ----------- Audio Data Endpoint Descriptor ------------
+bLength                  : 0x07 (7 bytes)
+bDescriptorType          : 0x25 (Audio Endpoint Descriptor)
+bDescriptorSubtype       : 0x01 (General)
+bmAttributes             : 0x00
+ D0   : Sampling Freq    : 0x00 (not supported)
+ D1   : Pitch            : 0x00 (not supported)
+ D6..2: Reserved         : 0x00
+ D7   : MaxPacketsOnly   : 0x00 (no)
+bLockDelayUnits          : 0x00 (Undefined)
+wLockDelay               : 0x0000
+Data (HexDump)           : 07 25 01 00 00 00 00                              .%.....
+
+        ---------------- Interface Descriptor -----------------
+bLength                  : 0x09 (9 bytes)
+bDescriptorType          : 0x04 (Interface Descriptor)
+bInterfaceNumber         : 0x03 (Interface 3)
+bAlternateSetting        : 0x00
+bNumEndpoints            : 0x02 (2 Endpoints)
+bInterfaceClass          : 0x03 (HID - Human Interface Device)
+bInterfaceSubClass       : 0x00 (None)
+bInterfaceProtocol       : 0x00 (None)
+iInterface               : 0x00 (No String Descriptor)
+Data (HexDump)           : 09 04 03 00 02 03 00 00 00                        .........
+
+        ------------------- HID Descriptor --------------------
+bLength                  : 0x09 (9 bytes)
+bDescriptorType          : 0x21 (HID Descriptor)
+bcdHID                   : 0x0111 (HID Version 1.11)
+bCountryCode             : 0x00 (00 = not localized)
+bNumDescriptors          : 0x01
+Data (HexDump)           : 09 21 11 01 00 01 22 11 01                        .!...."..
+Descriptor 1:
+bDescriptorType          : 0x22 (Class=Report)
+wDescriptorLength        : 0x0111 (273 bytes)
+  05 01             Usage Page (Generic Desktop Controls)
+  09 05             Usage (Gamepad)
+  A1 01             Collection (Application)
+  85 01               Report ID (0x01)
+  09 30               Usage (Direction-X)
+  09 31               Usage (Direction-Y)
+  09 32               Usage (Direction-Z)
+  09 35               Usage (Rotate-Z)
+  09 33               Usage (Rotate-X)
+  09 34               Usage (Rotate-Y)
+  15 00               Logical Minimum (0)
+  26 FF 00            Logical Maximum (255)
+  75 08               Report Size (8)
+  95 06               Report Count (6)
+  81 02               Input (Var)
+  06 00 FF            Usage Page (Vendor Defined)
+  09 20               Usage (unk)
+  95 01               Report Count (1)
+  81 02               Input (Var)
+  05 01               Usage Page (Generic Desktop Controls)
+  09 39               Usage (Hat Switch)
+  15 00               Logical Minimum (0)
+  25 07               Logical Maximum (7)
+  35 00               Physical Minimum (0)
+  46 3B 01            Physical Maximum (315)
+  65 14               Unit (0x14)
+  75 04               Report Size (4)
+  95 01               Report Count (1)
+  81 42               Input (Var, NullState)
+  65 00               Unit (0x00)
+  05 09               Usage Page (Buttons)
+  19 01               Usage Minimum (1)
+  29 0F               Usage Maximum (15)
+  15 00               Logical Minimum (0)
+  25 01               Logical Maximum (1)
+  75 01               Report Size (1)
+  95 0F               Report Count (15)
+  81 02               Input (Var)
+  06 00 FF            Usage Page (Vendor Defined)
+  09 21               Usage (unk)
+  95 0D               Report Count (13)
+  81 02               Input (Var)
+  06 00 FF            Usage Page (Vendor Defined)
+  09 22               Usage (unk)
+  15 00               Logical Minimum (0)
+  26 FF 00            Logical Maximum (255)
+  75 08               Report Size (8)
+  95 34               Report Count (52)
+  81 02               Input (Var)
+  85 02               Report ID (0x02)
+  09 23               Usage (unk)
+  95 2F               Report Count (47)
+  91 02               Output (Var)
+  85 05               Report ID (0x05)
+  09 33               Usage (unk)
+  95 28               Report Count (40)
+  B1 02               Feature (Var)
+  85 08               Report ID (0x08)
+  09 34               Usage (unk)
+  95 2F               Report Count (47)
+  B1 02               Feature (Var)
+  85 09               Report ID (0x09)
+  09 24               Usage (unk)
+  95 13               Report Count (19)
+  B1 02               Feature (Var)
+  85 0A               Report ID (0x0A)
+  09 25               Usage (unk)
+  95 1A               Report Count (26)
+  B1 02               Feature (Var)
+  85 20               Report ID (0x20)
+  09 26               Usage (unk)
+  95 3F               Report Count (63)
+  B1 02               Feature (Var)
+  85 21               Report ID (0x21)
+  09 27               Usage (unk)
+  95 04               Report Count (4)
+  B1 02               Feature (Var)
+  85 22               Report ID (0x22)
+  09 40               Usage (unk)
+  95 3F               Report Count (63)
+  B1 02               Feature (Var)
+  85 80               Report ID (0x80)
+  09 28               Usage (unk)
+  95 3F               Report Count (63)
+  B1 02               Feature (Var)
+  85 81               Report ID (0x81)
+  09 29               Usage (unk)
+  95 3F               Report Count (63)
+  B1 02               Feature (Var)
+  85 82               Report ID (0x82)
+  09 2A               Usage (unk)
+  95 09               Report Count (9)
+  B1 02               Feature (Var)
+  85 83               Report ID (0x83)
+  09 2B               Usage (unk)
+  95 3F               Report Count (63)
+  B1 02               Feature (Var)
+  85 84               Report ID (0x84)
+  09 2C               Usage (unk)
+  95 3F               Report Count (63)
+  B1 02               Feature (Var)
+  85 85               Report ID (0x85)
+  09 2D               Usage (unk)
+  95 02               Report Count (2)
+  B1 02               Feature (Var)
+  85 A0               Report ID (0xA0)
+  09 2E               Usage (unk)
+  95 01               Report Count (1)
+  B1 02               Feature (Var)
+  85 E0               Report ID (0xE0)
+  09 2F               Usage (unk)
+  95 3F               Report Count (63)
+  B1 02               Feature (Var)
+  85 F0               Report ID (0xF0)
+  09 30               Usage (unk)
+  95 3F               Report Count (63)
+  B1 02               Feature (Var)
+  85 F1               Report ID (0xF1)
+  09 31               Usage (unk)
+  95 3F               Report Count (63)
+  B1 02               Feature (Var)
+  85 F2               Report ID (0xF2)
+  09 32               Usage (unk)
+  95 0F               Report Count (15)
+  B1 02               Feature (Var)
+  85 F4               Report ID (0xF4)
+  09 35               Usage (unk)
+  95 3F               Report Count (63)
+  B1 02               Feature (Var)
+  85 F5               Report ID (0xF5)
+  09 36               Usage (unk)
+  95 03               Report Count (3)
+  B1 02               Feature (Var)
+  C0                End Collection
+Data (HexDump)           : 05 01 09 05 A1 01 85 01 09 30 09 31 09 32 09 35   .........0.1.2.5
+                           09 33 09 34 15 00 26 FF 00 75 08 95 06 81 02 06   .3.4..&..u......
+                           00 FF 09 20 95 01 81 02 05 01 09 39 15 00 25 07   ... .......9..%.
+                           35 00 46 3B 01 65 14 75 04 95 01 81 42 65 00 05   5.F;.e.u....Be..
+                           09 19 01 29 0F 15 00 25 01 75 01 95 0F 81 02 06   ...)...%.u......
+                           00 FF 09 21 95 0D 81 02 06 00 FF 09 22 15 00 26   ...!........"..&
+                           FF 00 75 08 95 34 81 02 85 02 09 23 95 2F 91 02   ..u..4.....#./..
+                           85 05 09 33 95 28 B1 02 85 08 09 34 95 2F B1 02   ...3.(.....4./..
+                           85 09 09 24 95 13 B1 02 85 0A 09 25 95 1A B1 02   ...$.......%....
+                           85 20 09 26 95 3F B1 02 85 21 09 27 95 04 B1 02   . .&.?...!.'....
+                           85 22 09 40 95 3F B1 02 85 80 09 28 95 3F B1 02   .".@.?.....(.?..
+                           85 81 09 29 95 3F B1 02 85 82 09 2A 95 09 B1 02   ...).?.....*....
+                           85 83 09 2B 95 3F B1 02 85 84 09 2C 95 3F B1 02   ...+.?.....,.?..
+                           85 85 09 2D 95 02 B1 02 85 A0 09 2E 95 01 B1 02   ...-............
+                           85 E0 09 2F 95 3F B1 02 85 F0 09 30 95 3F B1 02   .../.?.....0.?..
+                           85 F1 09 31 95 3F B1 02 85 F2 09 32 95 0F B1 02   ...1.?.....2....
+                           85 F4 09 35 95 3F B1 02 85 F5 09 36 95 03 B1 02   ...5.?.....6....
+                           C0                                                .
+
+        ----------------- Endpoint Descriptor -----------------
+bLength                  : 0x07 (7 bytes)
+bDescriptorType          : 0x05 (Endpoint Descriptor)
+bEndpointAddress         : 0x84 (Direction=IN EndpointID=4)
+bmAttributes             : 0x03 (TransferType=Interrupt)
+wMaxPacketSize           : 0x0040 (64 bytes)
+bInterval                : 0x06 (6 ms)
+Data (HexDump)           : 07 05 84 03 40 00 06                              ....@..
+
+        ----------------- Endpoint Descriptor -----------------
+bLength                  : 0x07 (7 bytes)
+bDescriptorType          : 0x05 (Endpoint Descriptor)
+bEndpointAddress         : 0x03 (Direction=OUT EndpointID=3)
+bmAttributes             : 0x03 (TransferType=Interrupt)
+wMaxPacketSize           : 0x0040 (64 bytes)
+bInterval                : 0x06 (6 ms)
+Data (HexDump)           : 07 05 03 03 40 00 06                              ....@..
+
+      -------------------- String Descriptors -------------------
+             ------ String Descriptor 0 ------
+bLength                  : 0x04 (4 bytes)
+bDescriptorType          : 0x03 (String Descriptor)
+Language ID[0]           : 0x0409 (English - United States)
+Data (HexDump)           : 04 03 09 04                                       ....
+             ------ String Descriptor 1 ------
+bLength                  : 0x3E (62 bytes)
+bDescriptorType          : 0x03 (String Descriptor)
+Language 0x0409          : "Sony Interactive Entertainment"
+Data (HexDump)           : 3E 03 53 00 6F 00 6E 00 79 00 20 00 49 00 6E 00   >.S.o.n.y. .I.n.
+                           74 00 65 00 72 00 61 00 63 00 74 00 69 00 76 00   t.e.r.a.c.t.i.v.
+                           65 00 20 00 45 00 6E 00 74 00 65 00 72 00 74 00   e. .E.n.t.e.r.t.
+                           61 00 69 00 6E 00 6D 00 65 00 6E 00 74 00         a.i.n.m.e.n.t.
+             ------ String Descriptor 2 ------
+bLength                  : 0x3C (60 bytes)
+bDescriptorType          : 0x03 (String Descriptor)
+Language 0x0409          : "DualSense Wireless Controller"
+Data (HexDump)           : 3C 03 44 00 75 00 61 00 6C 00 53 00 65 00 6E 00   <.D.u.a.l.S.e.n.
+                           73 00 65 00 20 00 57 00 69 00 72 00 65 00 6C 00   s.e. .W.i.r.e.l.
+                           65 00 73 00 73 00 20 00 43 00 6F 00 6E 00 74 00   e.s.s. .C.o.n.t.
+                           72 00 6F 00 6C 00 6C 00 65 00 72 00               r.o.l.l.e.r.

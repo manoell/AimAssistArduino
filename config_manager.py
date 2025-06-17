@@ -60,6 +60,24 @@ class ConfigManager:
             'exit': 'F12'                # Tecla para sair
         }
         
+        # Humanização
+        self.config['Humanization'] = {
+            'enabled': 'True',
+            'base_reaction_time': '150',
+            'reaction_time_variance': '50',
+            'jitter_enabled': 'True',
+            'jitter_strength': '0.3',
+            'timing_variance_enabled': 'True',
+            'min_timing_variance': '-0.5',
+            'max_timing_variance': '2.0',
+            'max_command_frequency': '500',
+            'base_loop_delay': '5.0',
+            'loop_delay_variance': '2.0',
+            'simulate_fatigue': 'False',
+            'simulate_attention_gaps': 'False',
+            'natural_movement_curve': 'True'
+        }
+        
         # Salvar configurações padrão
         with open(self.config_file, 'w') as f:
             self.config.write(f)
@@ -129,6 +147,49 @@ class ConfigManager:
         """
         value = self.config.get(section, key)
         return np.array([int(x) for x in value.split(',')])
+    
+    def get_humanization_config(self):
+        """
+        Retorna todas as configurações de humanização
+        
+        Returns:
+            dict: Configurações de humanização
+        """
+        try:
+            return {
+                'enabled': self.get_boolean('Humanization', 'enabled'),
+                'base_reaction_time': self.get_float('Humanization', 'base_reaction_time') / 1000,  # Converter para segundos
+                'reaction_time_variance': self.get_float('Humanization', 'reaction_time_variance') / 1000,
+                'jitter_enabled': self.get_boolean('Humanization', 'jitter_enabled'),
+                'jitter_strength': self.get_float('Humanization', 'jitter_strength'),
+                'timing_variance_enabled': self.get_boolean('Humanization', 'timing_variance_enabled'),
+                'min_timing_variance': self.get_float('Humanization', 'min_timing_variance') / 1000,
+                'max_timing_variance': self.get_float('Humanization', 'max_timing_variance') / 1000,
+                'max_command_frequency': self.get_int('Humanization', 'max_command_frequency'),
+                'base_loop_delay': self.get_float('Humanization', 'base_loop_delay') / 1000,
+                'loop_delay_variance': self.get_float('Humanization', 'loop_delay_variance') / 1000,
+                'simulate_fatigue': self.get_boolean('Humanization', 'simulate_fatigue'),
+                'simulate_attention_gaps': self.get_boolean('Humanization', 'simulate_attention_gaps'),
+                'natural_movement_curve': self.get_boolean('Humanization', 'natural_movement_curve')
+            }
+        except:
+            # Se seção não existir, retornar valores padrão
+            return {
+                'enabled': True,
+                'base_reaction_time': 0.150,
+                'reaction_time_variance': 0.050,
+                'jitter_enabled': True,
+                'jitter_strength': 0.3,
+                'timing_variance_enabled': True,
+                'min_timing_variance': -0.0005,
+                'max_timing_variance': 0.002,
+                'max_command_frequency': 500,
+                'base_loop_delay': 0.005,
+                'loop_delay_variance': 0.002,
+                'simulate_fatigue': False,
+                'simulate_attention_gaps': False,
+                'natural_movement_curve': True
+            }
     
     def set(self, section, key, value):
         """

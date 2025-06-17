@@ -1,8 +1,8 @@
 #include "Descriptors.h"
 
-// *** CORREÇÃO CRÍTICA: Mouse HID Report Descriptor Boot Protocol PADRÃO ***
+// *** MOUSE HID REPORT DESCRIPTOR OTIMIZADO PARA 1000Hz ***
 const USB_Descriptor_HIDReport_Datatype_t PROGMEM MouseHIDReport[] = {
-  // Boot Protocol Mouse PADRÃO (3 bytes apenas: buttons, X, Y)
+  // Boot Protocol Mouse PADRÃO otimizado para gaming
   0x05, 0x01,        // Usage Page (Generic Desktop)
   0x09, 0x02,        // Usage (Mouse)
   0xA1, 0x01,        // Collection (Application)
@@ -10,7 +10,7 @@ const USB_Descriptor_HIDReport_Datatype_t PROGMEM MouseHIDReport[] = {
   0xA1, 0x00,        //   Collection (Physical)
   0x05, 0x09,        //     Usage Page (Buttons)
   0x19, 0x01,        //     Usage Minimum (1)
-  0x29, 0x03,        //     Usage Maximum (3) - APENAS 3 BOTÕES para Boot Protocol
+  0x29, 0x03,        //     Usage Maximum (3) - 3 botões Boot Protocol
   0x15, 0x00,        //     Logical Minimum (0)
   0x25, 0x01,        //     Logical Maximum (1)
   0x95, 0x03,        //     Report Count (3) - 3 botões
@@ -150,7 +150,7 @@ const USB_Descriptor_Device_t PROGMEM DeviceDescriptor = {
   .NumberOfConfigurations = FIXED_NUM_CONFIGURATIONS
 };
 
-// Configuration Descriptor (mantém igual)
+// *** CONFIGURATION DESCRIPTOR OTIMIZADO PARA 1000Hz ***
 const USB_Descriptor_Configuration_t PROGMEM ConfigurationDescriptor = {
   .Config = {
     .Header                 = {.Size = sizeof(USB_Descriptor_Configuration_Header_t), .Type = DTYPE_Configuration},
@@ -183,12 +183,13 @@ const USB_Descriptor_Configuration_t PROGMEM ConfigurationDescriptor = {
     .HIDReportLength        = sizeof(MouseHIDReport)
   },
 
+  // *** MOUSE ENDPOINT OTIMIZADO PARA 1000Hz ***
   .HID_MouseEndpoint = {
     .Header                 = {.Size = sizeof(USB_Descriptor_Endpoint_t), .Type = DTYPE_Endpoint},
     .EndpointAddress        = MOUSE_IN_EPADDR,
     .Attributes             = (EP_TYPE_INTERRUPT | ENDPOINT_ATTR_NO_SYNC | ENDPOINT_USAGE_DATA),
     .EndpointSize           = MOUSE_EPSIZE,
-    .PollingIntervalMS      = 0x01
+    .PollingIntervalMS      = 0x01   // *** 1ms = 1000Hz POLLING RATE ***
   },
 
   // Interface 1 - Keyboard (Boot Protocol)  
@@ -212,12 +213,13 @@ const USB_Descriptor_Configuration_t PROGMEM ConfigurationDescriptor = {
     .HIDReportLength        = sizeof(KeyboardHIDReport)
   },
 
+  // *** KEYBOARD ENDPOINT OTIMIZADO PARA 1000Hz ***
   .HID_KeyboardEndpoint = {
     .Header                 = {.Size = sizeof(USB_Descriptor_Endpoint_t), .Type = DTYPE_Endpoint},
     .EndpointAddress        = KEYBOARD_IN_EPADDR,
     .Attributes             = (EP_TYPE_INTERRUPT | ENDPOINT_ATTR_NO_SYNC | ENDPOINT_USAGE_DATA),
     .EndpointSize           = KEYBOARD_EPSIZE,
-    .PollingIntervalMS      = 0x01
+    .PollingIntervalMS      = 0x01   // *** 1ms = 1000Hz POLLING RATE ***
   },
 
   // Interface 2 - HID Genérico
@@ -241,20 +243,22 @@ const USB_Descriptor_Configuration_t PROGMEM ConfigurationDescriptor = {
     .HIDReportLength        = sizeof(GenericHIDReport)
   },
 
+  // *** GENERIC ENDPOINT IN OTIMIZADO PARA 1000Hz ***
   .HID_GenericEndpointIN = {
     .Header                 = {.Size = sizeof(USB_Descriptor_Endpoint_t), .Type = DTYPE_Endpoint},
     .EndpointAddress        = GENERIC_IN_EPADDR,
     .Attributes             = (EP_TYPE_INTERRUPT | ENDPOINT_ATTR_NO_SYNC | ENDPOINT_USAGE_DATA),
     .EndpointSize           = GENERIC_EPSIZE,
-    .PollingIntervalMS      = 0x01
+    .PollingIntervalMS      = 0x01   // *** 1ms = 1000Hz POLLING RATE ***
   },
 
+  // *** GENERIC ENDPOINT OUT OTIMIZADO PARA 1000Hz - CRÍTICO PARA AIMBOT ***
   .HID_GenericEndpointOUT = {
     .Header                 = {.Size = sizeof(USB_Descriptor_Endpoint_t), .Type = DTYPE_Endpoint},
     .EndpointAddress        = GENERIC_OUT_EPADDR,
     .Attributes             = (EP_TYPE_INTERRUPT | ENDPOINT_ATTR_NO_SYNC | ENDPOINT_USAGE_DATA),
     .EndpointSize           = GENERIC_EPSIZE,
-    .PollingIntervalMS      = 0x01
+    .PollingIntervalMS      = 0x01   // *** 1ms = 1000Hz POLLING RATE - CRÍTICO! ***
   }
 };
 

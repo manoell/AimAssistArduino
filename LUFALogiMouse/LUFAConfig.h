@@ -5,105 +5,97 @@
 #define F_USB F_CPU
 
 #if (ARCH == ARCH_AVR8)
-    // ============ CONFIGURAÇÕES DE PERFORMANCE ============
+    // ============ OTIMIZAÇÕES EXTREMAS PARA AIMBOT ============
     
-    // Non-USB Related Configuration Tokens
-    #define DISABLE_TERMINAL_CODES    // Economizar espaço e ciclos
-
-    // USB Class Driver Related Tokens
-    #define NO_CLASS_DRIVER_AUTOFLUSH   // Controle manual do flush para otimização
+    // Performance crítica - desabilitar tudo que não é essencial
+    #define DISABLE_TERMINAL_CODES       
+    #define NO_CLASS_DRIVER_AUTOFLUSH    
+    #define NO_STREAM_CALLBACKS          
+    #define NO_LIMITED_CONTROLLER_CONNECT 
+    #define NO_SOF_EVENTS                
+    #define NO_DEVICE_REMOTE_WAKEUP      
+    #define NO_DEVICE_SELF_POWER         
+    #define NO_INTERNAL_SERIAL           
     
-    // ============ CONFIGURAÇÕES USB OTIMIZADAS ============
-    
-    // General USB Driver Related Tokens
-    #define ORDERED_EP_CONFIG            // Configuração de endpoints em ordem
+    // USB configuração ultra-agressiva para 1000Hz
     #define USE_STATIC_OPTIONS           (USB_DEVICE_OPT_FULLSPEED | USB_OPT_REG_ENABLED | USB_OPT_AUTO_PLL)
-    #define USB_DEVICE_ONLY              // Apenas device mode
-    #define USB_STREAM_TIMEOUT_MS        50   // Timeout agressivo para latência mínima
-    #define NO_LIMITED_CONTROLLER_CONNECT
-    #define NO_SOF_EVENTS                // Desabilitar Start of Frame events para economia
-
-    // ============ CONFIGURAÇÕES DE DEVICE MODE ============
+    #define USB_DEVICE_ONLY              
+    #define USB_STREAM_TIMEOUT_MS        1      // 1ms timeout ultra-agressivo
+    #define ORDERED_EP_CONFIG            
+    #define USE_FLASH_DESCRIPTORS        
+    #define FIXED_CONTROL_ENDPOINT_SIZE  64     
+    #define FIXED_NUM_CONFIGURATIONS     1      
+    #define INTERRUPT_CONTROL_ENDPOINT   
     
-    // USB Device Mode Driver Related Tokens
-    #define USE_FLASH_DESCRIPTORS        // Descriptors na Flash (economia de RAM)
-    #define NO_INTERNAL_SERIAL           // Desabilitar serial interno se não usado
-    #define FIXED_CONTROL_ENDPOINT_SIZE  64   // Endpoint de controle fixo
-    #define FIXED_NUM_CONFIGURATIONS     1    // Apenas 1 configuração
-    #define INTERRUPT_CONTROL_ENDPOINT   // Controle por interrupt
-    #define NO_DEVICE_REMOTE_WAKEUP      // Desabilitar remote wakeup
-    #define NO_DEVICE_SELF_POWER         // Device não é self-powered
-
-    // ============ OTIMIZAÇÕES ESPECÍFICAS ============
-    
-    // Configurações específicas para latência mínima
-    #define FAST_STREAM_TRANSFERS        // Transferências rápidas (se disponível na versão LUFA)
-    #define NO_STREAM_CALLBACKS          // Sem callbacks em streams
-    
-    // Configurações de memória otimizadas
-    #define DEVICE_STATE_AS_GPIOR        0    // Usar GPIOR para device state
-    
-    // ============ CONFIGURAÇÕES DE DEBUG ============
-    
-    // Descomentar apenas para debug (aumenta latência!)
-    // #define DEBUG_USB_COMMUNICATIONS
-    // #define ENABLE_TELEMETRY
-    
-    // ============ CONFIGURAÇÕES AVR8 ESPECÍFICAS ============
-    
-    // Otimizações específicas para ATmega32U4 (Arduino Leonardo)
+    // Otimizações específicas para ATmega32U4 (Leonardo)
     #if defined(__AVR_ATmega32U4__)
-        // Leonardo tem 2.5KB de RAM - otimizar uso
-        #define OPTIMIZE_FOR_LEONARDO
-        
-        // Configurar endpoints de forma otimizada para o Leonardo
-        // Leonardo suporta até 6 endpoints + controle
+        #define OPTIMIZE_FOR_GAMING_LEONARDO
         #define MAX_ENDPOINTS                6
-        
-        // Configuração de memória de endpoint otimizada
-        // Control: 64 bytes, Mouse: 64 bytes, Keyboard: 64 bytes, Generic: 128 bytes
         #define ENDPOINT_MEMORY_OPTIMIZED
+        #define MINIMIZE_RAM_USAGE
+        #define OPTIMIZE_ENDPOINT_BANKS      1   // Single bank = menor latência
+        
+        // CRÍTICO: Configuração para 1000Hz polling
+        #define USB_POLLING_INTERVAL_MS      1   // 1ms = 1000Hz polling
+        #define HID_INTERRUPT_INTERVAL       1   // 1ms para HID
+        
+        #define DEVICE_STATE_AS_GPIOR        0   
+        #define ENDPOINT_STATE_AS_GPIOR      1   
+        #define USB_ENDPOINT_BUFFER_SIZE     64  
+        #define F_CPU_EXACT                  16000000UL
     #endif
-
-#elif (ARCH == ARCH_XMEGA)
-    // ============ CONFIGURAÇÕES XMEGA ============
     
-    // Non-USB Related Configuration Tokens
-    #define DISABLE_TERMINAL_CODES
-
-    // USB Class Driver Related Tokens  
-    #define NO_CLASS_DRIVER_AUTOFLUSH
-
-    // General USB Driver Related Tokens
-    #define USE_STATIC_OPTIONS               (USB_DEVICE_OPT_FULLSPEED | USB_OPT_RC32MCLKSRC | USB_OPT_BUSEVENT_PRIHIGH)
-    #define USB_STREAM_TIMEOUT_MS            50
-    #define NO_LIMITED_CONTROLLER_CONNECT
-    #define NO_SOF_EVENTS
-
-    // USB Device Mode Driver Related Tokens
-    #define USE_FLASH_DESCRIPTORS
-    #define NO_INTERNAL_SERIAL
-    #define FIXED_CONTROL_ENDPOINT_SIZE      64
-    #define FIXED_NUM_CONFIGURATIONS         1
-    #define MAX_ENDPOINT_INDEX               3
-    #define NO_DEVICE_REMOTE_WAKEUP
-    #define NO_DEVICE_SELF_POWER
+    // Configurações de latência crítica para aimbot
+    #define ULTRA_LOW_LATENCY_MODE       
+    #define GAMING_OPTIMIZATIONS         
+    #define PRIORITIZE_MOUSE_REPORTS     
+    #define MINIMIZE_USB_OVERHEAD        
+    #define FAST_ENDPOINT_PROCESSING     
+    #define HIGH_PRIORITY_USB_INTERRUPTS 
+    #define MINIMIZE_INTERRUPT_LATENCY   
+    #define ATOMIC_USB_OPERATIONS        
+    
+    // Buffer management otimizado
+    #define USB_BUFFER_MANAGEMENT_OPTIMIZED
+    #define MINIMIZE_BUFFER_COPYING      
+    #define DIRECT_ENDPOINT_ACCESS       
+    #define ZERO_COPY_OPERATIONS         
+    
+    // Prioridades de endpoint
+    #define MOUSE_ENDPOINT_PRIORITY      0   // Máxima prioridade
+    #define GENERIC_ENDPOINT_PRIORITY    1   
+    #define KEYBOARD_ENDPOINT_PRIORITY   2   
+    
+    // Configurações de compilação para velocidade
+    #define OPTIMIZE_FOR_SPEED           
+    #define INLINE_SMALL_FUNCTIONS       
+    #define UNROLL_SMALL_LOOPS          
+    #define MINIMIZE_FUNCTION_CALLS      
+    #define ALIGN_USB_STRUCTURES         
+    #define PACK_USB_DESCRIPTORS         
+    #define OPTIMIZE_MEMORY_LAYOUT       
 
 #else
-    #error Unsupported architecture for this LUFA configuration file.
+    #error Unsupported architecture for gaming optimization
 #endif
 
-// ============ CONFIGURAÇÕES CUSTOMIZADAS PARA AIMBOT ============
+// Configurações específicas para aimbot
+#define AIMBOT_OPTIMIZED                 
+#define ULTRA_LOW_LATENCY_GAMING         
+#define MOUSE_MOVEMENT_PRIORITY          
+#define MINIMIZE_USB_JITTER              
+#define CONSISTENT_TIMING                
+#define HIGH_FREQUENCY_UPDATES           
 
-// Configurações específicas para aplicação de aimbot
-#define AIMBOT_OPTIMIZED                 // Flag para identificar build otimizado
+// Validação crítica
+#if !defined(USB_POLLING_INTERVAL_MS) || USB_POLLING_INTERVAL_MS != 1
+    #error "Polling rate deve ser 1ms (1000Hz) para aimbot!"
+#endif
 
-// Configurações de latência crítica
-#define ULTRA_LOW_LATENCY_MODE           // Ativa todas as otimizações de latência
-#define PRIORITIZE_MOUSE_ENDPOINT        // Prioridade máxima para endpoint do mouse
-
-// Configurações de segurança (anti-detection)
-#define STEALTH_MODE                     // Ativa recursos de stealth
-#define RANDOMIZE_TIMING                 // Randomizar timing para evitar detecção
+// Constantes de performance
+#define TARGET_POLLING_RATE_HZ           1000    
+#define TARGET_LATENCY_MS                1       
+#define MAX_ACCEPTABLE_JITTER_US         100     
+#define TARGET_CPU_USAGE_PERCENT         30      
 
 #endif

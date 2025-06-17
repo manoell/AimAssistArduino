@@ -1,7 +1,24 @@
+# Dependências do projeto Enhanced Arduino Aim Assist
+# Instalação: pip install -r requirements.txt
+
+# Processamento de imagem
 opencv-python==4.7.0.72
 numpy==1.24.3
+
+# Comunicação USB Raw HID (NOVO - substitui pyserial)
 pyusb==1.2.1
+
+# Captura de tela otimizada
 mss==9.0.1
+
+# Controle de mouse e teclado
 pyautogui==0.9.54
 keyboard==0.13.5
+
+# APIs do Windows
 pywin32==306
+
+# Dependências opcionais para melhor performance
+# Descomente se quiser instalar:
+# psutil==5.9.5          # Para controle de prioridade de processo
+# colorama==0.4.6        # Para output colorido no terminal

@@ -50,30 +50,34 @@ void setup() {
 }
 
 void loop() {
-  // ============ LOOP PRINCIPAL ULTRA-OTIMIZADO ============
-  
-  // PRIORIDADE 1: USB Task - DEVE ser chamado o mais frequente possível
-  USB_USBTask();
-  
-  // PRIORIDADE 2: HID Task - Processar endpoints imediatamente
-  HID_Task();
-  
-  // PRIORIDADE 3: Contador de performance (opcional, só para debug)
-  loop_count++;
-  
-  // ============ OTIMIZAÇÕES CRÍTICAS ============
-  
-  // SEM DELAYS - NUNCA ADICIONAR DELAYS AQUI!
-  // SEM PRINTS - Prints causam latência!
-  // SEM OPERAÇÕES BLOQUEANTES - Manter o loop 100% non-blocking
-  
-  // OPCIONAL: Reset contadores para evitar overflow (a cada ~1 hora)
-  if (loop_count >= 0xFFFFF0) {
-    loop_count = 0;
-    command_count = 0;
-  }
-  
-  // Não colocar nada mais aqui! USB_USBTask e HID_Task são o suficiente!
+    // ============ LOOP ULTRA-AGRESSIVO PARA AIMBOT ============
+    
+    // EXECUÇÃO MÚLTIPLA POR CICLO - Fundamental para alta performance
+    
+    // Executar USB_USBTask múltiplas vezes por ciclo
+    USB_USBTask();
+    USB_USBTask();  // 2x para garantir processamento
+    
+    // Executar HID_Task múltiplas vezes por ciclo  
+    HID_Task();
+    HID_Task();     // 2x para processar mais comandos
+    HID_Task();     // 3x para garantir throughput máximo
+    
+    // Terceira rodada para casos extremos
+    USB_USBTask();
+    HID_Task();
+    
+    // Contador simples (sem overhead)
+    loop_count++;
+    
+    // Reset ocasional para evitar overflow
+    if (loop_count == 0) {  // Overflow natural
+        command_count = 0;
+    }
+    
+    // ============ CRITICAL: SEM DELAYS! ============
+    // Cada ciclo deve ser o mais rápido possível
+    // NUNCA adicionar delays, sleeps ou prints aqui!
 }
 
 // ============ FUNÇÕES DE UTILIDADE ============

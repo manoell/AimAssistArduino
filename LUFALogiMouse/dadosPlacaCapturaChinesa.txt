@@ -1,0 +1,1701 @@
+
+    =========================== USB Port3 ===========================
+
+Connection Status        : 0x01 (Device is connected)
+Port Chain               : 1-3
+Properties               : 0x01
+ IsUserConnectable       : yes
+ PortIsDebugCapable      : no
+ PortHasMultiCompanions  : no
+ PortConnectorIsTypeC    : no
+ConnectionIndex          : 0x03 (Port 3)
+CompanionIndex           : 0
+ CompanionHubSymLnk      : USB#ROOT_HUB30#7&30304c2c&0&0#{f18a0e88-c30c-11d0-8815-00a0c906bed8}
+ CompanionPortNumber     : 0x09 (Port 9)
+ -> CompanionPortChain   : 1-9
+
+      ========================== Summary =========================
+Vendor ID                : 0x534D (Hefei Macrosilicon Technology Co., Ltd. - OBSOLETE)
+Product ID               : 0x2109
+Manufacturer String      : MACROSILICON
+Product String           : USB Video
+Serial                   : ---
+USB Version              : 2.0
+Port maximum Speed       : High-Speed (Companion Port 1-9 is doing the SuperSpeed)
+Device maximum Speed     : High-Speed
+Device Connection Speed  : High-Speed
+Self powered             : no
+Demanded Current         : 500 mA
+Used Endpoints           : 2
+Video                    : UVC Version 1.00
+                 -------- Default Video Modes --------
+1920 x 1080 @ 60 fps     : MJPEG
+1920 x 1080 @ 5 fps      : Uncompressed
+1600 x 1200 @ 60 fps     : MJPEG
+1600 x 1200 @ 5 fps      : Uncompressed
+1280 x 1024 @ 60 fps     : MJPEG
+1280 x 1024 @ 8 fps      : Uncompressed
+1280 x 960 @ 60 fps      : MJPEG
+1280 x 960 @ 8 fps       : Uncompressed
+1360 x 768 @ 60 fps      : MJPEG
+1360 x 768 @ 8 fps       : Uncompressed
+1280 x 720 @ 60 fps      : MJPEG
+1280 x 720 @ 10 fps      : Uncompressed
+1024 x 768 @ 60 fps      : MJPEG
+1024 x 768 @ 10 fps      : Uncompressed
+800 x 600 @ 60 fps       : MJPEG
+800 x 600 @ 20 fps       : Uncompressed
+720 x 576 @ 60 fps       : MJPEG
+720 x 576 @ 25 fps       : Uncompressed
+720 x 480 @ 60 fps       : MJPEG
+720 x 480 @ 30 fps       : Uncompressed
+640 x 480 @ 60 fps       : MJPEG
+640 x 480 @ 30 fps       : Uncompressed
+
+      ======================== USB Device ========================
+
+        +++++++++++++++++ Device Information ++++++++++++++++++
+Device Description       : USB Composite Device
+Device Path              : \\?\USB#VID_534D&PID_2109#8&384b90af&0&3#{a5dcbf10-6530-11d2-901f-00c04fb951ed} (GUID_DEVINTERFACE_USB_DEVICE)
+Kernel Name              : \Device\USBPDO-15
+Device ID                : USB\VID_534D&PID_2109\8&384B90AF&0&3
+Hardware IDs             : USB\VID_534D&PID_2109&REV_2100 USB\VID_534D&PID_2109
+Driver KeyName           : {36fc9e60-c465-11cf-8056-444553540000}\0035 (GUID_DEVCLASS_USB)
+Driver                   : \SystemRoot\System32\drivers\usbccgp.sys (Version: 10.0.19041.5794  Date: 2025-05-01  Company: Microsoft Corporation)
+Driver Inf               : C:\Windows\inf\usb.inf
+Legacy BusType           : PNPBus
+Class                    : USB
+Class GUID               : {36fc9e60-c465-11cf-8056-444553540000} (GUID_DEVCLASS_USB)
+Service                  : usbccgp
+Enumerator               : USB
+Location Info            : Port_#0003.Hub_#0001
+Address                  : 3
+Location IDs             : PCIROOT(0)#PCI(0102)#PCI(0000)#PCI(0800)#PCI(0001)#USBROOT(0)#USB(3), ACPI(_SB_)#ACPI(PCI0)#ACPI(BXBR)#ACPI(BYUP)#ACPI(BYD8)#ACPI(XHC1)#ACPI(RHUB)#ACPI(PRT3)
+Container ID             : {93a85828-369f-11f0-888e-a85e451e3cda}
+Manufacturer Info        : (Standard USB Host Controller)
+Capabilities             : 0x84 (Removable, SurpriseRemovalOK)
+Status                   : 0x0180600A (DN_DRIVER_LOADED, DN_STARTED, DN_DISABLEABLE, DN_REMOVABLE, DN_NT_ENUMERATOR, DN_NT_DRIVER)
+Problem Code             : 0
+Address                  : 3
+EnhancedPowerMgmtEnabled : 0
+Power State              : D0 (supported: D0, D3, wake from D0)
+
+        +++++++++++++++++ Registry USB Flags +++++++++++++++++
+HKEY_LOCAL_MACHINE\SYSTEM\CurrentControlSet\Control\usbflags\534D21092100
+ osvc                    : REG_BINARY 00 00
+
+        ---------------- Connection Information ---------------
+Connection Index         : 0x03 (Port 3)
+Connection Status        : 0x01 (DeviceConnected)
+Current Config Value     : 0x01 (Configuration 1)
+Device Address           : 0x04 (4)
+Is Hub                   : 0x00 (no)
+Device Bus Speed         : 0x02 (High-Speed)
+Number of open Pipes     : 0x01 (1 pipe to data endpoints)
+Pipe[0]                  : EndpointID=4  Direction=IN   ScheduleOffset=0  Type=Interrupt  wMaxPacketSize=0x4     bInterval=16  -> 158 Bits/ms = 19750 Bytes/s
+Data (HexDump)           : 03 00 00 00 12 01 00 02 EF 02 01 40 4D 53 09 21   ...........@MS.!
+                           00 21 01 02 00 01 01 02 00 04 00 01 00 00 00 01   .!..............
+                           00 00 00 07 05 84 03 04 00 10 00 00 00 00         ..............
+
+        --------------- Connection Information V2 -------------
+Connection Index         : 0x03 (3)
+Length                   : 0x10 (16 bytes)
+SupportedUsbProtocols    : 0x03
+ Usb110                  : 1 (yes, port supports USB 1.1)
+ Usb200                  : 1 (yes, port supports USB 2.0)
+ Usb300                  : 0 (no, port not supports USB 3.0) -> but Companion Port 1-9 does
+ ReservedMBZ             : 0x00
+Flags                    : 0x00
+ DevIsOpAtSsOrHigher     : 0 (Device is not operating at SuperSpeed or higher)
+ DevIsSsCapOrHigher      : 0 (Device is not SuperSpeed capable or higher)
+ DevIsOpAtSsPlusOrHigher : 0 (Device is not operating at SuperSpeedPlus or higher)
+ DevIsSsPlusCapOrHigher  : 0 (Device is not SuperSpeedPlus capable or higher)
+ ReservedMBZ             : 0x00
+Data (HexDump)           : 03 00 00 00 10 00 00 00 03 00 00 00 00 00 00 00   ................
+
+    ---------------------- Device Descriptor ----------------------
+bLength                  : 0x12 (18 bytes)
+bDescriptorType          : 0x01 (Device Descriptor)
+bcdUSB                   : 0x200 (USB Version 2.0)
+bDeviceClass             : 0xEF (Miscellaneous)
+bDeviceSubClass          : 0x02
+bDeviceProtocol          : 0x01 (IAD - Interface Association Descriptor)
+bMaxPacketSize0          : 0x40 (64 bytes)
+idVendor                 : 0x534D (Hefei Macrosilicon Technology Co., Ltd. - OBSOLETE)
+idProduct                : 0x2109
+bcdDevice                : 0x2100
+iManufacturer            : 0x01 (String Descriptor 1)
+ Language 0x0409         : "MACROSILICON"
+iProduct                 : 0x02 (String Descriptor 2)
+ Language 0x0409         : "USB Video"
+iSerialNumber            : 0x00 (No String Descriptor)
+bNumConfigurations       : 0x01 (1 Configuration)
+Data (HexDump)           : 12 01 00 02 EF 02 01 40 4D 53 09 21 00 21 01 02   .......@MS.!.!..
+                           00 01                                             ..
+
+    ------------------ Configuration Descriptor -------------------
+bLength                  : 0x09 (9 bytes)
+bDescriptorType          : 0x02 (Configuration Descriptor)
+wTotalLength             : 0x04BB (1211 bytes)
+bNumInterfaces           : 0x05 (5 Interfaces)
+bConfigurationValue      : 0x01 (Configuration 1)
+iConfiguration           : 0x00 (No String Descriptor)
+bmAttributes             : 0x80
+ D7: Reserved, set 1     : 0x01
+ D6: Self Powered        : 0x00 (no)
+ D5: Remote Wakeup       : 0x00 (no)
+ D4..0: Reserved, set 0  : 0x00
+MaxPower                 : 0xFA (500 mA)
+Data (HexDump)           : 09 02 BB 04 05 01 00 80 FA 08 0B 00 02 0E 03 00   ................
+                           02 09 04 00 00 00 0E 01 00 02 0D 24 01 00 01 33   ...........$...3
+                           00 00 6C DC 02 01 01 12 24 02 01 01 02 00 00 00   ..l.....$.......
+                           00 00 00 00 00 03 00 00 00 0B 24 05 02 01 00 00   ..........$.....
+                           02 0F 00 00 09 24 03 03 01 01 00 02 00 09 04 01   .....$..........
+                           00 00 0E 02 00 00 0F 24 01 02 B1 03 83 00 03 00   .......$........
+                           00 00 01 00 00 0B 24 06 01 0B 01 01 00 00 00 00   ......$.........
+                           2E 24 07 01 00 80 07 38 04 00 B8 0B 00 00 00 B8   .$.....8........
+                           0B 00 48 3F 00 0A 8B 02 00 05 0A 8B 02 00 15 16   ..H?............
+                           05 00 80 1A 06 00 20 A1 07 00 40 42 0F 00 2E 24   ...... ...@B...$
+                           07 02 00 40 06 B0 04 00 B8 0B 00 00 00 B8 0B 00   ...@............
+                           98 3A 00 0A 8B 02 00 05 0A 8B 02 00 15 16 05 00   .:..............
+                           80 1A 06 00 20 A1 07 00 40 42 0F 00 2E 24 07 03   .... ...@B...$..
+                           00 50 05 00 03 00 B8 0B 00 00 00 B8 0B 00 E0 1F   .P..............
+                           00 0A 8B 02 00 05 0A 8B 02 00 15 16 05 00 80 1A   ................
+                           06 00 20 A1 07 00 40 42 0F 00 2E 24 07 04 00 00   .. ...@B...$....
+                           05 00 04 00 B8 0B 00 00 00 B8 0B 00 00 28 00 0A   .............(..
+                           8B 02 00 05 0A 8B 02 00 15 16 05 00 80 1A 06 00   ................
+                           20 A1 07 00 40 42 0F 00 2E 24 07 05 00 00 05 C0    ...@B...$......
+                           03 00 B8 0B 00 00 00 B8 0B 00 80 25 00 0A 8B 02   ...........%....
+                           00 05 0A 8B 02 00 15 16 05 00 80 1A 06 00 20 A1   .............. .
+                           07 00 40 42 0F 00 2E 24 07 06 00 00 05 D0 02 00   ..@B...$........
+                           B8 0B 00 00 00 B8 0B 00 20 1C 00 0A 8B 02 00 05   ........ .......
+                           0A 8B 02 00 40 0D 03 00 15 16 05 00 20 A1 07 00   ....@....... ...
+                           40 42 0F 00 2E 24 07 07 00 00 04 00 03 00 B8 0B   @B...$..........
+                           00 00 00 B8 0B 00 00 18 00 0A 8B 02 00 05 0A 8B   ................
+                           02 00 40 0D 03 00 15 16 05 00 20 A1 07 00 40 42   ..@....... ...@B
+                           0F 00 2E 24 07 08 00 20 03 58 02 00 B8 0B 00 00   ...$... .X......
+                           00 B8 0B 00 A6 0E 00 0A 8B 02 00 05 0A 8B 02 00   ................
+                           40 0D 03 00 15 16 05 00 20 A1 07 00 40 42 0F 00   @....... ...@B..
+                           2E 24 07 09 00 D0 02 40 02 00 B8 0B 00 00 00 B8   .$.....@........
+                           0B 00 A8 0C 00 0A 8B 02 00 05 0A 8B 02 00 40 0D   ..............@.
+                           03 00 15 16 05 00 20 A1 07 00 40 42 0F 00 2E 24   ...... ...@B...$
+                           07 0A 00 D0 02 E0 01 00 B8 0B 00 00 00 B8 0B 00   ................
+                           8C 0A 00 0A 8B 02 00 05 0A 8B 02 00 40 0D 03 00   ............@...
+                           15 16 05 00 20 A1 07 00 40 42 0F 00 2E 24 07 0B   .... ...@B...$..
+                           00 80 02 E0 01 00 B8 0B 00 00 00 B8 0B 00 60 09   ..............`.
+                           00 0A 8B 02 00 05 0A 8B 02 00 40 0D 03 00 15 16   ..........@.....
+                           05 00 20 A1 07 00 40 42 0F 00 06 24 0D 01 01 04   .. ...@B...$....
+                           1B 24 04 02 0B 59 55 59 32 00 00 10 00 80 00 00   .$...YUY2.......
+                           AA 00 38 9B 71 10 06 00 00 00 00 1E 24 05 01 00   ..8.q.......$...
+                           80 07 38 04 00 B8 0B 00 00 00 B8 0B 00 48 3F 00   ..8..........H?.
+                           80 84 1E 00 01 80 84 1E 00 1E 24 05 02 00 40 06   ..........$...@.
+                           B0 04 00 B8 0B 00 00 00 B8 0B 00 98 3A 00 80 84   ............:...
+                           1E 00 01 80 84 1E 00 1E 24 05 03 00 50 05 00 03   ........$...P...
+                           00 B8 0B 00 00 00 B8 0B 00 E0 1F 00 D0 12 13 00   ................
+                           01 D0 12 13 00 1E 24 05 04 00 00 05 00 04 00 B8   ......$.........
+                           0B 00 00 00 B8 0B 00 00 28 00 D0 12 13 00 01 D0   ........(.......
+                           12 13 00 1E 24 05 05 00 00 05 C0 03 00 B8 0B 00   ....$...........
+                           00 00 B8 0B 00 80 25 00 D0 12 13 00 01 D0 12 13   ......%.........
+                           00 1E 24 05 06 00 00 05 D0 02 00 B8 0B 00 00 00   ..$.............
+                           B8 0B 00 20 1C 00 40 42 0F 00 01 40 42 0F 00 1E   ... ..@B...@B...
+                           24 05 07 00 00 04 00 03 00 B8 0B 00 00 00 B8 0B   $...............
+                           00 00 18 00 40 42 0F 00 01 40 42 0F 00 26 24 05   ....@B...@B..&$.
+                           08 00 20 03 58 02 00 B8 0B 00 00 00 B8 0B 00 A6   .. .X...........
+                           0E 00 20 A1 07 00 03 20 A1 07 00 40 42 0F 00 80   .. .... ...@B...
+                           84 1E 00 2A 24 05 09 00 D0 02 40 02 00 B8 0B 00   ...*$.....@.....
+                           00 00 B8 0B 00 A8 0C 00 80 1A 06 00 04 80 1A 06   ................
+                           00 20 A1 07 00 40 42 0F 00 80 84 1E 00 2A 24 05   . ...@B......*$.
+                           0A 00 D0 02 E0 01 00 B8 0B 00 00 00 B8 0B 00 8C   ................
+                           0A 00 15 16 05 00 04 15 16 05 00 20 A1 07 00 40   ........... ...@
+                           42 0F 00 80 84 1E 00 2A 24 05 0B 00 80 02 E0 01   B......*$.......
+                           00 B8 0B 00 00 00 B8 0B 00 60 09 00 15 16 05 00   .........`......
+                           04 15 16 05 00 20 A1 07 00 40 42 0F 00 80 84 1E   ..... ...@B.....
+                           00 06 24 0D 01 01 04 09 04 01 01 01 0E 02 00 00   ..$.............
+                           07 05 83 05 20 03 01 09 04 01 02 01 0E 02 00 00   .... ...........
+                           07 05 83 05 00 0C 01 09 04 01 03 01 0E 02 00 00   ................
+                           07 05 83 05 00 14 01 08 0B 02 02 01 01 00 04 09   ................
+                           04 02 00 00 01 01 00 04 09 24 01 00 01 26 00 01   .........$...&..
+                           03 0C 24 02 01 02 06 00 02 03 00 00 00 08 24 06   ..$...........$.
+                           02 01 01 01 00 09 24 03 03 01 01 00 02 00 09 04   ......$.........
+                           03 00 00 01 02 00 04 09 04 03 01 01 01 02 00 04   ................
+                           07 24 01 03 00 01 00 0B 24 02 01 01 02 10 01 00   .$......$.......
+                           77 01 09 05 82 05 00 01 04 00 00 07 25 01 00 00   w...........%...
+                           00 00 09 04 04 00 01 03 00 00 00 09 21 10 01 21   ............!..!
+                           01 22 17 00 07 05 84 03 04 00 10                  .".........
+
+        ------------------- IAD Descriptor --------------------
+bLength                  : 0x08 (8 bytes)
+bDescriptorType          : 0x0B (Interface Association Descriptor)
+bFirstInterface          : 0x00 (Interface 0)
+bInterfaceCount          : 0x02 (2 Interfaces)
+bFunctionClass           : 0x0E (Video)
+bFunctionSubClass        : 0x03 (Video Interface Collection)
+bFunctionProtocol        : 0x00 (PC_PROTOCOL_UNDEFINED)
+iFunction                : 0x02 (String Descriptor 2)
+ Language 0x0409         : "USB Video"
+Data (HexDump)           : 08 0B 00 02 0E 03 00 02                           ........
+
+        ---------------- Interface Descriptor -----------------
+bLength                  : 0x09 (9 bytes)
+bDescriptorType          : 0x04 (Interface Descriptor)
+bInterfaceNumber         : 0x00 (Interface 0)
+bAlternateSetting        : 0x00
+bNumEndpoints            : 0x00 (Default Control Pipe only)
+bInterfaceClass          : 0x0E (Video)
+bInterfaceSubClass       : 0x01 (Video Control)
+bInterfaceProtocol       : 0x00
+iInterface               : 0x02 (String Descriptor 2)
+ Language 0x0409         : "USB Video"
+Data (HexDump)           : 09 04 00 00 00 0E 01 00 02                        .........
+
+        ------- Video Control Interface Header Descriptor -----
+bLength                  : 0x0D (13 bytes)
+bDescriptorType          : 0x24 (Video Control Interface)
+bDescriptorSubtype       : 0x01 (Video Control Header)
+bcdUVC                   : 0x0100 (UVC Version 1.00)
+wTotalLength             : 0x0033 (51 bytes)
+dwClockFreq              : 0x02DC6C00 (48 MHz)
+bInCollection            : 0x01 (1 VideoStreaming interface)
+baInterfaceNr[1]         : 0x01 (Interface 1)
+Data (HexDump)           : 0D 24 01 00 01 33 00 00 6C DC 02 01 01            .$...3..l....
+
+        -------- Video Control Input Terminal Descriptor ------
+bLength                  : 0x12 (18 bytes)
+bDescriptorType          : 0x24 (Video Control Interface)
+bDescriptorSubtype       : 0x02 (Input Terminal)
+bTerminalID              : 0x01 (1)
+wTerminalType            : 0x0201 (ITT_CAMERA)
+bAssocTerminal           : 0x00 (Not associated with an Output Terminal)
+iTerminal                : 0x00 (No String Descriptor)
+Camera Input Terminal Data:
+wObjectiveFocalLengthMin : 0x0000
+wObjectiveFocalLengthMax : 0x0000
+wOcularFocalLength       : 0x0000
+bControlSize             : 0x03 (3 bytes)
+bmControls               : 0x00, 0x00, 0x00
+ D0                      : 0   no -  Scanning Mode
+ D1                      : 0   no -  Auto-Exposure Mode
+ D2                      : 0   no -  Auto-Exposure Priority
+ D3                      : 0   no -  Exposure Time (Absolute)
+ D4                      : 0   no -  Exposure Time (Relative)
+ D5                      : 0   no -  Focus (Absolute)
+ D6                      : 0   no -  Focus (Relative)
+ D7                      : 0   no -  Iris (Absolute)
+ D8                      : 0   no -  Iris (Relative)
+ D9                      : 0   no -  Zoom (Absolute)
+ D10                     : 0   no -  Zoom (Relative)
+ D11                     : 0   no -  Pan (Absolute)
+ D12                     : 0   no -  Pan (Relative)
+ D13                     : 0   no -  Roll (Absolute)
+ D14                     : 0   no -  Roll (Relative)
+ D15                     : 0   no -  Tilt (Absolute)
+ D16                     : 0   no -  Tilt (Relative)
+ D17                     : 0   no -  Focus Auto
+ D18                     : 0   no -  Reserved
+ D19                     : 0   no -  Reserved
+ D20                     : 0   no -  Reserved
+ D21                     : 0   no -  Reserved
+ D22                     : 0   no -  Reserved
+ D23                     : 0   no -  Reserved
+Data (HexDump)           : 12 24 02 01 01 02 00 00 00 00 00 00 00 00 03 00   .$..............
+                           00 00                                             ..
+
+        -------- Video Control Processing Unit Descriptor -----
+bLength                  : 0x0B (11 bytes)
+bDescriptorType          : 0x24 (Video Control Interface)
+bDescriptorSubtype       : 0x05 (Processing Unit)
+bUnitID                  : 0x02 (2)
+bSourceID                : 0x01 (1)
+wMaxMultiplier           : 0x0000
+bControlSize             : 0x02 (2 bytes)
+bmControls               : 0x0F, 0x00
+ D0                      : 1  yes -  Brightness
+ D1                      : 1  yes -  Contrast
+ D2                      : 1  yes -  Hue
+ D3                      : 1  yes -  Saturation
+ D4                      : 0   no -  Sharpness
+ D5                      : 0   no -  Gamma
+ D6                      : 0   no -  White Balance Temperature
+ D7                      : 0   no -  White Balance Component
+ D8                      : 0   no -  Backlight Compensation
+ D9                      : 0   no -  Gain
+ D10                     : 0   no -  Power Line Frequency
+ D11                     : 0   no -  Hue, Auto
+ D12                     : 0   no -  White Balance Temperature, Auto
+ D13                     : 0   no -  White Balance Component, Auto
+ D14                     : 0   no -  Digital Multiplier
+ D15                     : 0   no -  Digital Multiplier Limit
+iProcessing              : 0x00 (No String Descriptor)
+Data (HexDump)           : 0B 24 05 02 01 00 00 02 0F 00 00                  .$.........
+
+        ------- Video Control Output Terminal Descriptor ------
+bLength                  : 0x09 (9 bytes)
+bDescriptorType          : 0x24 (Video Control Interface)
+bDescriptorSubtype       : 0x03 (Output Terminal)
+bTerminalID              : 0x03 (3)
+wTerminalType            : 0x0101 (TT_STREAMING)
+bAssocTerminal           : 0x00 (Not associated with an Input Terminal)
+bSourceID                : 0x02 (2)
+iTerminal                : 0x00 (No String Descriptor)
+Data (HexDump)           : 09 24 03 03 01 01 00 02 00                        .$.......
+
+        ---------------- Interface Descriptor -----------------
+bLength                  : 0x09 (9 bytes)
+bDescriptorType          : 0x04 (Interface Descriptor)
+bInterfaceNumber         : 0x01 (Interface 1)
+bAlternateSetting        : 0x00
+bNumEndpoints            : 0x00 (Default Control Pipe only)
+bInterfaceClass          : 0x0E (Video)
+bInterfaceSubClass       : 0x02 (Video Streaming)
+bInterfaceProtocol       : 0x00
+iInterface               : 0x00 (No String Descriptor)
+Data (HexDump)           : 09 04 01 00 00 0E 02 00 00                        .........
+
+        ---- VC-Specific VS Video Input Header Descriptor -----
+bLength                  : 0x0F (15 bytes)
+bDescriptorType          : 0x24 (Video Streaming Interface)
+bDescriptorSubtype       : 0x01 (Input Header)
+bNumFormats              : 0x02
+wTotalLength             : 0x03B1 (945 bytes)
+bEndpointAddress         : 0x83 (Direction=IN  EndpointID=3)
+bmInfo                   : 0x00 (Dynamic Format Change not supported)
+bTerminalLink            : 0x03 (Output Terminal ID 3)
+bStillCaptureMethod      : 0x00 (No Still Capture)
+nbTriggerSupport         : 0x00 (Hardware Triggering not supported)
+bTriggerUsage            : 0x00 (Host will initiate still image capture)
+bControlSize             : 0x01 (1 bytes each)
+Video Payload Format 1   : 0x00
+ D0                      : 0   no -  Key Frame Rate
+ D1                      : 0   no -  P Frame Rate
+ D2                      : 0   no -  Compression Quality
+ D3                      : 0   no -  Compression Window Size
+ D4                      : 0   no -  Generate Key Frame
+ D5                      : 0   no -  Update Frame Segment
+ D6                      : 0   no -  Reserved
+ D7                      : 0   no -  Reserved
+Video Payload Format 2   : 0x00
+ D0                      : 0   no -  Key Frame Rate
+ D1                      : 0   no -  P Frame Rate
+ D2                      : 0   no -  Compression Quality
+ D3                      : 0   no -  Compression Window Size
+ D4                      : 0   no -  Generate Key Frame
+ D5                      : 0   no -  Update Frame Segment
+ D6                      : 0   no -  Reserved
+ D7                      : 0   no -  Reserved
+Data (HexDump)           : 0F 24 01 02 B1 03 83 00 03 00 00 00 01 00 00      .$.............
+
+        ----- Video Streaming MJPEG Format Type Descriptor ----
+bLength                  : 0x0B (11 bytes)
+bDescriptorType          : 0x24 (Video Streaming Interface)
+bDescriptorSubtype       : 0x06 (Format MJPEG)
+bFormatIndex             : 0x01 (1)
+bNumFrameDescriptors     : 0x0B (11)
+bmFlags                  : 0x01 (Sample size is fixed)
+bDefaultFrameIndex       : 0x01 (1)
+bAspectRatioX            : 0x00
+bAspectRatioY            : 0x00
+bmInterlaceFlags         : 0x00
+ D0 IL stream or variable: 0 (no)
+ D1 Fields per frame     : 0 (2 fields)
+ D2 Field 1 first        : 0 (no)
+ D3 Reserved             : 0
+ D4..5 Field pattern     : 0 (Field 1 only)
+ D6..7 Display Mode      : 0 (Bob only)
+bCopyProtect             : 0x00 (No restrictions)
+Data (HexDump)           : 0B 24 06 01 0B 01 01 00 00 00 00                  .$.........
+
+        ----- Video Streaming MJPEG Frame Type Descriptor -----
+---> This is the Default (optimum) Frame index
+bLength                  : 0x2E (46 bytes)
+bDescriptorType          : 0x24 (Video Streaming Interface)
+bDescriptorSubtype       : 0x07 (MJPEG Frame Type)
+bFrameIndex              : 0x01
+bmCapabilities           : 0x00
+wWidth                   : 0x0780 (1920)
+wHeight                  : 0x0438 (1080)
+dwMinBitRate             : 0x000BB800 (768000 bps -> 96 KB/s)
+dwMaxBitRate             : 0x0BB80000 (196608000 bps -> 24.576 MB/s)
+dwMaxVideoFrameBufferSize: 0x003F4800 (4147200 bytes)
+dwDefaultFrameInterval   : 0x00028B0A (16.6666 ms -> 60.0000 fps)
+bFrameIntervalType       : 0x05 (5 discrete frame intervals supported)
+adwFrameInterval[1]      : 0x00028B0A (16.6666 ms -> 60.0000 fps)
+adwFrameInterval[2]      : 0x00051615 (33.3333 ms -> 30.0000 fps)
+adwFrameInterval[3]      : 0x00061A80 (40.0000 ms -> 25.0000 fps)
+adwFrameInterval[4]      : 0x0007A120 (50.0000 ms -> 20.0000 fps)
+adwFrameInterval[5]      : 0x000F4240 (100.0000 ms -> 10.0000 fps)
+Data (HexDump)           : 2E 24 07 01 00 80 07 38 04 00 B8 0B 00 00 00 B8   .$.....8........
+                           0B 00 48 3F 00 0A 8B 02 00 05 0A 8B 02 00 15 16   ..H?............
+                           05 00 80 1A 06 00 20 A1 07 00 40 42 0F 00         ...... ...@B..
+
+        ----- Video Streaming MJPEG Frame Type Descriptor -----
+bLength                  : 0x2E (46 bytes)
+bDescriptorType          : 0x24 (Video Streaming Interface)
+bDescriptorSubtype       : 0x07 (MJPEG Frame Type)
+bFrameIndex              : 0x02
+bmCapabilities           : 0x00
+wWidth                   : 0x0640 (1600)
+wHeight                  : 0x04B0 (1200)
+dwMinBitRate             : 0x000BB800 (768000 bps -> 96 KB/s)
+dwMaxBitRate             : 0x0BB80000 (196608000 bps -> 24.576 MB/s)
+dwMaxVideoFrameBufferSize: 0x003A9800 (3840000 bytes)
+dwDefaultFrameInterval   : 0x00028B0A (16.6666 ms -> 60.0000 fps)
+bFrameIntervalType       : 0x05 (5 discrete frame intervals supported)
+adwFrameInterval[1]      : 0x00028B0A (16.6666 ms -> 60.0000 fps)
+adwFrameInterval[2]      : 0x00051615 (33.3333 ms -> 30.0000 fps)
+adwFrameInterval[3]      : 0x00061A80 (40.0000 ms -> 25.0000 fps)
+adwFrameInterval[4]      : 0x0007A120 (50.0000 ms -> 20.0000 fps)
+adwFrameInterval[5]      : 0x000F4240 (100.0000 ms -> 10.0000 fps)
+Data (HexDump)           : 2E 24 07 02 00 40 06 B0 04 00 B8 0B 00 00 00 B8   .$...@..........
+                           0B 00 98 3A 00 0A 8B 02 00 05 0A 8B 02 00 15 16   ...:............
+                           05 00 80 1A 06 00 20 A1 07 00 40 42 0F 00         ...... ...@B..
+
+        ----- Video Streaming MJPEG Frame Type Descriptor -----
+bLength                  : 0x2E (46 bytes)
+bDescriptorType          : 0x24 (Video Streaming Interface)
+bDescriptorSubtype       : 0x07 (MJPEG Frame Type)
+bFrameIndex              : 0x03
+bmCapabilities           : 0x00
+wWidth                   : 0x0550 (1360)
+wHeight                  : 0x0300 (768)
+dwMinBitRate             : 0x000BB800 (768000 bps -> 96 KB/s)
+dwMaxBitRate             : 0x0BB80000 (196608000 bps -> 24.576 MB/s)
+dwMaxVideoFrameBufferSize: 0x001FE000 (2088960 bytes)
+dwDefaultFrameInterval   : 0x00028B0A (16.6666 ms -> 60.0000 fps)
+bFrameIntervalType       : 0x05 (5 discrete frame intervals supported)
+adwFrameInterval[1]      : 0x00028B0A (16.6666 ms -> 60.0000 fps)
+adwFrameInterval[2]      : 0x00051615 (33.3333 ms -> 30.0000 fps)
+adwFrameInterval[3]      : 0x00061A80 (40.0000 ms -> 25.0000 fps)
+adwFrameInterval[4]      : 0x0007A120 (50.0000 ms -> 20.0000 fps)
+adwFrameInterval[5]      : 0x000F4240 (100.0000 ms -> 10.0000 fps)
+Data (HexDump)           : 2E 24 07 03 00 50 05 00 03 00 B8 0B 00 00 00 B8   .$...P..........
+                           0B 00 E0 1F 00 0A 8B 02 00 05 0A 8B 02 00 15 16   ................
+                           05 00 80 1A 06 00 20 A1 07 00 40 42 0F 00         ...... ...@B..
+
+        ----- Video Streaming MJPEG Frame Type Descriptor -----
+bLength                  : 0x2E (46 bytes)
+bDescriptorType          : 0x24 (Video Streaming Interface)
+bDescriptorSubtype       : 0x07 (MJPEG Frame Type)
+bFrameIndex              : 0x04
+bmCapabilities           : 0x00
+wWidth                   : 0x0500 (1280)
+wHeight                  : 0x0400 (1024)
+dwMinBitRate             : 0x000BB800 (768000 bps -> 96 KB/s)
+dwMaxBitRate             : 0x0BB80000 (196608000 bps -> 24.576 MB/s)
+dwMaxVideoFrameBufferSize: 0x00280000 (2621440 bytes)
+dwDefaultFrameInterval   : 0x00028B0A (16.6666 ms -> 60.0000 fps)
+bFrameIntervalType       : 0x05 (5 discrete frame intervals supported)
+adwFrameInterval[1]      : 0x00028B0A (16.6666 ms -> 60.0000 fps)
+adwFrameInterval[2]      : 0x00051615 (33.3333 ms -> 30.0000 fps)
+adwFrameInterval[3]      : 0x00061A80 (40.0000 ms -> 25.0000 fps)
+adwFrameInterval[4]      : 0x0007A120 (50.0000 ms -> 20.0000 fps)
+adwFrameInterval[5]      : 0x000F4240 (100.0000 ms -> 10.0000 fps)
+Data (HexDump)           : 2E 24 07 04 00 00 05 00 04 00 B8 0B 00 00 00 B8   .$..............
+                           0B 00 00 28 00 0A 8B 02 00 05 0A 8B 02 00 15 16   ...(............
+                           05 00 80 1A 06 00 20 A1 07 00 40 42 0F 00         ...... ...@B..
+
+        ----- Video Streaming MJPEG Frame Type Descriptor -----
+bLength                  : 0x2E (46 bytes)
+bDescriptorType          : 0x24 (Video Streaming Interface)
+bDescriptorSubtype       : 0x07 (MJPEG Frame Type)
+bFrameIndex              : 0x05
+bmCapabilities           : 0x00
+wWidth                   : 0x0500 (1280)
+wHeight                  : 0x03C0 (960)
+dwMinBitRate             : 0x000BB800 (768000 bps -> 96 KB/s)
+dwMaxBitRate             : 0x0BB80000 (196608000 bps -> 24.576 MB/s)
+dwMaxVideoFrameBufferSize: 0x00258000 (2457600 bytes)
+dwDefaultFrameInterval   : 0x00028B0A (16.6666 ms -> 60.0000 fps)
+bFrameIntervalType       : 0x05 (5 discrete frame intervals supported)
+adwFrameInterval[1]      : 0x00028B0A (16.6666 ms -> 60.0000 fps)
+adwFrameInterval[2]      : 0x00051615 (33.3333 ms -> 30.0000 fps)
+adwFrameInterval[3]      : 0x00061A80 (40.0000 ms -> 25.0000 fps)
+adwFrameInterval[4]      : 0x0007A120 (50.0000 ms -> 20.0000 fps)
+adwFrameInterval[5]      : 0x000F4240 (100.0000 ms -> 10.0000 fps)
+Data (HexDump)           : 2E 24 07 05 00 00 05 C0 03 00 B8 0B 00 00 00 B8   .$..............
+                           0B 00 80 25 00 0A 8B 02 00 05 0A 8B 02 00 15 16   ...%............
+                           05 00 80 1A 06 00 20 A1 07 00 40 42 0F 00         ...... ...@B..
+
+        ----- Video Streaming MJPEG Frame Type Descriptor -----
+bLength                  : 0x2E (46 bytes)
+bDescriptorType          : 0x24 (Video Streaming Interface)
+bDescriptorSubtype       : 0x07 (MJPEG Frame Type)
+bFrameIndex              : 0x06
+bmCapabilities           : 0x00
+wWidth                   : 0x0500 (1280)
+wHeight                  : 0x02D0 (720)
+dwMinBitRate             : 0x000BB800 (768000 bps -> 96 KB/s)
+dwMaxBitRate             : 0x0BB80000 (196608000 bps -> 24.576 MB/s)
+dwMaxVideoFrameBufferSize: 0x001C2000 (1843200 bytes)
+dwDefaultFrameInterval   : 0x00028B0A (16.6666 ms -> 60.0000 fps)
+bFrameIntervalType       : 0x05 (5 discrete frame intervals supported)
+adwFrameInterval[1]      : 0x00028B0A (16.6666 ms -> 60.0000 fps)
+adwFrameInterval[2]      : 0x00030D40 (20.0000 ms -> 50.0000 fps)
+adwFrameInterval[3]      : 0x00051615 (33.3333 ms -> 30.0000 fps)
+adwFrameInterval[4]      : 0x0007A120 (50.0000 ms -> 20.0000 fps)
+adwFrameInterval[5]      : 0x000F4240 (100.0000 ms -> 10.0000 fps)
+Data (HexDump)           : 2E 24 07 06 00 00 05 D0 02 00 B8 0B 00 00 00 B8   .$..............
+                           0B 00 20 1C 00 0A 8B 02 00 05 0A 8B 02 00 40 0D   .. ...........@.
+                           03 00 15 16 05 00 20 A1 07 00 40 42 0F 00         ...... ...@B..
+
+        ----- Video Streaming MJPEG Frame Type Descriptor -----
+bLength                  : 0x2E (46 bytes)
+bDescriptorType          : 0x24 (Video Streaming Interface)
+bDescriptorSubtype       : 0x07 (MJPEG Frame Type)
+bFrameIndex              : 0x07
+bmCapabilities           : 0x00
+wWidth                   : 0x0400 (1024)
+wHeight                  : 0x0300 (768)
+dwMinBitRate             : 0x000BB800 (768000 bps -> 96 KB/s)
+dwMaxBitRate             : 0x0BB80000 (196608000 bps -> 24.576 MB/s)
+dwMaxVideoFrameBufferSize: 0x00180000 (1572864 bytes)
+dwDefaultFrameInterval   : 0x00028B0A (16.6666 ms -> 60.0000 fps)
+bFrameIntervalType       : 0x05 (5 discrete frame intervals supported)
+adwFrameInterval[1]      : 0x00028B0A (16.6666 ms -> 60.0000 fps)
+adwFrameInterval[2]      : 0x00030D40 (20.0000 ms -> 50.0000 fps)
+adwFrameInterval[3]      : 0x00051615 (33.3333 ms -> 30.0000 fps)
+adwFrameInterval[4]      : 0x0007A120 (50.0000 ms -> 20.0000 fps)
+adwFrameInterval[5]      : 0x000F4240 (100.0000 ms -> 10.0000 fps)
+Data (HexDump)           : 2E 24 07 07 00 00 04 00 03 00 B8 0B 00 00 00 B8   .$..............
+                           0B 00 00 18 00 0A 8B 02 00 05 0A 8B 02 00 40 0D   ..............@.
+                           03 00 15 16 05 00 20 A1 07 00 40 42 0F 00         ...... ...@B..
+
+        ----- Video Streaming MJPEG Frame Type Descriptor -----
+bLength                  : 0x2E (46 bytes)
+bDescriptorType          : 0x24 (Video Streaming Interface)
+bDescriptorSubtype       : 0x07 (MJPEG Frame Type)
+bFrameIndex              : 0x08
+bmCapabilities           : 0x00
+wWidth                   : 0x0320 (800)
+wHeight                  : 0x0258 (600)
+dwMinBitRate             : 0x000BB800 (768000 bps -> 96 KB/s)
+dwMaxBitRate             : 0x0BB80000 (196608000 bps -> 24.576 MB/s)
+dwMaxVideoFrameBufferSize: 0x000EA600 (960000 bytes)
+dwDefaultFrameInterval   : 0x00028B0A (16.6666 ms -> 60.0000 fps)
+bFrameIntervalType       : 0x05 (5 discrete frame intervals supported)
+adwFrameInterval[1]      : 0x00028B0A (16.6666 ms -> 60.0000 fps)
+adwFrameInterval[2]      : 0x00030D40 (20.0000 ms -> 50.0000 fps)
+adwFrameInterval[3]      : 0x00051615 (33.3333 ms -> 30.0000 fps)
+adwFrameInterval[4]      : 0x0007A120 (50.0000 ms -> 20.0000 fps)
+adwFrameInterval[5]      : 0x000F4240 (100.0000 ms -> 10.0000 fps)
+Data (HexDump)           : 2E 24 07 08 00 20 03 58 02 00 B8 0B 00 00 00 B8   .$... .X........
+                           0B 00 A6 0E 00 0A 8B 02 00 05 0A 8B 02 00 40 0D   ..............@.
+                           03 00 15 16 05 00 20 A1 07 00 40 42 0F 00         ...... ...@B..
+
+        ----- Video Streaming MJPEG Frame Type Descriptor -----
+bLength                  : 0x2E (46 bytes)
+bDescriptorType          : 0x24 (Video Streaming Interface)
+bDescriptorSubtype       : 0x07 (MJPEG Frame Type)
+bFrameIndex              : 0x09
+bmCapabilities           : 0x00
+wWidth                   : 0x02D0 (720)
+wHeight                  : 0x0240 (576)
+dwMinBitRate             : 0x000BB800 (768000 bps -> 96 KB/s)
+dwMaxBitRate             : 0x0BB80000 (196608000 bps -> 24.576 MB/s)
+dwMaxVideoFrameBufferSize: 0x000CA800 (829440 bytes)
+dwDefaultFrameInterval   : 0x00028B0A (16.6666 ms -> 60.0000 fps)
+bFrameIntervalType       : 0x05 (5 discrete frame intervals supported)
+adwFrameInterval[1]      : 0x00028B0A (16.6666 ms -> 60.0000 fps)
+adwFrameInterval[2]      : 0x00030D40 (20.0000 ms -> 50.0000 fps)
+adwFrameInterval[3]      : 0x00051615 (33.3333 ms -> 30.0000 fps)
+adwFrameInterval[4]      : 0x0007A120 (50.0000 ms -> 20.0000 fps)
+adwFrameInterval[5]      : 0x000F4240 (100.0000 ms -> 10.0000 fps)
+Data (HexDump)           : 2E 24 07 09 00 D0 02 40 02 00 B8 0B 00 00 00 B8   .$.....@........
+                           0B 00 A8 0C 00 0A 8B 02 00 05 0A 8B 02 00 40 0D   ..............@.
+                           03 00 15 16 05 00 20 A1 07 00 40 42 0F 00         ...... ...@B..
+
+        ----- Video Streaming MJPEG Frame Type Descriptor -----
+bLength                  : 0x2E (46 bytes)
+bDescriptorType          : 0x24 (Video Streaming Interface)
+bDescriptorSubtype       : 0x07 (MJPEG Frame Type)
+bFrameIndex              : 0x0A
+bmCapabilities           : 0x00
+wWidth                   : 0x02D0 (720)
+wHeight                  : 0x01E0 (480)
+dwMinBitRate             : 0x000BB800 (768000 bps -> 96 KB/s)
+dwMaxBitRate             : 0x0BB80000 (196608000 bps -> 24.576 MB/s)
+dwMaxVideoFrameBufferSize: 0x000A8C00 (691200 bytes)
+dwDefaultFrameInterval   : 0x00028B0A (16.6666 ms -> 60.0000 fps)
+bFrameIntervalType       : 0x05 (5 discrete frame intervals supported)
+adwFrameInterval[1]      : 0x00028B0A (16.6666 ms -> 60.0000 fps)
+adwFrameInterval[2]      : 0x00030D40 (20.0000 ms -> 50.0000 fps)
+adwFrameInterval[3]      : 0x00051615 (33.3333 ms -> 30.0000 fps)
+adwFrameInterval[4]      : 0x0007A120 (50.0000 ms -> 20.0000 fps)
+adwFrameInterval[5]      : 0x000F4240 (100.0000 ms -> 10.0000 fps)
+Data (HexDump)           : 2E 24 07 0A 00 D0 02 E0 01 00 B8 0B 00 00 00 B8   .$..............
+                           0B 00 8C 0A 00 0A 8B 02 00 05 0A 8B 02 00 40 0D   ..............@.
+                           03 00 15 16 05 00 20 A1 07 00 40 42 0F 00         ...... ...@B..
+
+        ----- Video Streaming MJPEG Frame Type Descriptor -----
+bLength                  : 0x2E (46 bytes)
+bDescriptorType          : 0x24 (Video Streaming Interface)
+bDescriptorSubtype       : 0x07 (MJPEG Frame Type)
+bFrameIndex              : 0x0B
+bmCapabilities           : 0x00
+wWidth                   : 0x0280 (640)
+wHeight                  : 0x01E0 (480)
+dwMinBitRate             : 0x000BB800 (768000 bps -> 96 KB/s)
+dwMaxBitRate             : 0x0BB80000 (196608000 bps -> 24.576 MB/s)
+dwMaxVideoFrameBufferSize: 0x00096000 (614400 bytes)
+dwDefaultFrameInterval   : 0x00028B0A (16.6666 ms -> 60.0000 fps)
+bFrameIntervalType       : 0x05 (5 discrete frame intervals supported)
+adwFrameInterval[1]      : 0x00028B0A (16.6666 ms -> 60.0000 fps)
+adwFrameInterval[2]      : 0x00030D40 (20.0000 ms -> 50.0000 fps)
+adwFrameInterval[3]      : 0x00051615 (33.3333 ms -> 30.0000 fps)
+adwFrameInterval[4]      : 0x0007A120 (50.0000 ms -> 20.0000 fps)
+adwFrameInterval[5]      : 0x000F4240 (100.0000 ms -> 10.0000 fps)
+Data (HexDump)           : 2E 24 07 0B 00 80 02 E0 01 00 B8 0B 00 00 00 B8   .$..............
+                           0B 00 60 09 00 0A 8B 02 00 05 0A 8B 02 00 40 0D   ..`...........@.
+                           03 00 15 16 05 00 20 A1 07 00 40 42 0F 00         ...... ...@B..
+
+        ------- VS Color Matching Descriptor Descriptor -------
+bLength                  : 0x06 (6 bytes)
+bDescriptorType          : 0x24 (Video Streaming Interface)
+bDescriptorSubtype       : 0x0D (Color Matching)
+bColorPrimaries          : 0x01 (BT.709, sRGB)
+bTransferCharacteristics : 0x01 (BT.709)
+bMatrixCoefficients      : 0x04 (SMPTE 170M)
+Data (HexDump)           : 06 24 0D 01 01 04                                 .$....
+
+        ------- VS Uncompressed Format Type Descriptor --------
+bLength                  : 0x1B (27 bytes)
+bDescriptorType          : 0x24 (Video Streaming Interface)
+bDescriptorSubtype       : 0x04 (Uncompressed Format Type)
+bFormatIndex             : 0x02 (2)
+bNumFrameDescriptors     : 0x0B (11 Frame Descriptors)
+guidFormat               : {32595559-0000-0010-8000-00AA00389B71} (YUY2)
+bBitsPerPixel            : 0x10 (16 bits per pixel)
+bDefaultFrameIndex       : 0x06 (Index 6)
+bAspectRatioX            : 0x00
+bAspectRatioY            : 0x00
+bmInterlaceFlags         : 0x00
+ D0 IL stream or variable: 0 (no)
+ D1 Fields per frame     : 0 (2 fields)
+ D2 Field 1 first        : 0 (no)
+ D3 Reserved             : 0
+ D4..5 Field pattern     : 0 (Field 1 only)
+ D6..7 Display Mode      : 0 (Bob only)
+bCopyProtect             : 0x00 (No restrictions)
+Data (HexDump)           : 1B 24 04 02 0B 59 55 59 32 00 00 10 00 80 00 00   .$...YUY2.......
+                           AA 00 38 9B 71 10 06 00 00 00 00                  ..8.q......
+
+        -------- VS Uncompressed Frame Type Descriptor --------
+bLength                  : 0x1E (30 bytes)
+bDescriptorType          : 0x24 (Video Streaming Interface)
+bDescriptorSubtype       : 0x05 (Uncompressed Frame Type)
+bFrameIndex              : 0x01
+bmCapabilities           : 0x00
+wWidth                   : 0x0780 (1920)
+wHeight                  : 0x0438 (1080)
+dwMinBitRate             : 0x000BB800 (768000 bps -> 96 KB/s)
+dwMaxBitRate             : 0x0BB80000 (196608000 bps -> 24.576 MB/s)
+dwMaxVideoFrameBufferSize: 0x003F4800 (4147200 bytes)
+dwDefaultFrameInterval   : 0x001E8480 (200.0000 ms -> 5.0000 fps)
+bFrameIntervalType       : 0x01 (1 discrete frame interval supported)
+*!*WARNING:  if bFrameIntervalType is 1 then dwMinBitRate should equal dwMaxBitRate
+adwFrameInterval[1]      : 0x001E8480 (200.0000 ms -> 5.0000 fps)
+Data (HexDump)           : 1E 24 05 01 00 80 07 38 04 00 B8 0B 00 00 00 B8   .$.....8........
+                           0B 00 48 3F 00 80 84 1E 00 01 80 84 1E 00         ..H?..........
+
+        -------- VS Uncompressed Frame Type Descriptor --------
+bLength                  : 0x1E (30 bytes)
+bDescriptorType          : 0x24 (Video Streaming Interface)
+bDescriptorSubtype       : 0x05 (Uncompressed Frame Type)
+bFrameIndex              : 0x02
+bmCapabilities           : 0x00
+wWidth                   : 0x0640 (1600)
+wHeight                  : 0x04B0 (1200)
+dwMinBitRate             : 0x000BB800 (768000 bps -> 96 KB/s)
+dwMaxBitRate             : 0x0BB80000 (196608000 bps -> 24.576 MB/s)
+dwMaxVideoFrameBufferSize: 0x003A9800 (3840000 bytes)
+dwDefaultFrameInterval   : 0x001E8480 (200.0000 ms -> 5.0000 fps)
+bFrameIntervalType       : 0x01 (1 discrete frame interval supported)
+*!*WARNING:  if bFrameIntervalType is 1 then dwMinBitRate should equal dwMaxBitRate
+adwFrameInterval[1]      : 0x001E8480 (200.0000 ms -> 5.0000 fps)
+Data (HexDump)           : 1E 24 05 02 00 40 06 B0 04 00 B8 0B 00 00 00 B8   .$...@..........
+                           0B 00 98 3A 00 80 84 1E 00 01 80 84 1E 00         ...:..........
+
+        -------- VS Uncompressed Frame Type Descriptor --------
+bLength                  : 0x1E (30 bytes)
+bDescriptorType          : 0x24 (Video Streaming Interface)
+bDescriptorSubtype       : 0x05 (Uncompressed Frame Type)
+bFrameIndex              : 0x03
+bmCapabilities           : 0x00
+wWidth                   : 0x0550 (1360)
+wHeight                  : 0x0300 (768)
+dwMinBitRate             : 0x000BB800 (768000 bps -> 96 KB/s)
+dwMaxBitRate             : 0x0BB80000 (196608000 bps -> 24.576 MB/s)
+dwMaxVideoFrameBufferSize: 0x001FE000 (2088960 bytes)
+dwDefaultFrameInterval   : 0x001312D0 (125.0000 ms -> 8.0000 fps)
+bFrameIntervalType       : 0x01 (1 discrete frame interval supported)
+*!*WARNING:  if bFrameIntervalType is 1 then dwMinBitRate should equal dwMaxBitRate
+adwFrameInterval[1]      : 0x001312D0 (125.0000 ms -> 8.0000 fps)
+Data (HexDump)           : 1E 24 05 03 00 50 05 00 03 00 B8 0B 00 00 00 B8   .$...P..........
+                           0B 00 E0 1F 00 D0 12 13 00 01 D0 12 13 00         ..............
+
+        -------- VS Uncompressed Frame Type Descriptor --------
+bLength                  : 0x1E (30 bytes)
+bDescriptorType          : 0x24 (Video Streaming Interface)
+bDescriptorSubtype       : 0x05 (Uncompressed Frame Type)
+bFrameIndex              : 0x04
+bmCapabilities           : 0x00
+wWidth                   : 0x0500 (1280)
+wHeight                  : 0x0400 (1024)
+dwMinBitRate             : 0x000BB800 (768000 bps -> 96 KB/s)
+dwMaxBitRate             : 0x0BB80000 (196608000 bps -> 24.576 MB/s)
+dwMaxVideoFrameBufferSize: 0x00280000 (2621440 bytes)
+dwDefaultFrameInterval   : 0x001312D0 (125.0000 ms -> 8.0000 fps)
+bFrameIntervalType       : 0x01 (1 discrete frame interval supported)
+*!*WARNING:  if bFrameIntervalType is 1 then dwMinBitRate should equal dwMaxBitRate
+adwFrameInterval[1]      : 0x001312D0 (125.0000 ms -> 8.0000 fps)
+Data (HexDump)           : 1E 24 05 04 00 00 05 00 04 00 B8 0B 00 00 00 B8   .$..............
+                           0B 00 00 28 00 D0 12 13 00 01 D0 12 13 00         ...(..........
+
+        -------- VS Uncompressed Frame Type Descriptor --------
+bLength                  : 0x1E (30 bytes)
+bDescriptorType          : 0x24 (Video Streaming Interface)
+bDescriptorSubtype       : 0x05 (Uncompressed Frame Type)
+bFrameIndex              : 0x05
+bmCapabilities           : 0x00
+wWidth                   : 0x0500 (1280)
+wHeight                  : 0x03C0 (960)
+dwMinBitRate             : 0x000BB800 (768000 bps -> 96 KB/s)
+dwMaxBitRate             : 0x0BB80000 (196608000 bps -> 24.576 MB/s)
+dwMaxVideoFrameBufferSize: 0x00258000 (2457600 bytes)
+dwDefaultFrameInterval   : 0x001312D0 (125.0000 ms -> 8.0000 fps)
+bFrameIntervalType       : 0x01 (1 discrete frame interval supported)
+*!*WARNING:  if bFrameIntervalType is 1 then dwMinBitRate should equal dwMaxBitRate
+adwFrameInterval[1]      : 0x001312D0 (125.0000 ms -> 8.0000 fps)
+Data (HexDump)           : 1E 24 05 05 00 00 05 C0 03 00 B8 0B 00 00 00 B8   .$..............
+                           0B 00 80 25 00 D0 12 13 00 01 D0 12 13 00         ...%..........
+
+        -------- VS Uncompressed Frame Type Descriptor --------
+---> This is the Default (optimum) Frame index
+bLength                  : 0x1E (30 bytes)
+bDescriptorType          : 0x24 (Video Streaming Interface)
+bDescriptorSubtype       : 0x05 (Uncompressed Frame Type)
+bFrameIndex              : 0x06
+bmCapabilities           : 0x00
+wWidth                   : 0x0500 (1280)
+wHeight                  : 0x02D0 (720)
+dwMinBitRate             : 0x000BB800 (768000 bps -> 96 KB/s)
+dwMaxBitRate             : 0x0BB80000 (196608000 bps -> 24.576 MB/s)
+dwMaxVideoFrameBufferSize: 0x001C2000 (1843200 bytes)
+dwDefaultFrameInterval   : 0x000F4240 (100.0000 ms -> 10.0000 fps)
+bFrameIntervalType       : 0x01 (1 discrete frame interval supported)
+*!*WARNING:  if bFrameIntervalType is 1 then dwMinBitRate should equal dwMaxBitRate
+adwFrameInterval[1]      : 0x000F4240 (100.0000 ms -> 10.0000 fps)
+Data (HexDump)           : 1E 24 05 06 00 00 05 D0 02 00 B8 0B 00 00 00 B8   .$..............
+                           0B 00 20 1C 00 40 42 0F 00 01 40 42 0F 00         .. ..@B...@B..
+
+        -------- VS Uncompressed Frame Type Descriptor --------
+bLength                  : 0x1E (30 bytes)
+bDescriptorType          : 0x24 (Video Streaming Interface)
+bDescriptorSubtype       : 0x05 (Uncompressed Frame Type)
+bFrameIndex              : 0x07
+bmCapabilities           : 0x00
+wWidth                   : 0x0400 (1024)
+wHeight                  : 0x0300 (768)
+dwMinBitRate             : 0x000BB800 (768000 bps -> 96 KB/s)
+dwMaxBitRate             : 0x0BB80000 (196608000 bps -> 24.576 MB/s)
+dwMaxVideoFrameBufferSize: 0x00180000 (1572864 bytes)
+dwDefaultFrameInterval   : 0x000F4240 (100.0000 ms -> 10.0000 fps)
+bFrameIntervalType       : 0x01 (1 discrete frame interval supported)
+*!*WARNING:  if bFrameIntervalType is 1 then dwMinBitRate should equal dwMaxBitRate
+adwFrameInterval[1]      : 0x000F4240 (100.0000 ms -> 10.0000 fps)
+Data (HexDump)           : 1E 24 05 07 00 00 04 00 03 00 B8 0B 00 00 00 B8   .$..............
+                           0B 00 00 18 00 40 42 0F 00 01 40 42 0F 00         .....@B...@B..
+
+        -------- VS Uncompressed Frame Type Descriptor --------
+bLength                  : 0x26 (38 bytes)
+bDescriptorType          : 0x24 (Video Streaming Interface)
+bDescriptorSubtype       : 0x05 (Uncompressed Frame Type)
+bFrameIndex              : 0x08
+bmCapabilities           : 0x00
+wWidth                   : 0x0320 (800)
+wHeight                  : 0x0258 (600)
+dwMinBitRate             : 0x000BB800 (768000 bps -> 96 KB/s)
+dwMaxBitRate             : 0x0BB80000 (196608000 bps -> 24.576 MB/s)
+dwMaxVideoFrameBufferSize: 0x000EA600 (960000 bytes)
+dwDefaultFrameInterval   : 0x0007A120 (50.0000 ms -> 20.0000 fps)
+bFrameIntervalType       : 0x03 (3 discrete frame intervals supported)
+adwFrameInterval[1]      : 0x0007A120 (50.0000 ms -> 20.0000 fps)
+adwFrameInterval[2]      : 0x000F4240 (100.0000 ms -> 10.0000 fps)
+adwFrameInterval[3]      : 0x001E8480 (200.0000 ms -> 5.0000 fps)
+Data (HexDump)           : 26 24 05 08 00 20 03 58 02 00 B8 0B 00 00 00 B8   &$... .X........
+                           0B 00 A6 0E 00 20 A1 07 00 03 20 A1 07 00 40 42   ..... .... ...@B
+                           0F 00 80 84 1E 00                                 ......
+
+        -------- VS Uncompressed Frame Type Descriptor --------
+bLength                  : 0x2A (42 bytes)
+bDescriptorType          : 0x24 (Video Streaming Interface)
+bDescriptorSubtype       : 0x05 (Uncompressed Frame Type)
+bFrameIndex              : 0x09
+bmCapabilities           : 0x00
+wWidth                   : 0x02D0 (720)
+wHeight                  : 0x0240 (576)
+dwMinBitRate             : 0x000BB800 (768000 bps -> 96 KB/s)
+dwMaxBitRate             : 0x0BB80000 (196608000 bps -> 24.576 MB/s)
+dwMaxVideoFrameBufferSize: 0x000CA800 (829440 bytes)
+dwDefaultFrameInterval   : 0x00061A80 (40.0000 ms -> 25.0000 fps)
+bFrameIntervalType       : 0x04 (4 discrete frame intervals supported)
+adwFrameInterval[1]      : 0x00061A80 (40.0000 ms -> 25.0000 fps)
+adwFrameInterval[2]      : 0x0007A120 (50.0000 ms -> 20.0000 fps)
+adwFrameInterval[3]      : 0x000F4240 (100.0000 ms -> 10.0000 fps)
+adwFrameInterval[4]      : 0x001E8480 (200.0000 ms -> 5.0000 fps)
+Data (HexDump)           : 2A 24 05 09 00 D0 02 40 02 00 B8 0B 00 00 00 B8   *$.....@........
+                           0B 00 A8 0C 00 80 1A 06 00 04 80 1A 06 00 20 A1   .............. .
+                           07 00 40 42 0F 00 80 84 1E 00                     ..@B......
+
+        -------- VS Uncompressed Frame Type Descriptor --------
+bLength                  : 0x2A (42 bytes)
+bDescriptorType          : 0x24 (Video Streaming Interface)
+bDescriptorSubtype       : 0x05 (Uncompressed Frame Type)
+bFrameIndex              : 0x0A
+bmCapabilities           : 0x00
+wWidth                   : 0x02D0 (720)
+wHeight                  : 0x01E0 (480)
+dwMinBitRate             : 0x000BB800 (768000 bps -> 96 KB/s)
+dwMaxBitRate             : 0x0BB80000 (196608000 bps -> 24.576 MB/s)
+dwMaxVideoFrameBufferSize: 0x000A8C00 (691200 bytes)
+dwDefaultFrameInterval   : 0x00051615 (33.3333 ms -> 30.0000 fps)
+bFrameIntervalType       : 0x04 (4 discrete frame intervals supported)
+adwFrameInterval[1]      : 0x00051615 (33.3333 ms -> 30.0000 fps)
+adwFrameInterval[2]      : 0x0007A120 (50.0000 ms -> 20.0000 fps)
+adwFrameInterval[3]      : 0x000F4240 (100.0000 ms -> 10.0000 fps)
+adwFrameInterval[4]      : 0x001E8480 (200.0000 ms -> 5.0000 fps)
+Data (HexDump)           : 2A 24 05 0A 00 D0 02 E0 01 00 B8 0B 00 00 00 B8   *$..............
+                           0B 00 8C 0A 00 15 16 05 00 04 15 16 05 00 20 A1   .............. .
+                           07 00 40 42 0F 00 80 84 1E 00                     ..@B......
+
+        -------- VS Uncompressed Frame Type Descriptor --------
+bLength                  : 0x2A (42 bytes)
+bDescriptorType          : 0x24 (Video Streaming Interface)
+bDescriptorSubtype       : 0x05 (Uncompressed Frame Type)
+bFrameIndex              : 0x0B
+bmCapabilities           : 0x00
+wWidth                   : 0x0280 (640)
+wHeight                  : 0x01E0 (480)
+dwMinBitRate             : 0x000BB800 (768000 bps -> 96 KB/s)
+dwMaxBitRate             : 0x0BB80000 (196608000 bps -> 24.576 MB/s)
+dwMaxVideoFrameBufferSize: 0x00096000 (614400 bytes)
+dwDefaultFrameInterval   : 0x00051615 (33.3333 ms -> 30.0000 fps)
+bFrameIntervalType       : 0x04 (4 discrete frame intervals supported)
+adwFrameInterval[1]      : 0x00051615 (33.3333 ms -> 30.0000 fps)
+adwFrameInterval[2]      : 0x0007A120 (50.0000 ms -> 20.0000 fps)
+adwFrameInterval[3]      : 0x000F4240 (100.0000 ms -> 10.0000 fps)
+adwFrameInterval[4]      : 0x001E8480 (200.0000 ms -> 5.0000 fps)
+Data (HexDump)           : 2A 24 05 0B 00 80 02 E0 01 00 B8 0B 00 00 00 B8   *$..............
+                           0B 00 60 09 00 15 16 05 00 04 15 16 05 00 20 A1   ..`........... .
+                           07 00 40 42 0F 00 80 84 1E 00                     ..@B......
+
+        ------- VS Color Matching Descriptor Descriptor -------
+bLength                  : 0x06 (6 bytes)
+bDescriptorType          : 0x24 (Video Streaming Interface)
+bDescriptorSubtype       : 0x0D (Color Matching)
+bColorPrimaries          : 0x01 (BT.709, sRGB)
+bTransferCharacteristics : 0x01 (BT.709)
+bMatrixCoefficients      : 0x04 (SMPTE 170M)
+Data (HexDump)           : 06 24 0D 01 01 04                                 .$....
+
+        ---------------- Interface Descriptor -----------------
+bLength                  : 0x09 (9 bytes)
+bDescriptorType          : 0x04 (Interface Descriptor)
+bInterfaceNumber         : 0x01 (Interface 1)
+bAlternateSetting        : 0x01
+bNumEndpoints            : 0x01 (1 Endpoint)
+bInterfaceClass          : 0x0E (Video)
+bInterfaceSubClass       : 0x02 (Video Streaming)
+bInterfaceProtocol       : 0x00
+iInterface               : 0x00 (No String Descriptor)
+Data (HexDump)           : 09 04 01 01 01 0E 02 00 00                        .........
+
+        ----------------- Endpoint Descriptor -----------------
+bLength                  : 0x07 (7 bytes)
+bDescriptorType          : 0x05 (Endpoint Descriptor)
+bEndpointAddress         : 0x83 (Direction=IN EndpointID=3)
+bmAttributes             : 0x05 (TransferType=Isochronous  SyncType=Asynchronous  EndpointType=Data)
+wMaxPacketSize           : 0x0320
+ Bits 15..13             : 0x00 (reserved, must be zero)
+ Bits 12..11             : 0x00 (0 additional transactions per microframe -> allows 1..1024 bytes per packet)
+ Bits 10..0              : 0x320 (800 bytes per packet)
+bInterval                : 0x01 (1 microframe -> 0.125 ms)
+Data (HexDump)           : 07 05 83 05 20 03 01                              .... ..
+
+        ---------------- Interface Descriptor -----------------
+bLength                  : 0x09 (9 bytes)
+bDescriptorType          : 0x04 (Interface Descriptor)
+bInterfaceNumber         : 0x01 (Interface 1)
+bAlternateSetting        : 0x02
+bNumEndpoints            : 0x01 (1 Endpoint)
+bInterfaceClass          : 0x0E (Video)
+bInterfaceSubClass       : 0x02 (Video Streaming)
+bInterfaceProtocol       : 0x00
+iInterface               : 0x00 (No String Descriptor)
+Data (HexDump)           : 09 04 01 02 01 0E 02 00 00                        .........
+
+        ----------------- Endpoint Descriptor -----------------
+bLength                  : 0x07 (7 bytes)
+bDescriptorType          : 0x05 (Endpoint Descriptor)
+bEndpointAddress         : 0x83 (Direction=IN EndpointID=3)
+bmAttributes             : 0x05 (TransferType=Isochronous  SyncType=Asynchronous  EndpointType=Data)
+wMaxPacketSize           : 0x0C00
+ Bits 15..13             : 0x00 (reserved, must be zero)
+ Bits 12..11             : 0x01 (1 additional transactions per microframe -> allows 513..1024 byte per packet)
+ Bits 10..0              : 0x400 (1024 bytes per packet)
+bInterval                : 0x01 (1 microframe -> 0.125 ms)
+Data (HexDump)           : 07 05 83 05 00 0C 01                              .......
+
+        ---------------- Interface Descriptor -----------------
+bLength                  : 0x09 (9 bytes)
+bDescriptorType          : 0x04 (Interface Descriptor)
+bInterfaceNumber         : 0x01 (Interface 1)
+bAlternateSetting        : 0x03
+bNumEndpoints            : 0x01 (1 Endpoint)
+bInterfaceClass          : 0x0E (Video)
+bInterfaceSubClass       : 0x02 (Video Streaming)
+bInterfaceProtocol       : 0x00
+iInterface               : 0x00 (No String Descriptor)
+Data (HexDump)           : 09 04 01 03 01 0E 02 00 00                        .........
+
+        ----------------- Endpoint Descriptor -----------------
+bLength                  : 0x07 (7 bytes)
+bDescriptorType          : 0x05 (Endpoint Descriptor)
+bEndpointAddress         : 0x83 (Direction=IN EndpointID=3)
+bmAttributes             : 0x05 (TransferType=Isochronous  SyncType=Asynchronous  EndpointType=Data)
+wMaxPacketSize           : 0x1400
+ Bits 15..13             : 0x00 (reserved, must be zero)
+ Bits 12..11             : 0x02 (2 additional transactions per microframe -> allows 683..1024 bytes per packet)
+ Bits 10..0              : 0x400 (1024 bytes per packet)
+bInterval                : 0x01 (1 microframe -> 0.125 ms)
+Data (HexDump)           : 07 05 83 05 00 14 01                              .......
+
+        ------------------- IAD Descriptor --------------------
+bLength                  : 0x08 (8 bytes)
+bDescriptorType          : 0x0B (Interface Association Descriptor)
+bFirstInterface          : 0x02 (Interface 2)
+bInterfaceCount          : 0x02 (2 Interfaces)
+bFunctionClass           : 0x01 (Audio)
+bFunctionSubClass        : 0x01 (Audio Control)
+bFunctionProtocol        : 0x00
+iFunction                : 0x04 (String Descriptor 4)
+ Language 0x0409         : "USB Digital Audio"
+Data (HexDump)           : 08 0B 02 02 01 01 00 04                           ........
+
+        ---------------- Interface Descriptor -----------------
+bLength                  : 0x09 (9 bytes)
+bDescriptorType          : 0x04 (Interface Descriptor)
+bInterfaceNumber         : 0x02 (Interface 2)
+bAlternateSetting        : 0x00
+bNumEndpoints            : 0x00 (Default Control Pipe only)
+bInterfaceClass          : 0x01 (Audio)
+bInterfaceSubClass       : 0x01 (Audio Control)
+bInterfaceProtocol       : 0x00
+iInterface               : 0x04 (String Descriptor 4)
+ Language 0x0409         : "USB Digital Audio"
+Data (HexDump)           : 09 04 02 00 00 01 01 00 04                        .........
+
+        ------ Audio Control Interface Header Descriptor ------
+bLength                  : 0x09 (9 bytes)
+bDescriptorType          : 0x24 (Audio Interface Descriptor)
+bDescriptorSubtype       : 0x01 (Header)
+bcdADC                   : 0x0100
+wTotalLength             : 0x0026 (38 bytes)
+bInCollection            : 0x01
+baInterfaceNr[1]         : 0x03
+Data (HexDump)           : 09 24 01 00 01 26 00 01 03                        .$...&...
+
+        ------- Audio Control Input Terminal Descriptor -------
+bLength                  : 0x0C (12 bytes)
+bDescriptorType          : 0x24 (Audio Interface Descriptor)
+bDescriptorSubtype       : 0x02 (Input Terminal)
+bTerminalID              : 0x01
+wTerminalType            : 0x0602 (Digital audio interface)
+bAssocTerminal           : 0x00
+bNrChannels              : 0x02 (2 channels)
+wChannelConfig           : 0x0003 (L, R)
+iChannelNames            : 0x00 (No String Descriptor)
+iTerminal                : 0x00 (No String Descriptor)
+Data (HexDump)           : 0C 24 02 01 02 06 00 02 03 00 00 00               .$..........
+
+        -------- Audio Control Feature Unit Descriptor --------
+bLength                  : 0x08 (8 bytes)
+bDescriptorType          : 0x24 (Audio Interface Descriptor)
+bDescriptorSubtype       : 0x06 (Feature Unit)
+bUnitID                  : 0x02 (2)
+bSourceID                : 0x01 (1)
+bControlSize             : 0x01 (1 byte per control)
+bmaControls[0]           : 0x01
+ D0: Mute                : 1
+ D1: Volume              : 0
+ D2: Bass                : 0
+ D3: Mid                 : 0
+ D4: Treble              : 0
+ D5: Graphic Equalizer   : 0
+ D6: Automatic Gain      : 0
+ D7: Delay               : 0
+iFeature                 : 0x00 (No String Descriptor)
+Data (HexDump)           : 08 24 06 02 01 01 01 00                           .$......
+
+        ------- Audio Control Output Terminal Descriptor ------
+bLength                  : 0x09 (9 bytes)
+bDescriptorType          : 0x24 (Audio Interface Descriptor)
+bDescriptorSubtype       : 0x03 (Output Terminal)
+bTerminalID              : 0x03
+wTerminalType            : 0x0101 (USB Streaming)
+bAssocTerminal           : 0x00 (0)
+bSourceID                : 0x02 (2)
+iTerminal                : 0x00 (No String Descriptor)
+Data (HexDump)           : 09 24 03 03 01 01 00 02 00                        .$.......
+
+        ---------------- Interface Descriptor -----------------
+bLength                  : 0x09 (9 bytes)
+bDescriptorType          : 0x04 (Interface Descriptor)
+bInterfaceNumber         : 0x03 (Interface 3)
+bAlternateSetting        : 0x00
+bNumEndpoints            : 0x00 (Default Control Pipe only)
+bInterfaceClass          : 0x01 (Audio)
+bInterfaceSubClass       : 0x02 (Audio Streaming)
+bInterfaceProtocol       : 0x00
+iInterface               : 0x04 (String Descriptor 4)
+ Language 0x0409         : "USB Digital Audio"
+Data (HexDump)           : 09 04 03 00 00 01 02 00 04                        .........
+
+        ---------------- Interface Descriptor -----------------
+bLength                  : 0x09 (9 bytes)
+bDescriptorType          : 0x04 (Interface Descriptor)
+bInterfaceNumber         : 0x03 (Interface 3)
+bAlternateSetting        : 0x01
+bNumEndpoints            : 0x01 (1 Endpoint)
+bInterfaceClass          : 0x01 (Audio)
+bInterfaceSubClass       : 0x02 (Audio Streaming)
+bInterfaceProtocol       : 0x00
+iInterface               : 0x04 (String Descriptor 4)
+ Language 0x0409         : "USB Digital Audio"
+Data (HexDump)           : 09 04 03 01 01 01 02 00 04                        .........
+
+        -------- Audio Streaming Interface Descriptor ---------
+bLength                  : 0x07 (7 bytes)
+bDescriptorType          : 0x24 (Audio Interface Descriptor)
+bDescriptorSubtype       : 0x01 (AS_GENERAL)
+bTerminalLink            : 0x03 (Terminal ID 3)
+bDelay                   : 0x00 (0 frames)
+wFormatTag               : 0x0001 (PCM)
+Data (HexDump)           : 07 24 01 03 00 01 00                              .$.....
+
+        ------- Audio Streaming Format Type Descriptor --------
+bLength                  : 0x0B (11 bytes)
+bDescriptorType          : 0x24 (Audio Interface Descriptor)
+bDescriptorSubtype       : 0x02 (Format Type)
+bFormatType              : 0x01 (FORMAT_TYPE_I)
+bNrChannels              : 0x01 (1 channel)
+bSubframeSize            : 0x02 (2 bytes per subframe)
+bBitResolution           : 0x10 (16 bits per sample)
+bSamFreqType             : 0x01 (supports 1 sample frequence)
+tSamFreq[1]              : 0x17700 (96000 Hz)
+Data (HexDump)           : 0B 24 02 01 01 02 10 01 00 77 01                  .$.......w.
+
+        ----------------- Endpoint Descriptor -----------------
+bLength                  : 0x09 (9 bytes)
+bDescriptorType          : 0x05 (Endpoint Descriptor)
+bEndpointAddress         : 0x82 (Direction=IN EndpointID=2)
+bmAttributes             : 0x05 (TransferType=Isochronous  SyncType=Asynchronous  EndpointType=Data)
+wMaxPacketSize           : 0x0100
+ Bits 15..13             : 0x00 (reserved, must be zero)
+ Bits 12..11             : 0x00 (0 additional transactions per microframe -> allows 1..1024 bytes per packet)
+ Bits 10..0              : 0x100 (256 bytes per packet)
+bInterval                : 0x04 (4 ms)
+bRefresh                 : 0x00
+bSynchAddress            : 0x00
+Data (HexDump)           : 09 05 82 05 00 01 04 00 00                        .........
+
+        ----------- Audio Data Endpoint Descriptor ------------
+bLength                  : 0x07 (7 bytes)
+bDescriptorType          : 0x25 (Audio Endpoint Descriptor)
+bDescriptorSubtype       : 0x01 (General)
+bmAttributes             : 0x00
+ D0   : Sampling Freq    : 0x00 (not supported)
+ D1   : Pitch            : 0x00 (not supported)
+ D6..2: Reserved         : 0x00
+ D7   : MaxPacketsOnly   : 0x00 (no)
+bLockDelayUnits          : 0x00 (Undefined)
+wLockDelay               : 0x0000
+Data (HexDump)           : 07 25 01 00 00 00 00                              .%.....
+
+        ---------------- Interface Descriptor -----------------
+bLength                  : 0x09 (9 bytes)
+bDescriptorType          : 0x04 (Interface Descriptor)
+bInterfaceNumber         : 0x04 (Interface 4)
+bAlternateSetting        : 0x00
+bNumEndpoints            : 0x01 (1 Endpoint)
+bInterfaceClass          : 0x03 (HID - Human Interface Device)
+bInterfaceSubClass       : 0x00 (None)
+bInterfaceProtocol       : 0x00 (None)
+iInterface               : 0x00 (No String Descriptor)
+Data (HexDump)           : 09 04 04 00 01 03 00 00 00                        .........
+
+        ------------------- HID Descriptor --------------------
+bLength                  : 0x09 (9 bytes)
+bDescriptorType          : 0x21 (HID Descriptor)
+bcdHID                   : 0x0110 (HID Version 1.10)
+bCountryCode             : 0x21 (33 = US)
+bNumDescriptors          : 0x01
+Data (HexDump)           : 09 21 10 01 21 01 22 17 00                        .!..!."..
+Descriptor 1:
+bDescriptorType          : 0x22 (Class=Report)
+wDescriptorLength        : 0x0017 (23 bytes)
+Error reading descriptor : ERROR_GEN_FAILURE (due to a obscure limitation of the Win32 USB API, see F1 Help)
+
+        ----------------- Endpoint Descriptor -----------------
+bLength                  : 0x07 (7 bytes)
+bDescriptorType          : 0x05 (Endpoint Descriptor)
+bEndpointAddress         : 0x84 (Direction=IN EndpointID=4)
+bmAttributes             : 0x03 (TransferType=Interrupt)
+wMaxPacketSize           : 0x0004
+ Bits 15..13             : 0x00 (reserved, must be zero)
+ Bits 12..11             : 0x00 (0 additional transactions per microframe -> allows 1..1024 bytes per packet)
+ Bits 10..0              : 0x04 (4 bytes per packet)
+bInterval                : 0x10 (32768 microframes -> 4096 ms)
+Data (HexDump)           : 07 05 84 03 04 00 10                              .......
+
+    --------- Device Qualifier Descriptor (for Full-Speed) --------
+bLength                  : 0x0A (10 bytes)
+bDescriptorType          : 0x06 (Device_qualifier Descriptor)
+bcdUSB                   : 0x200 (USB Version 2.0)bDeviceClass             : 0xEF (Miscellaneous)
+bDeviceSubClass          : 0x02
+bDeviceProtocol          : 0x01 (IAD - Interface Association Descriptor)
+bMaxPacketSize0          : 0x40 (64 Bytes)
+bNumConfigurations       : 0x01 (1 other-speed configuration)
+bReserved                : 0x00
+Data (HexDump)           : 0A 06 00 02 EF 02 01 40 01 00                     .......@..
+
+    ------------ Other Speed Configuration Descriptor -------------
+bLength                  : 0x09 (9 bytes)
+bDescriptorType          : 0x07 (Other_speed_configuration Descriptor)
+wTotalLength             : 0x0163 (355 bytes)
+bNumInterfaces           : 0x05 (5 Interfaces)
+bConfigurationValue      : 0x01 (Configuration 1)
+iConfiguration           : 0x00 (No String Descriptor)
+bmAttributes             : 0x80
+ D7: Reserved, set 1     : 0x01
+ D6: Self Powered        : 0x00 (no)
+ D5: Remote Wakeup       : 0x00 (no)
+ D4..0: Reserved, set 0  : 0x00
+MaxPower                 : 0xFA (500 mA)
+Data (HexDump)           : 09 07 63 01 05 01 00 80 FA 08 0B 00 02 0E 03 00   ..c.............
+                           02 09 04 00 00 00 0E 01 00 02 0D 24 01 00 01 33   ...........$...3
+                           00 00 6C DC 02 01 01 12 24 02 01 01 02 00 00 00   ..l.....$.......
+                           00 00 00 00 00 03 00 00 00 0B 24 05 02 01 00 00   ..........$.....
+                           02 0F 00 00 09 24 03 03 01 01 00 02 00 09 04 01   .....$..........
+                           00 00 0E 02 00 00 0E 24 01 01 49 00 83 00 03 00   .......$..I.....
+                           00 00 01 00 0B 24 06 01 01 01 01 00 00 00 00 2A   .....$.........*
+                           24 07 01 00 80 02 E0 01 00 B8 0B 00 00 00 B8 0B   $...............
+                           00 60 09 00 2A 2C 0A 00 04 20 A1 07 00 2A 2C 0A   .`..*,... ...*,.
+                           00 40 42 0F 00 80 84 1E 00 06 24 0D 01 01 04 09   .@B.......$.....
+                           04 01 01 01 0E 02 00 00 07 05 83 05 C0 00 01 09   ................
+                           04 01 02 01 0E 02 00 00 07 05 83 05 00 02 01 09   ................
+                           04 01 03 01 0E 02 00 00 07 05 83 05 BC 02 01 09   ................
+                           04 01 04 01 0E 02 00 00 07 05 83 05 20 03 01 08   ............ ...
+                           0B 02 02 01 01 00 04 09 04 02 00 00 01 01 00 04   ................
+                           09 24 01 00 01 26 00 01 03 0C 24 02 01 02 06 00   .$...&....$.....
+                           02 03 00 00 00 08 24 06 02 01 01 01 00 09 24 03   ......$.......$.
+                           03 01 01 00 02 00 09 04 03 00 00 01 02 00 04 09   ................
+                           04 03 01 01 01 02 00 04 07 24 01 03 00 01 00 0B   .........$......
+                           24 02 01 01 02 10 01 00 77 01 09 05 82 05 00 01   $.......w.......
+                           01 00 00 07 25 01 00 00 00 00 09 04 04 00 01 03   ....%...........
+                           00 00 00 09 21 10 01 21 01 22 17 00 07 05 84 03   ....!..!."......
+                           04 00 10                                          ...
+
+        ------------------- IAD Descriptor --------------------
+bLength                  : 0x08 (8 bytes)
+bDescriptorType          : 0x0B (Interface Association Descriptor)
+bFirstInterface          : 0x00 (Interface 0)
+bInterfaceCount          : 0x02 (2 Interfaces)
+bFunctionClass           : 0x0E (Video)
+bFunctionSubClass        : 0x03 (Video Interface Collection)
+bFunctionProtocol        : 0x00 (PC_PROTOCOL_UNDEFINED)
+iFunction                : 0x02 (String Descriptor 2)
+ Language 0x0409         : "USB Video"
+Data (HexDump)           : 08 0B 00 02 0E 03 00 02                           ........
+
+        ---------------- Interface Descriptor -----------------
+bLength                  : 0x09 (9 bytes)
+bDescriptorType          : 0x04 (Interface Descriptor)
+bInterfaceNumber         : 0x00 (Interface 0)
+bAlternateSetting        : 0x00
+bNumEndpoints            : 0x00 (Default Control Pipe only)
+bInterfaceClass          : 0x0E (Video)
+bInterfaceSubClass       : 0x01 (Video Control)
+bInterfaceProtocol       : 0x00
+iInterface               : 0x02 (String Descriptor 2)
+ Language 0x0409         : "USB Video"
+Data (HexDump)           : 09 04 00 00 00 0E 01 00 02                        .........
+
+        ------- Video Control Interface Header Descriptor -----
+bLength                  : 0x0D (13 bytes)
+bDescriptorType          : 0x24 (Video Control Interface)
+bDescriptorSubtype       : 0x01 (Video Control Header)
+bcdUVC                   : 0x0100 (UVC Version 1.00)
+wTotalLength             : 0x0033 (51 bytes)
+dwClockFreq              : 0x02DC6C00 (48 MHz)
+bInCollection            : 0x01 (1 VideoStreaming interface)
+baInterfaceNr[1]         : 0x01 (Interface 1)
+Data (HexDump)           : 0D 24 01 00 01 33 00 00 6C DC 02 01 01            .$...3..l....
+
+        -------- Video Control Input Terminal Descriptor ------
+bLength                  : 0x12 (18 bytes)
+bDescriptorType          : 0x24 (Video Control Interface)
+bDescriptorSubtype       : 0x02 (Input Terminal)
+bTerminalID              : 0x01 (1)
+wTerminalType            : 0x0201 (ITT_CAMERA)
+bAssocTerminal           : 0x00 (Not associated with an Output Terminal)
+iTerminal                : 0x00 (No String Descriptor)
+Camera Input Terminal Data:
+wObjectiveFocalLengthMin : 0x0000
+wObjectiveFocalLengthMax : 0x0000
+wOcularFocalLength       : 0x0000
+bControlSize             : 0x03 (3 bytes)
+bmControls               : 0x00, 0x00, 0x00
+ D0                      : 0   no -  Scanning Mode
+ D1                      : 0   no -  Auto-Exposure Mode
+ D2                      : 0   no -  Auto-Exposure Priority
+ D3                      : 0   no -  Exposure Time (Absolute)
+ D4                      : 0   no -  Exposure Time (Relative)
+ D5                      : 0   no -  Focus (Absolute)
+ D6                      : 0   no -  Focus (Relative)
+ D7                      : 0   no -  Iris (Absolute)
+ D8                      : 0   no -  Iris (Relative)
+ D9                      : 0   no -  Zoom (Absolute)
+ D10                     : 0   no -  Zoom (Relative)
+ D11                     : 0   no -  Pan (Absolute)
+ D12                     : 0   no -  Pan (Relative)
+ D13                     : 0   no -  Roll (Absolute)
+ D14                     : 0   no -  Roll (Relative)
+ D15                     : 0   no -  Tilt (Absolute)
+ D16                     : 0   no -  Tilt (Relative)
+ D17                     : 0   no -  Focus Auto
+ D18                     : 0   no -  Reserved
+ D19                     : 0   no -  Reserved
+ D20                     : 0   no -  Reserved
+ D21                     : 0   no -  Reserved
+ D22                     : 0   no -  Reserved
+ D23                     : 0   no -  Reserved
+Data (HexDump)           : 12 24 02 01 01 02 00 00 00 00 00 00 00 00 03 00   .$..............
+                           00 00                                             ..
+
+        -------- Video Control Processing Unit Descriptor -----
+bLength                  : 0x0B (11 bytes)
+bDescriptorType          : 0x24 (Video Control Interface)
+bDescriptorSubtype       : 0x05 (Processing Unit)
+bUnitID                  : 0x02 (2)
+bSourceID                : 0x01 (1)
+wMaxMultiplier           : 0x0000
+bControlSize             : 0x02 (2 bytes)
+bmControls               : 0x0F, 0x00
+ D0                      : 1  yes -  Brightness
+ D1                      : 1  yes -  Contrast
+ D2                      : 1  yes -  Hue
+ D3                      : 1  yes -  Saturation
+ D4                      : 0   no -  Sharpness
+ D5                      : 0   no -  Gamma
+ D6                      : 0   no -  White Balance Temperature
+ D7                      : 0   no -  White Balance Component
+ D8                      : 0   no -  Backlight Compensation
+ D9                      : 0   no -  Gain
+ D10                     : 0   no -  Power Line Frequency
+ D11                     : 0   no -  Hue, Auto
+ D12                     : 0   no -  White Balance Temperature, Auto
+ D13                     : 0   no -  White Balance Component, Auto
+ D14                     : 0   no -  Digital Multiplier
+ D15                     : 0   no -  Digital Multiplier Limit
+iProcessing              : 0x00 (No String Descriptor)
+Data (HexDump)           : 0B 24 05 02 01 00 00 02 0F 00 00                  .$.........
+
+        ------- Video Control Output Terminal Descriptor ------
+bLength                  : 0x09 (9 bytes)
+bDescriptorType          : 0x24 (Video Control Interface)
+bDescriptorSubtype       : 0x03 (Output Terminal)
+bTerminalID              : 0x03 (3)
+wTerminalType            : 0x0101 (TT_STREAMING)
+bAssocTerminal           : 0x00 (Not associated with an Input Terminal)
+bSourceID                : 0x02 (2)
+iTerminal                : 0x00 (No String Descriptor)
+Data (HexDump)           : 09 24 03 03 01 01 00 02 00                        .$.......
+
+        ---------------- Interface Descriptor -----------------
+bLength                  : 0x09 (9 bytes)
+bDescriptorType          : 0x04 (Interface Descriptor)
+bInterfaceNumber         : 0x01 (Interface 1)
+bAlternateSetting        : 0x00
+bNumEndpoints            : 0x00 (Default Control Pipe only)
+bInterfaceClass          : 0x0E (Video)
+bInterfaceSubClass       : 0x02 (Video Streaming)
+bInterfaceProtocol       : 0x00
+iInterface               : 0x00 (No String Descriptor)
+Data (HexDump)           : 09 04 01 00 00 0E 02 00 00                        .........
+
+        ---- VC-Specific VS Video Input Header Descriptor -----
+bLength                  : 0x0E (14 bytes)
+bDescriptorType          : 0x24 (Video Streaming Interface)
+bDescriptorSubtype       : 0x01 (Input Header)
+bNumFormats              : 0x01
+wTotalLength             : 0x0049 (73 bytes)
+bEndpointAddress         : 0x83 (Direction=IN  EndpointID=3)
+bmInfo                   : 0x00 (Dynamic Format Change not supported)
+bTerminalLink            : 0x03 (Output Terminal ID 3)
+bStillCaptureMethod      : 0x00 (No Still Capture)
+nbTriggerSupport         : 0x00 (Hardware Triggering not supported)
+bTriggerUsage            : 0x00 (Host will initiate still image capture)
+bControlSize             : 0x01 (1 bytes each)
+Video Payload Format 1   : 0x00
+ D0                      : 0   no -  Key Frame Rate
+ D1                      : 0   no -  P Frame Rate
+ D2                      : 0   no -  Compression Quality
+ D3                      : 0   no -  Compression Window Size
+ D4                      : 0   no -  Generate Key Frame
+ D5                      : 0   no -  Update Frame Segment
+ D6                      : 0   no -  Reserved
+ D7                      : 0   no -  Reserved
+Data (HexDump)           : 0E 24 01 01 49 00 83 00 03 00 00 00 01 00         .$..I.........
+
+        ----- Video Streaming MJPEG Format Type Descriptor ----
+bLength                  : 0x0B (11 bytes)
+bDescriptorType          : 0x24 (Video Streaming Interface)
+bDescriptorSubtype       : 0x06 (Format MJPEG)
+bFormatIndex             : 0x01 (1)
+bNumFrameDescriptors     : 0x01 (1)
+bmFlags                  : 0x01 (Sample size is fixed)
+bDefaultFrameIndex       : 0x01 (1)
+bAspectRatioX            : 0x00
+bAspectRatioY            : 0x00
+bmInterlaceFlags         : 0x00
+ D0 IL stream or variable: 0 (no)
+ D1 Fields per frame     : 0 (2 fields)
+ D2 Field 1 first        : 0 (no)
+ D3 Reserved             : 0
+ D4..5 Field pattern     : 0 (Field 1 only)
+ D6..7 Display Mode      : 0 (Bob only)
+bCopyProtect             : 0x00 (No restrictions)
+Data (HexDump)           : 0B 24 06 01 01 01 01 00 00 00 00                  .$.........
+
+        ----- Video Streaming MJPEG Frame Type Descriptor -----
+---> This is the Default (optimum) Frame index
+bLength                  : 0x2A (42 bytes)
+bDescriptorType          : 0x24 (Video Streaming Interface)
+bDescriptorSubtype       : 0x07 (MJPEG Frame Type)
+bFrameIndex              : 0x01
+bmCapabilities           : 0x00
+wWidth                   : 0x0280 (640)
+wHeight                  : 0x01E0 (480)
+dwMinBitRate             : 0x000BB800 (768000 bps -> 96 KB/s)
+dwMaxBitRate             : 0x0BB80000 (196608000 bps -> 24.576 MB/s)
+dwMaxVideoFrameBufferSize: 0x00096000 (614400 bytes)
+dwDefaultFrameInterval   : 0x000A2C2A (66.6666 ms -> 15.0000 fps)
+bFrameIntervalType       : 0x04 (4 discrete frame intervals supported)
+adwFrameInterval[1]      : 0x0007A120 (50.0000 ms -> 20.0000 fps)
+adwFrameInterval[2]      : 0x000A2C2A (66.6666 ms -> 15.0000 fps)
+adwFrameInterval[3]      : 0x000F4240 (100.0000 ms -> 10.0000 fps)
+adwFrameInterval[4]      : 0x001E8480 (200.0000 ms -> 5.0000 fps)
+Data (HexDump)           : 2A 24 07 01 00 80 02 E0 01 00 B8 0B 00 00 00 B8   *$..............
+                           0B 00 60 09 00 2A 2C 0A 00 04 20 A1 07 00 2A 2C   ..`..*,... ...*,
+                           0A 00 40 42 0F 00 80 84 1E 00                     ..@B......
+
+        ------- VS Color Matching Descriptor Descriptor -------
+bLength                  : 0x06 (6 bytes)
+bDescriptorType          : 0x24 (Video Streaming Interface)
+bDescriptorSubtype       : 0x0D (Color Matching)
+bColorPrimaries          : 0x01 (BT.709, sRGB)
+bTransferCharacteristics : 0x01 (BT.709)
+bMatrixCoefficients      : 0x04 (SMPTE 170M)
+Data (HexDump)           : 06 24 0D 01 01 04                                 .$....
+
+        ---------------- Interface Descriptor -----------------
+bLength                  : 0x09 (9 bytes)
+bDescriptorType          : 0x04 (Interface Descriptor)
+bInterfaceNumber         : 0x01 (Interface 1)
+bAlternateSetting        : 0x01
+bNumEndpoints            : 0x01 (1 Endpoint)
+bInterfaceClass          : 0x0E (Video)
+bInterfaceSubClass       : 0x02 (Video Streaming)
+bInterfaceProtocol       : 0x00
+iInterface               : 0x00 (No String Descriptor)
+Data (HexDump)           : 09 04 01 01 01 0E 02 00 00                        .........
+
+        ----------------- Endpoint Descriptor -----------------
+bLength                  : 0x07 (7 bytes)
+bDescriptorType          : 0x05 (Endpoint Descriptor)
+bEndpointAddress         : 0x83 (Direction=IN EndpointID=3)
+bmAttributes             : 0x05 (TransferType=Isochronous  SyncType=Asynchronous  EndpointType=Data)
+wMaxPacketSize           : 0x00C0 (192 bytes)
+bInterval                : 0x01 (1 ms)
+Data (HexDump)           : 07 05 83 05 C0 00 01                              .......
+
+        ---------------- Interface Descriptor -----------------
+bLength                  : 0x09 (9 bytes)
+bDescriptorType          : 0x04 (Interface Descriptor)
+bInterfaceNumber         : 0x01 (Interface 1)
+bAlternateSetting        : 0x02
+bNumEndpoints            : 0x01 (1 Endpoint)
+bInterfaceClass          : 0x0E (Video)
+bInterfaceSubClass       : 0x02 (Video Streaming)
+bInterfaceProtocol       : 0x00
+iInterface               : 0x00 (No String Descriptor)
+Data (HexDump)           : 09 04 01 02 01 0E 02 00 00                        .........
+
+        ----------------- Endpoint Descriptor -----------------
+bLength                  : 0x07 (7 bytes)
+bDescriptorType          : 0x05 (Endpoint Descriptor)
+bEndpointAddress         : 0x83 (Direction=IN EndpointID=3)
+bmAttributes             : 0x05 (TransferType=Isochronous  SyncType=Asynchronous  EndpointType=Data)
+wMaxPacketSize           : 0x0200 (512 bytes)
+bInterval                : 0x01 (1 ms)
+Data (HexDump)           : 07 05 83 05 00 02 01                              .......
+
+        ---------------- Interface Descriptor -----------------
+bLength                  : 0x09 (9 bytes)
+bDescriptorType          : 0x04 (Interface Descriptor)
+bInterfaceNumber         : 0x01 (Interface 1)
+bAlternateSetting        : 0x03
+bNumEndpoints            : 0x01 (1 Endpoint)
+bInterfaceClass          : 0x0E (Video)
+bInterfaceSubClass       : 0x02 (Video Streaming)
+bInterfaceProtocol       : 0x00
+iInterface               : 0x00 (No String Descriptor)
+Data (HexDump)           : 09 04 01 03 01 0E 02 00 00                        .........
+
+        ----------------- Endpoint Descriptor -----------------
+bLength                  : 0x07 (7 bytes)
+bDescriptorType          : 0x05 (Endpoint Descriptor)
+bEndpointAddress         : 0x83 (Direction=IN EndpointID=3)
+bmAttributes             : 0x05 (TransferType=Isochronous  SyncType=Asynchronous  EndpointType=Data)
+wMaxPacketSize           : 0x02BC (700 bytes)
+bInterval                : 0x01 (1 ms)
+Data (HexDump)           : 07 05 83 05 BC 02 01                              .......
+
+        ---------------- Interface Descriptor -----------------
+bLength                  : 0x09 (9 bytes)
+bDescriptorType          : 0x04 (Interface Descriptor)
+bInterfaceNumber         : 0x01 (Interface 1)
+bAlternateSetting        : 0x04
+bNumEndpoints            : 0x01 (1 Endpoint)
+bInterfaceClass          : 0x0E (Video)
+bInterfaceSubClass       : 0x02 (Video Streaming)
+bInterfaceProtocol       : 0x00
+iInterface               : 0x00 (No String Descriptor)
+Data (HexDump)           : 09 04 01 04 01 0E 02 00 00                        .........
+
+        ----------------- Endpoint Descriptor -----------------
+bLength                  : 0x07 (7 bytes)
+bDescriptorType          : 0x05 (Endpoint Descriptor)
+bEndpointAddress         : 0x83 (Direction=IN EndpointID=3)
+bmAttributes             : 0x05 (TransferType=Isochronous  SyncType=Asynchronous  EndpointType=Data)
+wMaxPacketSize           : 0x0320 (800 bytes)
+bInterval                : 0x01 (1 ms)
+Data (HexDump)           : 07 05 83 05 20 03 01                              .... ..
+
+        ------------------- IAD Descriptor --------------------
+bLength                  : 0x08 (8 bytes)
+bDescriptorType          : 0x0B (Interface Association Descriptor)
+bFirstInterface          : 0x02 (Interface 2)
+bInterfaceCount          : 0x02 (2 Interfaces)
+bFunctionClass           : 0x01 (Audio)
+bFunctionSubClass        : 0x01 (Audio Control)
+bFunctionProtocol        : 0x00
+iFunction                : 0x04 (String Descriptor 4)
+ Language 0x0409         : "USB Digital Audio"
+Data (HexDump)           : 08 0B 02 02 01 01 00 04                           ........
+
+        ---------------- Interface Descriptor -----------------
+bLength                  : 0x09 (9 bytes)
+bDescriptorType          : 0x04 (Interface Descriptor)
+bInterfaceNumber         : 0x02 (Interface 2)
+bAlternateSetting        : 0x00
+bNumEndpoints            : 0x00 (Default Control Pipe only)
+bInterfaceClass          : 0x01 (Audio)
+bInterfaceSubClass       : 0x01 (Audio Control)
+bInterfaceProtocol       : 0x00
+iInterface               : 0x04 (String Descriptor 4)
+ Language 0x0409         : "USB Digital Audio"
+Data (HexDump)           : 09 04 02 00 00 01 01 00 04                        .........
+
+        ------ Audio Control Interface Header Descriptor ------
+bLength                  : 0x09 (9 bytes)
+bDescriptorType          : 0x24 (Audio Interface Descriptor)
+bDescriptorSubtype       : 0x01 (Header)
+bcdADC                   : 0x0100
+wTotalLength             : 0x0026 (38 bytes)
+bInCollection            : 0x01
+baInterfaceNr[1]         : 0x03
+Data (HexDump)           : 09 24 01 00 01 26 00 01 03                        .$...&...
+
+        ------- Audio Control Input Terminal Descriptor -------
+bLength                  : 0x0C (12 bytes)
+bDescriptorType          : 0x24 (Audio Interface Descriptor)
+bDescriptorSubtype       : 0x02 (Input Terminal)
+bTerminalID              : 0x01
+wTerminalType            : 0x0602 (Digital audio interface)
+bAssocTerminal           : 0x00
+bNrChannels              : 0x02 (2 channels)
+wChannelConfig           : 0x0003 (L, R)
+iChannelNames            : 0x00 (No String Descriptor)
+iTerminal                : 0x00 (No String Descriptor)
+Data (HexDump)           : 0C 24 02 01 02 06 00 02 03 00 00 00               .$..........
+
+        -------- Audio Control Feature Unit Descriptor --------
+bLength                  : 0x08 (8 bytes)
+bDescriptorType          : 0x24 (Audio Interface Descriptor)
+bDescriptorSubtype       : 0x06 (Feature Unit)
+bUnitID                  : 0x02 (2)
+bSourceID                : 0x01 (1)
+bControlSize             : 0x01 (1 byte per control)
+bmaControls[0]           : 0x01
+ D0: Mute                : 1
+ D1: Volume              : 0
+ D2: Bass                : 0
+ D3: Mid                 : 0
+ D4: Treble              : 0
+ D5: Graphic Equalizer   : 0
+ D6: Automatic Gain      : 0
+ D7: Delay               : 0
+iFeature                 : 0x00 (No String Descriptor)
+Data (HexDump)           : 08 24 06 02 01 01 01 00                           .$......
+
+        ------- Audio Control Output Terminal Descriptor ------
+bLength                  : 0x09 (9 bytes)
+bDescriptorType          : 0x24 (Audio Interface Descriptor)
+bDescriptorSubtype       : 0x03 (Output Terminal)
+bTerminalID              : 0x03
+wTerminalType            : 0x0101 (USB Streaming)
+bAssocTerminal           : 0x00 (0)
+bSourceID                : 0x02 (2)
+iTerminal                : 0x00 (No String Descriptor)
+Data (HexDump)           : 09 24 03 03 01 01 00 02 00                        .$.......
+
+        ---------------- Interface Descriptor -----------------
+bLength                  : 0x09 (9 bytes)
+bDescriptorType          : 0x04 (Interface Descriptor)
+bInterfaceNumber         : 0x03 (Interface 3)
+bAlternateSetting        : 0x00
+bNumEndpoints            : 0x00 (Default Control Pipe only)
+bInterfaceClass          : 0x01 (Audio)
+bInterfaceSubClass       : 0x02 (Audio Streaming)
+bInterfaceProtocol       : 0x00
+iInterface               : 0x04 (String Descriptor 4)
+ Language 0x0409         : "USB Digital Audio"
+Data (HexDump)           : 09 04 03 00 00 01 02 00 04                        .........
+
+        ---------------- Interface Descriptor -----------------
+bLength                  : 0x09 (9 bytes)
+bDescriptorType          : 0x04 (Interface Descriptor)
+bInterfaceNumber         : 0x03 (Interface 3)
+bAlternateSetting        : 0x01
+bNumEndpoints            : 0x01 (1 Endpoint)
+bInterfaceClass          : 0x01 (Audio)
+bInterfaceSubClass       : 0x02 (Audio Streaming)
+bInterfaceProtocol       : 0x00
+iInterface               : 0x04 (String Descriptor 4)
+ Language 0x0409         : "USB Digital Audio"
+Data (HexDump)           : 09 04 03 01 01 01 02 00 04                        .........
+
+        -------- Audio Streaming Interface Descriptor ---------
+bLength                  : 0x07 (7 bytes)
+bDescriptorType          : 0x24 (Audio Interface Descriptor)
+bDescriptorSubtype       : 0x01 (AS_GENERAL)
+bTerminalLink            : 0x03 (Terminal ID 3)
+bDelay                   : 0x00 (0 frames)
+wFormatTag               : 0x0001 (PCM)
+Data (HexDump)           : 07 24 01 03 00 01 00                              .$.....
+
+        ------- Audio Streaming Format Type Descriptor --------
+bLength                  : 0x0B (11 bytes)
+bDescriptorType          : 0x24 (Audio Interface Descriptor)
+bDescriptorSubtype       : 0x02 (Format Type)
+bFormatType              : 0x01 (FORMAT_TYPE_I)
+bNrChannels              : 0x01 (1 channel)
+bSubframeSize            : 0x02 (2 bytes per subframe)
+bBitResolution           : 0x10 (16 bits per sample)
+bSamFreqType             : 0x01 (supports 1 sample frequence)
+tSamFreq[1]              : 0x17700 (96000 Hz)
+Data (HexDump)           : 0B 24 02 01 01 02 10 01 00 77 01                  .$.......w.
+
+        ----------------- Endpoint Descriptor -----------------
+bLength                  : 0x09 (9 bytes)
+bDescriptorType          : 0x05 (Endpoint Descriptor)
+bEndpointAddress         : 0x82 (Direction=IN EndpointID=2)
+bmAttributes             : 0x05 (TransferType=Isochronous  SyncType=Asynchronous  EndpointType=Data)
+wMaxPacketSize           : 0x0100 (256 bytes)
+bInterval                : 0x01 (1 ms)
+bRefresh                 : 0x00
+bSynchAddress            : 0x00
+Data (HexDump)           : 09 05 82 05 00 01 01 00 00                        .........
+
+        ----------- Audio Data Endpoint Descriptor ------------
+bLength                  : 0x07 (7 bytes)
+bDescriptorType          : 0x25 (Audio Endpoint Descriptor)
+bDescriptorSubtype       : 0x01 (General)
+bmAttributes             : 0x00
+ D0   : Sampling Freq    : 0x00 (not supported)
+ D1   : Pitch            : 0x00 (not supported)
+ D6..2: Reserved         : 0x00
+ D7   : MaxPacketsOnly   : 0x00 (no)
+bLockDelayUnits          : 0x00 (Undefined)
+wLockDelay               : 0x0000
+Data (HexDump)           : 07 25 01 00 00 00 00                              .%.....
+
+        ---------------- Interface Descriptor -----------------
+bLength                  : 0x09 (9 bytes)
+bDescriptorType          : 0x04 (Interface Descriptor)
+bInterfaceNumber         : 0x04 (Interface 4)
+bAlternateSetting        : 0x00
+bNumEndpoints            : 0x01 (1 Endpoint)
+bInterfaceClass          : 0x03 (HID - Human Interface Device)
+bInterfaceSubClass       : 0x00 (None)
+bInterfaceProtocol       : 0x00 (None)
+iInterface               : 0x00 (No String Descriptor)
+Data (HexDump)           : 09 04 04 00 01 03 00 00 00                        .........
+
+        ------------------- HID Descriptor --------------------
+bLength                  : 0x09 (9 bytes)
+bDescriptorType          : 0x21 (HID Descriptor)
+bcdHID                   : 0x0110 (HID Version 1.10)
+bCountryCode             : 0x21 (33 = US)
+bNumDescriptors          : 0x01
+Data (HexDump)           : 09 21 10 01 21 01 22 17 00                        .!..!."..
+Descriptor 1:
+bDescriptorType          : 0x22 (Class=Report)
+wDescriptorLength        : 0x0017 (23 bytes)
+Error reading descriptor : ERROR_GEN_FAILURE (due to a obscure limitation of the Win32 USB API, see F1 Help)
+
+        ----------------- Endpoint Descriptor -----------------
+bLength                  : 0x07 (7 bytes)
+bDescriptorType          : 0x05 (Endpoint Descriptor)
+bEndpointAddress         : 0x84 (Direction=IN EndpointID=4)
+bmAttributes             : 0x03 (TransferType=Interrupt)
+wMaxPacketSize           : 0x0004 (4 bytes)
+bInterval                : 0x10 (16 ms)
+Data (HexDump)           : 07 05 84 03 04 00 10                              .......
+
+      -------------------- String Descriptors -------------------
+             ------ String Descriptor 0 ------
+bLength                  : 0x04 (4 bytes)
+bDescriptorType          : 0x03 (String Descriptor)
+Language ID[0]           : 0x0409 (English - United States)
+Data (HexDump)           : 04 03 09 04                                       ....
+             ------ String Descriptor 1 ------
+bLength                  : 0x1A (26 bytes)
+bDescriptorType          : 0x03 (String Descriptor)
+Language 0x0409          : "MACROSILICON"
+Data (HexDump)           : 1A 03 4D 00 41 00 43 00 52 00 4F 00 53 00 49 00   ..M.A.C.R.O.S.I.
+                           4C 00 49 00 43 00 4F 00 4E 00                     L.I.C.O.N.
+             ------ String Descriptor 2 ------
+bLength                  : 0x14 (20 bytes)
+bDescriptorType          : 0x03 (String Descriptor)
+Language 0x0409          : "USB Video"
+Data (HexDump)           : 14 03 55 00 53 00 42 00 20 00 56 00 69 00 64 00   ..U.S.B. .V.i.d.
+                           65 00 6F 00                                       e.o.
+             ------ String Descriptor 4 ------
+bLength                  : 0x24 (36 bytes)
+bDescriptorType          : 0x03 (String Descriptor)
+Language 0x0409          : "USB Digital Audio"
+Data (HexDump)           : 24 03 55 00 53 00 42 00 20 00 44 00 69 00 67 00   $.U.S.B. .D.i.g.
+                           69 00 74 00 61 00 6C 00 20 00 41 00 75 00 64 00   i.t.a.l. .A.u.d.
+                           69 00 6F 00                                       i.o.

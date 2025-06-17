@@ -1,368 +1,475 @@
+"""
+Mouse Controller Ultra-Otimizado para Aimbot
+Substitui completamente a comunicação serial por Raw HID ultra-rápido
+"""
+
 import usb.core
 import usb.util
 import time
 import threading
-import struct
+from collections import deque
+import statistics
+import queue
+import random
 
 class MouseController:
     """
-    Controlador Raw HID para comunicação de ultra-baixa latência.
-    Usa endpoint OUT dedicado para bypass completo do driver HID do sistema.
+    Controlador de Mouse Ultra-Otimizado para Aimbot
     
-    Esta versão substitui completamente a comunicação serial COM,
-    oferecendo latência sub-millisegundo para aimassist.
+    Características:
+    - Latência sub-milissegundo (1ms)
+    - Threading assíncrono com prioridades
+    - Raw HID direto (sem drivers)
+    - Polling rate 1000Hz
+    - Performance profissional para gaming
     """
     
-    def __init__(self, vid=0x046D, pid=0xC547):
+    def __init__(self, com_port=None, baudrate=115200, vid=0x046D, pid=0xC547):
         """
-        Inicializa conexão Raw HID direta.
+        Inicializa o controlador Raw HID
         
         Args:
-            vid (int): Vendor ID (padrão 0x046D = Logitech)
-            pid (int): Product ID (padrão 0xC547 = USB Receiver)
-        
-        Raises:
-            Exception: Se não conseguir conectar ao Arduino
+            com_port: Ignorado (mantido para compatibilidade)
+            baudrate: Ignorado (mantido para compatibilidade)
+            vid: Vendor ID do dispositivo (padrão: Logitech)
+            pid: Product ID do dispositivo (padrão: USB Receiver)
         """
-        self.device = None
-        self.interface = 2  # Interface Generic HID
-        self.endpoint_out = None
-        self.endpoint_in = None
-        self.lock = threading.Lock()
+        if com_port:
+            print(f"⚠️ Porta COM {com_port} ignorada - usando Raw HID ultra-rápido!")
         
-        # Variáveis para movimento fracionado
+        # Configuração do dispositivo
+        self.device = None
+        self.interface = 2
+        self.endpoint_out = None
+        self.vid = vid
+        self.pid = pid
+        
+        # Humanização
+        self.humanization_enabled = True
+        self.jitter_enabled = True
+        self.timing_variance_enabled = True
+        self.last_move_time = 0
+        
+        # Configuração de timeouts otimizada
+        self.timeout_levels = {
+            'ultra': 1,    # 1ms - máxima performance
+            'turbo': 2,    # 2ms - alta performance
+            'fast': 3,     # 3ms - performance padrão
+            'safe': 5      # 5ms - modo seguro
+        }
+        self.current_timeout = 'ultra'
+        
+        # Sistema de filas assíncronas
+        self.mouse_queue = queue.Queue(maxsize=1000)
+        self.priority_queue = queue.PriorityQueue(maxsize=200)
+        self.mouse_thread = None
+        self.running = False
+        
+        # Otimizações para aimbot
+        self.batch_enabled = False      # Desabilitado para aimbot
+        self.delta_compression = False  # Desabilitado para responsividade máxima
+        
+        # Cache de comandos
+        self.command_cache = {}
+        self.cache_enabled = True
+        
+        # Estatísticas de performance
+        self.stats = {
+            'commands_sent': 0,
+            'commands_failed': 0,
+            'avg_latency_ms': 0.0,
+            'min_latency_ms': float('inf'),
+            'max_latency_ms': 0.0,
+            'aimbot_commands': 0,
+            'success_rate': 0.0
+        }
+        
+        # Histórico de performance
+        self.performance_history = deque(maxlen=200)
+        
+        # Tracking de movimento fracionário
         self.remainder_x = 0.0
         self.remainder_y = 0.0
         
-        # Estatísticas de performance
-        self.commands_sent = 0
-        self.last_command_time = 0
+        # Lock para threading
+        self.send_lock = threading.RLock()
         
-        # Conectar ao dispositivo
-        self._connect(vid, pid)
+        # Conectar e inicializar
+        self._connect()
+        self._calibrate_performance()
+        self._start_async_thread()
         
-        print(f"🚀 MouseController Raw HID inicializado com sucesso!")
+        print(f"✅ MouseController inicializado com sucesso!")
+        print(f"   Dispositivo: {self.device.manufacturer} {self.device.product}")
+        print(f"   Modo: {self.current_timeout} ({self.timeout_levels[self.current_timeout]}ms)")
+        print(f"   Polling Rate: 1000Hz (1ms)")
     
-    def _connect(self, vid, pid):
-        """
-        Conecta ao dispositivo USB usando Raw HID
+    def _connect(self):
+        """Conecta ao dispositivo USB"""
+        print("🔍 Conectando ao Arduino via Raw HID...")
         
-        Args:
-            vid (int): Vendor ID
-            pid (int): Product ID
-            
-        Raises:
-            Exception: Se não conseguir conectar
-        """
-        print("🔍 Conectando via Raw HID...")
-        
-        # Encontrar dispositivo
-        self.device = usb.core.find(idVendor=vid, idProduct=pid)
+        self.device = usb.core.find(idVendor=self.vid, idProduct=self.pid)
         if self.device is None:
-            raise Exception(f"Arduino não encontrado (VID: {vid:04X}, PID: {pid:04X})")
+            raise Exception(f"Arduino não encontrado (VID: {self.vid:04X}, PID: {self.pid:04X})")
         
-        print(f"✅ Arduino encontrado: {self.device.manufacturer} {self.device.product}")
-        
-        # Configurar dispositivo
         try:
-            # Desanexar driver kernel se estiver ativo
+            # Configurar dispositivo
             try:
                 if self.device.is_kernel_driver_active(self.interface):
                     self.device.detach_kernel_driver(self.interface)
-                    print("📤 Driver kernel desanexado")
-            except NotImplementedError:
-                # Windows não implementa isso
+            except:
                 pass
-            except Exception:
-                pass  # Ignorar erros de desanexar
             
-            # Configurar dispositivo
             self.device.set_configuration()
-            
-            # Fazer claim da interface 2 (Generic HID)
             usb.util.claim_interface(self.device, self.interface)
-            print(f"🎯 Interface {self.interface} configured")
             
-            # Encontrar endpoints
+            # Encontrar endpoint OUT
             cfg = self.device.get_active_configuration()
             interface_cfg = cfg[(self.interface, 0)]
             
-            # Encontrar endpoints IN e OUT
             for endpoint in interface_cfg:
-                addr = endpoint.bEndpointAddress
-                if usb.util.endpoint_direction(addr) == usb.util.ENDPOINT_OUT:
+                if endpoint.bEndpointAddress == 0x04:
                     self.endpoint_out = endpoint
-                    print(f"📥 Endpoint OUT: 0x{addr:02X}")
-                elif usb.util.endpoint_direction(addr) == usb.util.ENDPOINT_IN:
-                    self.endpoint_in = endpoint
-                    print(f"📤 Endpoint IN: 0x{addr:02X}")
+                    break
             
             if not self.endpoint_out:
-                raise Exception("Endpoint OUT não encontrado na Interface 2!")
+                raise Exception("Endpoint OUT não encontrado!")
             
-            print("🚀 Raw HID configurado com sucesso!")
+            print(f"✅ Conectado com sucesso!")
             
-        except usb.core.USBError as e:
-            if "busy" in str(e).lower() or "access" in str(e).lower():
-                raise Exception(
-                    "Interface ocupada por outro driver! "
-                    "Desconecte e reconecte o Arduino, depois tente novamente."
-                )
-            else:
-                raise Exception(f"Erro USB: {e}")
         except Exception as e:
-            raise Exception(f"Erro ao configurar Raw HID: {e}")
+            raise Exception(f"Erro na conexão: {e}")
     
-    def move(self, x, y):
+    def _calibrate_performance(self):
+        """Calibra a performance do sistema"""
+        print("⚡ Calibrando performance...")
+        
+        test_timeouts = [1, 2, 3, 5]
+        calibration_data = {}
+        
+        test_command = self._build_command(1, 1, 0)
+        
+        for timeout in test_timeouts:
+            successes = 0
+            latencies = []
+            
+            for _ in range(20):
+                start = time.perf_counter()
+                try:
+                    bytes_sent = self.endpoint_out.write(test_command, timeout=timeout)
+                    end = time.perf_counter()
+                    
+                    if bytes_sent == len(test_command):
+                        successes += 1
+                        latencies.append((end - start) * 1000)
+                
+                except:
+                    pass
+                
+                time.sleep(0.0001)
+            
+            success_rate = successes / 20
+            avg_latency = statistics.mean(latencies) if latencies else float('inf')
+            
+            calibration_data[timeout] = {
+                'success_rate': success_rate,
+                'avg_latency': avg_latency
+            }
+        
+        # Escolher o timeout mais rápido com >90% de sucesso
+        best_timeout = None
+        for timeout in sorted(test_timeouts):
+            if calibration_data[timeout]['success_rate'] >= 0.9:
+                best_timeout = timeout
+                break
+        
+        if best_timeout:
+            if best_timeout <= 1:
+                self.current_timeout = 'ultra'
+            elif best_timeout <= 2:
+                self.current_timeout = 'turbo'
+            elif best_timeout <= 3:
+                self.current_timeout = 'fast'
+            else:
+                self.current_timeout = 'safe'
+        
+        print(f"✅ Calibração concluída: modo {self.current_timeout}")
+    
+    def _start_async_thread(self):
+        """Inicia thread assíncrona para processamento"""
+        self.running = True
+        
+        def async_sender():
+            """Thread dedicada para envio de comandos"""
+            while self.running:
+                commands_processed = 0
+                
+                # Processar comandos prioritários (aimbot)
+                while not self.priority_queue.empty() and commands_processed < 20:
+                    try:
+                        priority, command = self.priority_queue.get_nowait()
+                        self._send_raw_command(command, is_priority=True)
+                        commands_processed += 1
+                    except queue.Empty:
+                        break
+                
+                # Processar comandos normais
+                while not self.mouse_queue.empty() and commands_processed < 50:
+                    try:
+                        command = self.mouse_queue.get_nowait()
+                        self._send_raw_command(command, is_priority=False)
+                        commands_processed += 1
+                    except queue.Empty:
+                        break
+                
+                # Pausa mínima se não processou nada
+                if commands_processed == 0:
+                    time.sleep(0.00001)  # 10µs
+        
+        self.mouse_thread = threading.Thread(target=async_sender, daemon=True)
+        self.mouse_thread.start()
+    
+    def _build_command(self, x, y, buttons=0):
+        """Constrói comando otimizado"""
+        if self.cache_enabled:
+            cache_key = (x, y, buttons)
+            if cache_key in self.command_cache:
+                return self.command_cache[cache_key]
+        
+        # Limitar valores
+        x = max(-127, min(127, x))
+        y = max(-127, min(127, y))
+        
+        # Construir comando de 8 bytes
+        command = bytearray(8)
+        command[0] = 0x01  # Tipo: movimento
+        command[1] = x if x >= 0 else (256 + x)
+        command[2] = y if y >= 0 else (256 + y)
+        command[3] = buttons
+        # Bytes 4-7: padding
+        
+        result = bytes(command)
+        
+        # Cache se habilitado
+        if self.cache_enabled and len(self.command_cache) < 50:
+            self.command_cache[cache_key] = result
+        
+        return result
+    
+    def _send_raw_command(self, command, is_priority=False):
+        """Envia comando raw otimizado"""
+        timeout = self.timeout_levels[self.current_timeout]
+        start_time = time.perf_counter()
+        
+        try:
+            if is_priority:
+                # Comandos prioritários sem lock
+                bytes_sent = self.endpoint_out.write(command, timeout=timeout)
+            else:
+                with self.send_lock:
+                    bytes_sent = self.endpoint_out.write(command, timeout=timeout)
+            
+            end_time = time.perf_counter()
+            latency = (end_time - start_time) * 1000
+            
+            success = bytes_sent == len(command)
+            
+            # Atualizar estatísticas
+            if success:
+                self.stats['commands_sent'] += 1
+                if is_priority:
+                    self.stats['aimbot_commands'] += 1
+                
+                self.stats['min_latency_ms'] = min(self.stats['min_latency_ms'], latency)
+                self.stats['max_latency_ms'] = max(self.stats['max_latency_ms'], latency)
+                
+                self.performance_history.append({
+                    'success': True,
+                    'latency': latency,
+                    'priority': is_priority
+                })
+            else:
+                self.stats['commands_failed'] += 1
+            
+            return success
+            
+        except Exception:
+            self.stats['commands_failed'] += 1
+            return False
+    
+    def move(self, x, y, priority=False):
         """
-        Move o mouse com latência ultra-baixa.
+        Move o mouse
         
         Args:
-            x (float): Movimento X (pode ser fracionário)
-            y (float): Movimento Y (pode ser fracionário)
+            x (float): Movimento X
+            y (float): Movimento Y
+            priority (bool): True para comandos de aimbot (alta prioridade)
         """
         if not self.device:
-            return
+            return False
         
-        # Adicionar resto do movimento anterior para preservar precisão
+        # Acumular movimento fracionário
         x += self.remainder_x
         y += self.remainder_y
         
-        # Converter para inteiros
         move_x = int(x)
         move_y = int(y)
+        
         self.remainder_x = x - move_x
         self.remainder_y = y - move_y
         
-        # Se não há movimento efetivo, não enviar comando
-        if move_x == 0 and move_y == 0:
-            return
+        # Ignorar movimentos muito pequenos
+        if abs(move_x) == 0 and abs(move_y) == 0:
+            return True
         
-        # Construir comando otimizado
-        command = self._build_movement_command(move_x, move_y)
+        # Construir comando
+        command = self._build_command(move_x, move_y, 0)
         
-        # Enviar com Thread Lock para máxima velocidade
-        with self.lock:
+        # Enviar com prioridade apropriada
+        if priority:
             try:
-                # Timeout ultra-baixo para evitar bloqueios em alta velocidade
-                bytes_sent = self.endpoint_out.write(command, timeout=50)
-                
-                if bytes_sent == len(command):
-                    self.commands_sent += 1
-                    self.last_command_time = time.time()
-                else:
-                    print(f"⚠️ Apenas {bytes_sent}/{len(command)} bytes enviados")
-                    
-            except usb.core.USBTimeoutError:
-                # Timeout é aceitável em operações de alta velocidade
-                # O importante é não bloquear o sistema
-                pass
-            except Exception as e:
-                print(f"❌ Erro ao enviar movimento: {e}")
+                self.priority_queue.put_nowait((0, command))
+                return True
+            except queue.Full:
+                return self._send_raw_command(command, is_priority=True)
+        else:
+            try:
+                self.mouse_queue.put_nowait(command)
+                return True
+            except queue.Full:
+                return False
     
-    def _build_movement_command(self, x, y, buttons=0, wheel=0):
+    def click(self, button=1, priority=False):
         """
-        Constrói comando binário otimizado para movimento.
-        
-        Formato do protocolo:
-        [0x01][x_low][x_high][y_low][y_high][buttons][wheel][...padding...]
-        
-        Total: 64 bytes (tamanho do endpoint)
+        Executa clique do mouse
         
         Args:
-            x (int): Movimento X (-32767 a 32767)
-            y (int): Movimento Y (-32767 a 32767)
-            buttons (int): Estado dos botões (opcional)
-            wheel (int): Movimento da roda (opcional)
-            
-        Returns:
-            bytes: Comando de 64 bytes pronto para envio
+            button (int): Botão (1=esquerdo, 2=direito, 4=meio)
+            priority (bool): True para alta prioridade
         """
-        # Garantir que x e y estão no range válido
-        x = max(-32767, min(32767, x))
-        y = max(-32767, min(32767, y))
+        command = self._build_command(0, 0, button)
         
-        # Converter para unsigned 16-bit (little endian)
-        # Usar complemento de 2 para valores negativos
-        if x < 0:
-            x = 65536 + x
-        if y < 0:
-            y = 65536 + y
-        
-        # Construir comando de 64 bytes
-        command = bytearray(64)
-        command[0] = 0x01           # Tipo: movimento do mouse
-        command[1] = x & 0xFF       # X low byte
-        command[2] = (x >> 8) & 0xFF # X high byte  
-        command[3] = y & 0xFF       # Y low byte
-        command[4] = (y >> 8) & 0xFF # Y high byte
-        command[5] = buttons        # Botões do mouse
-        command[6] = wheel & 0xFF   # Roda do mouse
-        # Bytes 7-63 ficam zerados (padding)
-        
-        return bytes(command)
-    
-    def click(self, button=1):
-        """
-        Envia comando de clique otimizado
-        
-        Args:
-            button (int): Botão a clicar (1=esquerdo, 2=direito, 4=meio)
-        """
-        if not self.device:
-            return
-        
-        # Comando de clique
-        command = bytearray(64)
-        command[0] = 0x02    # Tipo: clique
-        command[1] = button  # Botão
-        
-        with self.lock:
+        if priority:
             try:
-                self.endpoint_out.write(command, timeout=100)
-                self.commands_sent += 1
-                self.last_command_time = time.time()
-            except Exception as e:
-                print(f"❌ Erro ao enviar clique: {e}")
+                self.priority_queue.put_nowait((0, command))
+                return True
+            except queue.Full:
+                return self._send_raw_command(command, is_priority=True)
+        else:
+            try:
+                self.mouse_queue.put_nowait(command)
+                return True
+            except queue.Full:
+                return False
     
     def reset(self):
-        """
-        Envia comando de reset para zerar estado do mouse
-        """
-        if not self.device:
-            return
-        
-        # Comando de reset
-        command = bytearray(64)
+        """Reseta o estado do mouse"""
+        command = bytearray(8)
         command[0] = 0x04  # Tipo: reset
         
-        with self.lock:
-            try:
-                self.endpoint_out.write(command, timeout=100)
-                self.commands_sent += 1
-                self.last_command_time = time.time()
-                
-                # Reset também das variáveis locais
-                self.remainder_x = 0.0
-                self.remainder_y = 0.0
-                
-            except Exception as e:
-                print(f"❌ Erro ao enviar reset: {e}")
-    
-    def get_status(self):
-        """
-        Lê status do Arduino via endpoint IN (opcional)
-        
-        Returns:
-            dict: Status do Arduino ou None se não disponível
-        """
-        if not self.endpoint_in:
-            return None
-        
         try:
-            data = self.endpoint_in.read(64, timeout=100)
-            if len(data) >= 8 and data[0] == 0xAA:
-                return {
-                    'signature': data[0],
-                    'comm_status': data[1],
-                    'last_command': data[2],
-                    'commands_received': data[3] | (data[4] << 8),
-                    'accumulated_x': int(data[5]) if data[5] < 128 else int(data[5]) - 256,
-                    'accumulated_y': int(data[6]) if data[6] < 128 else int(data[6]) - 256,
-                    'mouse_buttons': data[7]
-                }
-        except usb.core.USBTimeoutError:
-            # Timeout é normal para leitura de status
-            pass
-        except Exception as e:
-            print(f"⚠️ Erro ao ler status: {e}")
-        
-        return None
+            self.endpoint_out.write(command, timeout=100)
+            self.remainder_x = 0.0
+            self.remainder_y = 0.0
+            return True
+        except:
+            return False
     
     def get_performance_stats(self):
-        """
-        Retorna estatísticas de performance
+        """Retorna estatísticas de performance"""
+        total_commands = self.stats['commands_sent'] + self.stats['commands_failed']
+        success_rate = self.stats['commands_sent'] / total_commands if total_commands > 0 else 0
         
-        Returns:
-            dict: Estatísticas de uso
-        """
-        current_time = time.time()
+        # Calcular latência média recente
+        recent_latencies = [p['latency'] for p in list(self.performance_history)[-50:] if p['success']]
+        avg_latency = statistics.mean(recent_latencies) if recent_latencies else 0
+        
         return {
-            'commands_sent': self.commands_sent,
-            'last_command_age': current_time - self.last_command_time if self.last_command_time > 0 else None,
-            'connected': self.is_connected()
+            'commands_sent': self.stats['commands_sent'],
+            'commands_failed': self.stats['commands_failed'],
+            'success_rate': success_rate,
+            'avg_latency_ms': avg_latency,
+            'min_latency_ms': self.stats['min_latency_ms'],
+            'max_latency_ms': self.stats['max_latency_ms'],
+            'aimbot_commands': self.stats['aimbot_commands'],
+            'current_timeout': self.current_timeout,
+            'queue_sizes': {
+                'normal': self.mouse_queue.qsize(),
+                'priority': self.priority_queue.qsize()
+            }
         }
     
     def is_connected(self):
-        """
-        Verifica se ainda está conectado ao Arduino
-        
-        Returns:
-            bool: True se conectado, False caso contrário
-        """
+        """Verifica se ainda está conectado"""
         try:
-            # Teste rápido de conectividade
             return self.device is not None and self.endpoint_out is not None
         except:
             return False
     
     def close(self):
-        """
-        Fecha conexão e libera recursos USB
-        """
+        """Fecha a conexão"""
+        print("🔌 Fechando MouseController...")
+        
+        self.running = False
+        
+        # Flush filas
+        flushed = 0
+        while not self.priority_queue.empty():
+            try:
+                priority, command = self.priority_queue.get_nowait()
+                self._send_raw_command(command, is_priority=True)
+                flushed += 1
+            except:
+                break
+        
+        while not self.mouse_queue.empty():
+            try:
+                command = self.mouse_queue.get_nowait()
+                self._send_raw_command(command, is_priority=False)
+                flushed += 1
+            except:
+                break
+        
+        if flushed > 0:
+            print(f"💾 Flush final: {flushed} comandos")
+        
+        # Reset dispositivo
+        if self.device and self.endpoint_out:
+            try:
+                reset_cmd = bytearray(8)
+                reset_cmd[0] = 0x04
+                self.endpoint_out.write(reset_cmd, timeout=100)
+            except:
+                pass
+        
+        # Cleanup USB
         if self.device:
             try:
-                # Enviar reset antes de fechar
-                if self.endpoint_out:
-                    try:
-                        reset_cmd = bytearray(64)
-                        reset_cmd[0] = 0x04
-                        self.endpoint_out.write(reset_cmd, timeout=100)
-                    except:
-                        pass
-                
-                # Liberar interface e recursos
                 usb.util.release_interface(self.device, self.interface)
                 usb.util.dispose_resources(self.device)
-                print("🔌 Conexão Raw HID fechada")
             except:
-                pass  # Ignorar erros de cleanup
+                pass
             finally:
                 self.device = None
-                self.endpoint_out = None
-                self.endpoint_in = None
+        
+        print("✅ MouseController fechado com sucesso!")
     
     def __del__(self):
-        """
-        Destructor - garante cleanup de recursos
-        """
+        """Destructor"""
         self.close()
 
 
-# Classe de compatibilidade para facilitar migração
-class SerialMouseController(MouseController):
+# Função para compatibilidade com código antigo
+def create_mouse_controller(com_port=None, baudrate=115200):
     """
-    Wrapper de compatibilidade que mantém a interface da versão serial
-    mas usa Raw HID internamente para máxima performance.
-    """
+    Cria um controlador de mouse (compatibilidade)
     
-    def __init__(self, com_port=None, baudrate=115200):
-        """
-        Inicializa usando Raw HID (ignora parâmetros de porta serial)
-        
-        Args:
-            com_port: Ignorado (mantido para compatibilidade)
-            baudrate: Ignorado (mantido para compatibilidade)
-        """
-        # Avisar sobre a mudança
-        if com_port:
-            print(f"⚠️ Nota: Ignorando COM port {com_port}")
-            print("🚀 Usando Raw HID para máxima performance!")
-        
-        # Chamar construtor da classe base (Raw HID)
-        super().__init__()
-
-
-# Para compatibilidade total, exportar a classe serial como padrão
-# Isso permite usar a nova versão Raw HID sem alterar o código principal
-MouseController = SerialMouseController
+    Args:
+        com_port: Ignorado (mantido para compatibilidade)
+        baudrate: Ignorado (mantido para compatibilidade)
+    
+    Returns:
+        MouseController: Instância do controlador
+    """
+    return MouseController(com_port=com_port, baudrate=baudrate)
